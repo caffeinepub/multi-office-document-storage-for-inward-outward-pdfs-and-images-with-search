@@ -1,90 +1,56 @@
 {
   "kind": "build_request",
-  "title": "Update header styling, filter office options by selected category, and add Category column to documents table",
+  "title": "Replace login/sign-in page image with uploaded JPEG",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the application header on every page to use background color #0B2554 and display the title text \"Dr Sudhir Dhone\" at the top of the page (in the header). Ensure the header text/icons remain readable against this new background color.",
+      "text": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to the frontend static assets under frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "user-1"
+          "msg-1"
         ],
         "quotes": [
-          "use colour #0B2554 for header Add a title Dr Sudhir Dhone on top of page",
-          "1 every page"
+          "replace existing image on login page and logo on sign in by this image"
         ]
       },
       "acceptanceCriteria": [
-        "On all routes/pages wrapped by the main layout, the header background color is exactly #0B2554.",
-        "The text \"Dr Sudhir Dhone\" is visible in the header on every page.",
-        "Header navigation items and icons remain readable with sufficient contrast on the new header background color."
+        "A new static asset exists under frontend/public/assets/generated derived from WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg and is suitable for use as a logo (square/contained, not distorted).",
+        "No UI on the login/sign-in screen references the old login image asset anymore (e.g., /assets/generated/auth-image.dim_512x512.jpeg is no longer used on that screen)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "In the Documents list page filters, make the Office dropdown options depend on the selected Category dropdown value so that only offices belonging to the selected category are shown. When no category is selected (All categories), show offices across all categories. If the user changes the selected category and the currently selected office is not valid for the new category, clear the Office selection.",
+      "text": "Update the unauthenticated login/sign-in UI in frontend/src/components/auth/AuthGate.tsx to display the uploaded image (from frontend/public/assets/generated) in place of the current logo image, and update the <img> alt text to a generic English description (do not use a person’s name).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "user-1"
+          "msg-1"
         ],
         "quotes": [
-          "offices only from selected category should be visible offices from other categories should not be visible",
-          "category is selected through the dropdown filter."
+          "replace existing image on login page and logo on sign in by this image"
         ]
       },
       "acceptanceCriteria": [
-        "Selecting a Category filters the Office dropdown list to only offices for that category.",
-        "When Category is set to All categories, the Office dropdown list contains offices across categories (not just one category).",
-        "If an Office is selected and the user changes Category such that the selected Office is no longer in the available options, the Office filter is reset to All offices.",
-        "No offices from non-selected categories are shown in the Office dropdown when a specific category is selected."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Add a new \"Category\" column to the existing Documents table shown below the filters on the Documents list page, and render each document’s category label in that column using the app’s category label mapping.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "user-1"
-        ],
-        "quotes": [
-          "category should be listed on document list details",
-          "list of all documents below filters category section should be added in table",
-          "add column to existing table"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The documents table includes a visible \"Category\" header/column without removing existing columns.",
-        "Each row displays the document’s category as a human-readable label (e.g., \"Nursing Institute\"), consistent with the existing category label helper.",
-        "The table layout remains usable on smaller screens (horizontal scroll behavior continues to work)."
+        "When logged out (no identity), the logo shown above the title in the sign-in card is the uploaded image.",
+        "The <img> alt text is in English and is generic (e.g., \"Login logo\"), and does not contain a real person’s name.",
+        "The sign-in page renders without broken image links in both local and deployed builds."
       ]
     }
   ],
   "constraints": [
-    "Do not edit any files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui (compose these components instead).",
-    "Backend must remain a single Motoko actor (backend/main.mo).",
-    "Use English for all user-facing text added/changed."
+    "Do not modify any files under frontend/src/components/ui or any paths listed as immutable in SYSTEM_CONTEXT.",
+    "Keep backend logic unchanged (this is a frontend asset/UI change only)."
   ],
   "nonGoals": [
-    "Do not introduce new authentication providers beyond Internet Identity.",
-    "Do not add new backend endpoints unless strictly necessary for the requested UI behavior.",
-    "Do not redesign unrelated pages or change document filtering semantics beyond the requested office-by-category visibility in the Office dropdown."
+    "Do not change the header logo in the authenticated AppShell header (frontend/src/components/layout/AppShell.tsx).",
+    "Do not add new authentication providers or change Internet Identity behavior."
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Square-cropped portrait photo (login-logo.dim_512x512.jpeg)"
+    ],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

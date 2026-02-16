@@ -28,14 +28,14 @@ export function AuthGate({ children }: AuthGateProps) {
           <CardHeader className="text-center">
             <div className="mb-4 flex justify-center">
               <img
-                src="/assets/generated/dms-logo.dim_512x512.png"
-                alt="Document Management System"
-                className="h-24 w-24"
+                src="/assets/generated/login-logo.dim_512x512.jpeg"
+                alt="Login logo"
+                className="h-32 w-32 rounded-lg object-cover"
               />
             </div>
-            <CardTitle className="text-2xl">Document Management System</CardTitle>
+            <CardTitle className="text-2xl">Dr Sudhir Dhone Document Management System</CardTitle>
             <CardDescription>
-              Secure storage for inward and outward documents across 6 offices
+              Secure storage for inward and outward documents across offices
             </CardDescription>
           </CardHeader>
           <CardContent>

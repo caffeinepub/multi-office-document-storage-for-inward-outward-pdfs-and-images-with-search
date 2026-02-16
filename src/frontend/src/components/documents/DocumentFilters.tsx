@@ -130,17 +130,17 @@ export function DocumentFilters({
             </div>
 
             {/* Office Filter */}
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0">
               <Label htmlFor="office-filter">Office</Label>
               <Select value={officeStringValue} onValueChange={handleOfficeChange}>
-                <SelectTrigger id="office-filter" className="bg-white dark:bg-white">
+                <SelectTrigger id="office-filter" className="bg-white dark:bg-white w-full min-w-0 [&>span]:truncate [&>span]:block">
                   <SelectValue placeholder="All offices" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
                   <SelectItem value="all">All offices</SelectItem>
                   {officeOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      <span className="truncate block">{option.label}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>

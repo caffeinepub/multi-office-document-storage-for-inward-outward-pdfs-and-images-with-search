@@ -182,3 +182,13 @@ export function officeMatchesCategory(office: Office, category: Category | null)
   if (!category) return true;
   return office.__kind__ === category;
 }
+
+// Check if an office string ID belongs to a specific category
+export function isOfficeStringInCategory(officeString: string, category: Category | null): boolean {
+  if (!category) return true;
+  if (!officeString) return false;
+  
+  // Extract category from the office string (format: "category:office")
+  const [officeCategory] = officeString.split(':');
+  return officeCategory === category;
+}

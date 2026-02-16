@@ -36,7 +36,7 @@ export function AppShell({ children }: AppShellProps) {
               className="flex items-center gap-3 transition-opacity hover:opacity-80"
             >
               <img
-                src="/assets/generated/dms-logo.dim_512x512.png"
+                src="/assets/generated/header-logo.dim_512x512.png"
                 alt="DMS"
                 className="h-10 w-10"
               />

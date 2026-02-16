@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useUploadDocument } from '@/features/documents/useUploadDocument';
 import { Office, Direction, Category } from '@/backend';
@@ -20,7 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon, Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { stringToOffice, getAllOfficeOptions } from '@/lib/officeHelpers';
+import { stringToOffice, getOfficeOptionsByCategory, isOfficeStringInCategory } from '@/lib/officeHelpers';
 import { getAllCategoryOptions } from '@/lib/categoryHelpers';
 
 const DIRECTION_LABELS: Record<Direction, string> = {
@@ -40,6 +40,13 @@ export function UploadDocumentPage() {
   const [title, setTitle] = useState('');
   const [referenceNumber, setReferenceNumber] = useState('');
   const [documentDate, setDocumentDate] = useState<Date | null>(null);
+
+  // Clear office selection when category changes if the office doesn't belong to the new category
+  useEffect(() => {
+    if (officeString && !isOfficeStringInCategory(officeString, category)) {
+      setOfficeString('');
+    }
+  }, [category, officeString]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -103,7 +110,8 @@ export function UploadDocumentPage() {
     );
   }
 
-  const officeOptions = getAllOfficeOptions();
+  // Get office options filtered by selected category
+  const officeOptions = getOfficeOptionsByCategory(category);
   const categoryOptions = getAllCategoryOptions();
 
   return (
