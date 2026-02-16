@@ -1,0 +1,63 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-application-header-on-every-page-to-use-background-color-0b2554-and-display-the-title-text-dr-sudhir-dhone-at-the-top-of-the-page-in-the-header-ensure-the-header-text-icons-remain-readable-against-this-new-background-color",
+      "featureTitle": "Update the application header on every page to use background color #0B2554 and display the title text \"Dr Sudhir Dhone\" at the top of the page (in the header). Ensure the header text/icons remain readable against this new background color.",
+      "files": [
+        "frontend/src/components/layout/AppShell.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-in-the-documents-list-page-filters-make-the-office-dropdown-options-depend-on-the-selected-category-dropdown-value-so-that-only-offices-belonging-to-the-selected-category-are-shown-when-no-category-is-selected-all-categories-show-offices-across-all-categories-if-the-user-changes-the-selected-category-and-the-currently-selected-office-is-not-valid-for-the-new-category-clear-the-office-selection",
+      "featureTitle": "In the Documents list page filters, make the Office dropdown options depend on the selected Category dropdown value so that only offices belonging to the selected category are shown. When no category is selected (All categories), show offices across all categories. If the user changes the selected category and the currently selected office is not valid for the new category, clear the Office selection.",
+      "files": [
+        "frontend/src/components/documents/DocumentFilters.tsx",
+        "frontend/src/lib/officeHelpers.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-new-category-column-to-the-existing-documents-table-shown-below-the-filters-on-the-documents-list-page-and-render-each-document-s-category-label-in-that-column-using-the-app-s-category-label-mapping",
+      "featureTitle": "Add a new \"Category\" column to the existing Documents table shown below the filters on the Documents list page, and render each document’s category label in that column using the app’s category label mapping.",
+      "files": [
+        "frontend/src/components/documents/DocumentList.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

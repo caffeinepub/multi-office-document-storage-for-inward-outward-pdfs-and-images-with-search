@@ -1,0 +1,61 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Header styling update, category-dependent office filter, and category column in documents table",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Update the global AppShell header background to #0B2554 and show the title text \"Dr Sudhir Dhone\" on every page while keeping header content readable.",
+      "acceptanceCriteria": [
+        "On all routes/pages wrapped by the main layout, the header background color is exactly #0B2554.",
+        "The text \"Dr Sudhir Dhone\" is visible in the header on every page.",
+        "Header navigation items and icons remain readable with sufficient contrast on the new header background color."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Update the header styling to use background color #0B2554 (e.g., Tailwind arbitrary color class) and render the header title text \"Dr Sudhir Dhone\" in the header across all pages; ensure existing nav buttons/icons retain high-contrast readable styling. Uses shadcn-ui Buttons/Menus already present for header controls—Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Make the Documents page Office dropdown options depend on the selected Category, and clear an invalid Office selection when Category changes.",
+      "acceptanceCriteria": [
+        "Selecting a Category filters the Office dropdown list to only offices for that category.",
+        "When Category is set to All categories, the Office dropdown list contains offices across categories (not just one category).",
+        "If an Office is selected and the user changes Category such that the selected Office is no longer in the available options, the Office filter is reset to All offices.",
+        "No offices from non-selected categories are shown in the Office dropdown when a specific category is selected."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/lib/officeHelpers.ts",
+          "operation": "modify",
+          "description": "Add category-aware office option helpers (e.g., derive Office option lists by selected Category, validate whether an Office belongs to a Category, and provide stable string IDs that include category/kind so Office select values can be filtered safely). Keep existing label helpers intact for display. (No UI components used here.)"
+        },
+        {
+          "path": "frontend/src/components/documents/DocumentFilters.tsx",
+          "operation": "modify",
+          "description": "Update the Office filter to use a category-dependent options list based on the currently selected Category, and add logic (e.g., an effect reacting to Category changes) to clear the selected Office when it is not valid for the new category. Continue using the existing shadcn-ui Select components for Category/Office filters—Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add a \"Category\" column to the Documents table and render each document’s category label using the existing category label mapping.",
+      "acceptanceCriteria": [
+        "The documents table includes a visible \"Category\" header/column without removing existing columns.",
+        "Each row displays the document’s category as a human-readable label (e.g., \"Nursing Institute\"), consistent with the existing category label helper.",
+        "The table layout remains usable on smaller screens (horizontal scroll behavior continues to work)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/documents/DocumentList.tsx",
+          "operation": "modify",
+          "description": "Insert a new \"Category\" table column (header + per-row cell) using the existing category label helper for human-readable rendering, while preserving existing columns and the current horizontal scroll container. Uses the existing shadcn-ui Table components already in place—Verify the component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useUploadDocument } from '@/features/documents/useUploadDocument';
+import { Office, Direction, Category } from '@/backend';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { CalendarIcon, Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { stringToOffice, getAllOfficeOptions } from '@/lib/officeHelpers';
+import { getAllCategoryOptions } from '@/lib/categoryHelpers';
+
+const DIRECTION_LABELS: Record<Direction, string> = {
+  [Direction.inward]: 'Inward',
+  [Direction.outward]: 'Outward',
+  [Direction.importantDocuments]: 'Important Documents',
+};
+
+export function UploadDocumentPage() {
+  const navigate = useNavigate();
+  const { uploadDocument, isUploading, uploadProgress, error, isSuccess } = useUploadDocument();
+
+  const [file, setFile] = useState<File | null>(null);
+  const [category, setCategory] = useState<Category | null>(null);
+  const [officeString, setOfficeString] = useState<string>('');
+  const [direction, setDirection] = useState<Direction | null>(null);
+  const [title, setTitle] = useState('');
+  const [referenceNumber, setReferenceNumber] = useState('');
+  const [documentDate, setDocumentDate] = useState<Date | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      const validTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+      if (!validTypes.includes(selectedFile.type)) {
+        alert('Please select a PDF or image file (PNG/JPEG)');
+        return;
+      }
+      setFile(selectedFile);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const office = stringToOffice(officeString);
+    if (!file || !category || !office || !direction || !title || !documentDate) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    await uploadDocument({
+      file,
+      category,
+      office,
+      direction,
+      title,
+      referenceNumber: referenceNumber || null,
+      documentDate,
+    });
+  };
+
+  const canSubmit = file && category && officeString && direction && title && documentDate && !isUploading;
+
+  if (isSuccess) {
+    return (
+      <div className="flex min-h-[600px] items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mb-4 flex justify-center">
+              <CheckCircle2 className="h-16 w-16 text-green-500" />
+            </div>
+            <CardTitle>Upload Successful</CardTitle>
+            <CardDescription>Your document has been uploaded successfully</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={() => navigate({ to: '/' })} className="w-full">
+              View Documents
+            </Button>
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="w-full"
+            >
+              Upload Another
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const officeOptions = getAllOfficeOptions();
+  const categoryOptions = getAllCategoryOptions();
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Upload Document</h1>
+        <p className="text-muted-foreground mt-2">
+          Add a new document to the archive
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Document Details</CardTitle>
+          <CardDescription>
+            Fill in the information below to upload a document
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* File Upload */}
+            <div className="space-y-2">
+              <Label htmlFor="file">
+                Document File <span className="text-destructive">*</span>
+              </Label>
+              <div className="flex items-center gap-4">
+                <Input
+                  id="file"
+                  type="file"
+                  accept=".pdf,.png,.jpg,.jpeg"
+                  onChange={handleFileChange}
+                  disabled={isUploading}
+                  className="flex-1"
+                />
+                {file && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <FileText className="h-4 w-4" />
+                    <span className="truncate max-w-[200px]">{file.name}</span>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Supported formats: PDF, PNG, JPEG (max 10MB)
+              </p>
+            </div>
+
+            {/* Category */}
+            <div className="space-y-2">
+              <Label htmlFor="category">
+                Category <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={category || ''}
+                onValueChange={(value) => setCategory(value as Category)}
+                disabled={isUploading}
+              >
+                <SelectTrigger id="category" className="bg-white dark:bg-white">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
+                  {categoryOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Office */}
+            <div className="space-y-2">
+              <Label htmlFor="office">
+                Office <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={officeString}
+                onValueChange={setOfficeString}
+                disabled={isUploading}
+              >
+                <SelectTrigger id="office" className="bg-white dark:bg-white">
+                  <SelectValue placeholder="Select office" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
+                  {officeOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Direction */}
+            <div className="space-y-2">
+              <Label htmlFor="direction">
+                Direction <span className="text-destructive">*</span>
+              </Label>
+              <Select
+                value={direction || ''}
+                onValueChange={(value) => setDirection(value as Direction)}
+                disabled={isUploading}
+              >
+                <SelectTrigger id="direction" className="bg-white dark:bg-white">
+                  <SelectValue placeholder="Select direction" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
+                  {Object.entries(DIRECTION_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title">
+                Document Title <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter document title"
+                disabled={isUploading}
+              />
+            </div>
+
+            {/* Reference Number */}
+            <div className="space-y-2">
+              <Label htmlFor="reference">Reference Number (Optional)</Label>
+              <Input
+                id="reference"
+                value={referenceNumber}
+                onChange={(e) => setReferenceNumber(e.target.value)}
+                placeholder="Enter reference number"
+                disabled={isUploading}
+              />
+            </div>
+
+            {/* Document Date */}
+            <div className="space-y-2">
+              <Label>
+                Document Date <span className="text-destructive">*</span>
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal bg-white dark:bg-white',
+                      !documentDate && 'text-muted-foreground'
+                    )}
+                    disabled={isUploading}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {documentDate ? format(documentDate, 'PP') : 'Select date'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-white dark:bg-white" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={documentDate || undefined}
+                    onSelect={(date) => setDocumentDate(date || null)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Upload Progress */}
+            {isUploading && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Uploading...</span>
+                  <span className="font-medium">{uploadProgress}%</span>
+                </div>
+                <Progress value={uploadProgress} />
+              </div>
+            )}
+
+            {/* Error Message */}
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error.message}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Submit Button */}
+            <Button type="submit" disabled={!canSubmit} className="w-full">
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" />
+                  Upload Document
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

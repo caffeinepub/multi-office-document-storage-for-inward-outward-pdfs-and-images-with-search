@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "UI updates requested: apply header color #0B2554 and add title 'Dr Sudhir Dhone' on every page; enforce office list filtering to show only offices from the selected category; add a Category column to the existing documents table below filters (category selected via dropdown).",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-update-the-application-header-on-every-page-to-use-background-color-0b2554-and-display-the-title-text-dr-sudhir-dhone-at-the-top-of-the-page-in-the-header-ensure-the-header-text-icons-remain-readable-against-this-new-background-color",
+      "title": "Update the application header on every page to use background color #0B2554 and display the title text \"Dr Sudhir Dhone\" at the top of the page (in the header). Ensure the header text/icons remain readable against this new background color.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-the-documents-list-page-filters-make-the-office-dropdown-options-depend-on-the-selected-category-dropdown-value-so-that-only-offices-belonging-to-the-selected-category-are-shown-when-no-category-is-selected-all-categories-show-offices-across-all-categories-if-the-user-changes-the-selected-category-and-the-currently-selected-office-is-not-valid-for-the-new-category-clear-the-office-selection",
+      "title": "In the Documents list page filters, make the Office dropdown options depend on the selected Category dropdown value so that only offices belonging to the selected category are shown. When no category is selected (All categories), show offices across all categories. If the user changes the selected category and the currently selected office is not valid for the new category, clear the Office selection.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-new-category-column-to-the-existing-documents-table-shown-below-the-filters-on-the-documents-list-page-and-render-each-document-s-category-label-in-that-column-using-the-app-s-category-label-mapping",
+      "title": "Add a new \"Category\" column to the existing Documents table shown below the filters on the Documents list page, and render each document’s category label in that column using the app’s category label mapping.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Set header color to #0B2554 and add page title 'Dr Sudhir Dhone' at top on every page",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Filter offices list by selected category dropdown so only offices from the selected category are visible (hide other categories)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add a 'Category' column to the existing documents table shown below filters",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Update header styling, filter office options by selected category, and add Category column to documents table",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

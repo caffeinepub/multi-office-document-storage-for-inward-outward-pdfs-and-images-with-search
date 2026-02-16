@@ -1,0 +1,64 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T01:02:07.322Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Update the application header on every page to use background color #0B2554 and display the title text \"Dr Sudhir Dhone\" at the top of the page (in the header). Ensure the header text/icons remain readable against this new background color.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/AppShell.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/AppShell.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "In the Documents list page filters, make the Office dropdown options depend on the selected Category dropdown value so that only offices belonging to the selected category are shown. When no category is selected (All categories), show offices across all categories. If the user changes the selected category and the currently selected office is not valid for the new category, clear the Office selection.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/lib/officeHelpers.ts",
+          "frontend/src/components/documents/DocumentFilters.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/lib/officeHelpers.ts",
+          "frontend/src/components/documents/DocumentFilters.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add a new \"Category\" column to the existing Documents table shown below the filters on the Documents list page, and render each document’s category label in that column using the app’s category label mapping.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/documents/DocumentList.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/documents/DocumentList.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/documents/DocumentFilters.tsx",
+    "frontend/src/components/documents/DocumentList.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/lib/officeHelpers.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

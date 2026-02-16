@@ -1,2 +1,3 @@
-# multi-office-document-storage-for-inward-outward-pdfs-and-images-with-search
-Exported from Caffeine project: Update header styling, filter office options by selected category, and add Category column to documents table
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

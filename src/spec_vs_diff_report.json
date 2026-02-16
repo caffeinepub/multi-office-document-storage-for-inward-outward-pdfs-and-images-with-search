@@ -1,0 +1,17 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-16T01:02:07.320Z",
+  "summary": "All three requested frontend changes appear to be implemented: header styling/title in AppShell, category-dependent office filtering (including clearing invalid office selections) in DocumentFilters with supporting helper usage, and a new Category column in the documents table rendering category labels via the category label helper.",
+  "missing_requirements": [],
+  "hallucinated_features": [],
+  "confidence": 0.74,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/documents/DocumentFilters.tsx",
+    "frontend/src/components/documents/DocumentList.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/lib/officeHelpers.ts",
+    "project_state.json"
+  ]
+}
