@@ -1,39 +1,31 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T03:06:22.894Z",
-  "summary": "AuthGate.tsx was updated to use /assets/generated/login-logo.dim_512x512.jpeg with alt text \"Login logo\", but the diff shows no new static asset added under frontend/public/assets/generated. The diff summary also indicates unrelated UI/feature changes (including an AppShell header logo update) that were explicitly out of scope.",
+  "generatedAt": "2026-02-16T04:09:53.813Z",
+  "summary": "AuthGate was updated to reference a new versioned login image path and to render it with object-contain (no crop). However, the new image asset file itself was not added under frontend/public/assets/generated, and there are unrelated/speculative changes in metadata/summary files.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
-      "reason": "No new files were added in the diff, and there is no evidence of a new generated asset being created under frontend/public/assets/generated derived from the provided JPEG.",
+      "requirement": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to frontend/public/assets/generated using a new versioned filename (different from login-logo-v2.dim_512x512.jpeg).",
+      "reason": "The diff shows no new files added (ADDED FILES: none), so the required new static asset file is not present in the change set.",
       "evidence": [
-        "<file-diff>: Added: 0, Modified: 3, Removed: 0",
-        "frontend/src/components/auth/AuthGate.tsx (references /assets/generated/login-logo.dim_512x512.jpeg but does not add it)"
+        "File diff summary: \"Added: 0\" / \"ADDED FILES: none\""
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Updated the authenticated AppShell header logo to use a new header-logo.dim_512x512.png asset.",
-      "reason": "The BuildRequest explicitly lists changing the authenticated AppShell header logo as a non-goal, but the diff summary claims it was updated.",
+      "description": "Unrelated app/theme/document feature changes described in frontend-file-summaries.txt (e.g., AppShell header/logo changes, document pages/filters/query changes, global OKLCH theme token changes).",
+      "reason": "The BuildRequest is narrowly about replacing the login image and preventing cropping; these additional features are not requested. The only concrete evidence is that the summary file was modified to claim these changes.",
       "evidence": [
-        "frontend-file-summaries.txt (\"frontend/src/components/layout/AppShell.tsx\": \"... updated header logo using the new header-logo.dim_512x512.png asset.\")"
+        "frontend-file-summaries.txt"
       ]
     },
     {
-      "description": "Document management feature/UI changes (category filtering, new Category column, query/mutation changes, etc.).",
-      "reason": "The BuildRequest scope is limited to replacing the login/sign-in image and keeping backend logic unchanged; the diff summary describes additional document feature modifications not requested.",
+      "description": "Project tracking metadata updates (new_feature_requests entries, known_issues/isFixRequest fields) in project_state.json.",
+      "reason": "Not requested by the BuildRequest; this is project bookkeeping not required to replace the login image.",
       "evidence": [
-        "frontend-file-summaries.txt (entries for DocumentListPage.tsx, UploadDocumentPage.tsx, DocumentDetailPage.tsx, DocumentFilters.tsx, DocumentList.tsx, useDocuments.ts, useUploadDocument.ts describing category and filtering changes)"
-      ]
-    },
-    {
-      "description": "Theme/color system and Tailwind/CSS utility changes.",
-      "reason": "Not requested; BuildRequest is a frontend asset/UI change only for the login/sign-in image, but the diff summary indicates broader styling/token updates.",
-      "evidence": [
-        "frontend-file-summaries.txt (entries for frontend/src/index.css, frontend/index.css, frontend/tailwind.config.js describing OKLCH palette, token sync, and utilities)"
+        "project_state.json"
       ]
     }
   ],

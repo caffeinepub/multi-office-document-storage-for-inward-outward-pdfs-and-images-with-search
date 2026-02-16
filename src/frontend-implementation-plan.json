@@ -1,36 +1,41 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update sign-in screen logo to uploaded JPEG",
+  "title": "Update login screen image asset (versioned) and render without cropping",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add the uploaded JPEG as the only login/sign-in logo static asset under generated assets (square, not distorted).",
+      "summary": "Add the uploaded login photo as a new versioned static asset and update AuthGate to reference it to bust cache.",
       "acceptanceCriteria": [
-        "A new static asset exists under frontend/public/assets/generated derived from WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg and is suitable for use as a logo (square/contained, not distorted).",
-        "No UI on the login/sign-in screen references the old login image asset anymore (e.g., /assets/generated/auth-image.dim_512x512.jpeg is no longer used on that screen)."
+        "A new static image file exists in frontend/public/assets/generated with a new, versioned filename (different from login-logo-v2.dim_512x512.jpeg) and contains the pixels from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg.",
+        "frontend/src/components/auth/AuthGate.tsx uses the new versioned asset path in the <img src=...> for the unauthenticated login screen.",
+        "After a hard refresh in the browser, the login screen displays the newly uploaded image (not the previously cached one)."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/login-logo.dim_512x512.jpeg",
+          "path": "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
           "operation": "create",
-          "description": "Create a square-cropped (512x512) logo image derived from the uploaded WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg, ensuring it is not stretched or distorted and is suitable for the sign-in card logo."
+          "description": "Add the uploaded image (pixels exactly from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg) as a new, versioned static asset file to bust browser cache."
+        },
+        {
+          "path": "frontend/src/components/auth/AuthGate.tsx",
+          "operation": "modify",
+          "description": "Update the unauthenticated login screen <img> to use the new asset path \"/assets/generated/login-logo-v3.dim_400x600.jpeg\" instead of \"/assets/generated/login-logo-v2.dim_512x512.jpeg\" so the new image loads after hard refresh."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Update AuthGate unauthenticated UI to use the uploaded logo image and a generic English alt text.",
+      "summary": "Ensure the AuthGate login image is displayed as-is (no crop) while staying contained within the existing 128x128 area.",
       "acceptanceCriteria": [
-        "When logged out (no identity), the logo shown above the title in the sign-in card is the uploaded image.",
-        "The <img> alt text is in English and is generic (e.g., \"Login logo\"), and does not contain a real person’s name.",
-        "The sign-in page renders without broken image links in both local and deployed builds."
+        "The AuthGate login image is displayed without cropping any part of the image (e.g., uses object-contain or equivalent styling rather than object-cover).",
+        "The image remains visually contained within the existing 128x128 (h-32 w-32) area on the login card, without overflowing the layout."
       ],
       "file_operations": [
         {
           "path": "frontend/src/components/auth/AuthGate.tsx",
           "operation": "modify",
-          "description": "Replace the current unauthenticated logo <img> source with /assets/generated/login-logo.dim_512x512.jpeg and update the alt text to a generic English description (e.g., \"Login logo\"); ensure the previous /assets/generated/auth-image.dim_512x512.jpeg is no longer referenced in this login/sign-in UI."
+          "description": "Change the login image Tailwind/CSS classes to avoid cropping (replace object-cover/object-top behavior with object-contain and appropriate positioning) while keeping the existing h-32 w-32 sizing and preventing overflow."
         }
       ]
     }

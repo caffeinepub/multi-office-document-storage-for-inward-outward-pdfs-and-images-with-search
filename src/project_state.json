@@ -4,22 +4,22 @@
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
-    "Login page is using the wrong image; needs to be replaced with the user-provided image (also replace sign-in logo)."
+    "Login image still appears unchanged; needs update to use the correct uploaded asset."
   ],
   "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Square-cropped portrait photo (login-logo.dim_512x512.jpeg)",
+  "imageRequirements": "## Required Images\n- Portrait photo of a person in a striped shirt against a light background (login-logo-v3.dim_400x600.jpeg)\n\n## Edit Images\n- Replace the login logo asset (login-logo-v2.dim_512x512.jpeg > login-logo-v3.dim_400x600.jpeg)",
   "existing_features": [
     {
-      "id": "feature-add-the-user-uploaded-image-file-whatsapp-image-2020-10-24-at-11-11-10-pm-2-jpeg-to-the-frontend-static-assets-under-frontend-public-assets-generated-as-a-properly-sized-login-sign-in-logo-image-and-ensure-it-is-the-only-image-used-on-the-login-sign-in-screen",
-      "title": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to the frontend static assets under frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
+      "id": "feature-add-the-user-uploaded-image-file-whatsapp-image-2020-10-24-at-11-11-10-pm-4-jpeg-to-the-frontend-static-assets-under-frontend-public-assets-generated-using-a-new-versioned-filename-and-update-the-login-screen-to-use-this-new-asset-instead-of-the-currently-referenced-assets-generated-login-logo-v2-dim-512x512-jpeg",
+      "title": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-update-the-unauthenticated-login-sign-in-ui-in-frontend-src-components-auth-authgate-tsx-to-display-the-uploaded-image-from-frontend-public-assets-generated-in-place-of-the-current-logo-image-and-update-the-img-alt-text-to-a-generic-english-description-do-not-use-a-person-s-name",
-      "title": "Update the unauthenticated login/sign-in UI in frontend/src/components/auth/AuthGate.tsx to display the uploaded image (from frontend/public/assets/generated) in place of the current logo image, and update the <img> alt text to a generic English description (do not use a person’s name).",
+      "id": "feature-honor-the-user-s-request-to-use-the-uploaded-image-exactly-as-is-no-crop-update-the-login-image-rendering-on-the-authgate-sign-in-screen-so-the-image-is-not-cropped-by-css-i-e-it-must-not-use-object-cover-cropping",
+      "title": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
       "reqIds": [
         "REQ-2"
       ],
@@ -29,12 +29,12 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Replace the login page image and the sign-in logo with the user-provided uploaded image",
+      "summary": "Replace the login screen image/logo with the user's uploaded image exactly as-is (no crop/resize)",
       "reqIds": [],
       "status": "pending"
     }
   ],
-  "projectName": "Replace login/sign-in page image with uploaded JPEG",
+  "projectName": "Replace login screen image with uploaded photo (as-is) and bust cache",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

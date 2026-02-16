@@ -2,9 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-the-user-uploaded-image-file-whatsapp-image-2020-10-24-at-11-11-10-pm-2-jpeg-to-the-frontend-static-assets-under-frontend-public-assets-generated-as-a-properly-sized-login-sign-in-logo-image-and-ensure-it-is-the-only-image-used-on-the-login-sign-in-screen",
-      "featureTitle": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to the frontend static assets under frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
-      "files": [],
+      "featureId": "feature-add-the-user-uploaded-image-file-whatsapp-image-2020-10-24-at-11-11-10-pm-4-jpeg-to-the-frontend-static-assets-under-frontend-public-assets-generated-using-a-new-versioned-filename-and-update-the-login-screen-to-use-this-new-asset-instead-of-the-currently-referenced-assets-generated-login-logo-v2-dim-512x512-jpeg",
+      "featureTitle": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
+      "files": [
+        "frontend/src/components/auth/AuthGate.tsx"
+      ],
       "components": [
         "blob-storage@4.0.0",
         "core-infrastructure@1.0.2",
@@ -19,8 +21,8 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-unauthenticated-login-sign-in-ui-in-frontend-src-components-auth-authgate-tsx-to-display-the-uploaded-image-from-frontend-public-assets-generated-in-place-of-the-current-logo-image-and-update-the-img-alt-text-to-a-generic-english-description-do-not-use-a-person-s-name",
-      "featureTitle": "Update the unauthenticated login/sign-in UI in frontend/src/components/auth/AuthGate.tsx to display the uploaded image (from frontend/public/assets/generated) in place of the current logo image, and update the <img> alt text to a generic English description (do not use a person’s name).",
+      "featureId": "feature-honor-the-user-s-request-to-use-the-uploaded-image-exactly-as-is-no-crop-update-the-login-image-rendering-on-the-authgate-sign-in-screen-so-the-image-is-not-cropped-by-css-i-e-it-must-not-use-object-cover-cropping",
+      "featureTitle": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
       "files": [
         "frontend/src/components/auth/AuthGate.tsx"
       ],

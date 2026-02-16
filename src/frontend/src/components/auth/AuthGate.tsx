@@ -28,9 +28,9 @@ export function AuthGate({ children }: AuthGateProps) {
           <CardHeader className="text-center">
             <div className="mb-4 flex justify-center">
               <img
-                src="/assets/generated/login-logo.dim_512x512.jpeg"
+                src="/assets/generated/login-logo-v3.dim_400x600.jpeg"
                 alt="Login logo"
-                className="h-32 w-32 rounded-lg object-cover"
+                className="h-32 w-32 rounded-lg object-contain"
               />
             </div>
             <CardTitle className="text-2xl">Dr Sudhir Dhone Document Management System</CardTitle>

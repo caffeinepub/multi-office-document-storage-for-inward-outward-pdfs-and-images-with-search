@@ -1,56 +1,73 @@
 {
   "kind": "build_request",
-  "title": "Replace login/sign-in page image with uploaded JPEG",
+  "title": "Replace login screen image with uploaded photo (as-is) and bust cache",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to the frontend static assets under frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
+      "text": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "replace existing image on login page and logo on sign in by this image"
+          "still login image is same can you share with me all images used in app so i could tell which ones to change",
+          "yes",
+          "yes include all",
+          "yes",
+          "as it is"
         ]
       },
       "acceptanceCriteria": [
-        "A new static asset exists under frontend/public/assets/generated derived from WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg and is suitable for use as a logo (square/contained, not distorted).",
-        "No UI on the login/sign-in screen references the old login image asset anymore (e.g., /assets/generated/auth-image.dim_512x512.jpeg is no longer used on that screen)."
+        "A new static image file exists in frontend/public/assets/generated with a new, versioned filename (different from login-logo-v2.dim_512x512.jpeg) and contains the pixels from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg.",
+        "frontend/src/components/auth/AuthGate.tsx uses the new versioned asset path in the <img src=...> for the unauthenticated login screen.",
+        "After a hard refresh in the browser, the login screen displays the newly uploaded image (not the previously cached one)."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update the unauthenticated login/sign-in UI in frontend/src/components/auth/AuthGate.tsx to display the uploaded image (from frontend/public/assets/generated) in place of the current logo image, and update the <img> alt text to a generic English description (do not use a person’s name).",
+      "text": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1"
         ],
         "quotes": [
-          "replace existing image on login page and logo on sign in by this image"
+          "as it is"
         ]
       },
       "acceptanceCriteria": [
-        "When logged out (no identity), the logo shown above the title in the sign-in card is the uploaded image.",
-        "The <img> alt text is in English and is generic (e.g., \"Login logo\"), and does not contain a real person’s name.",
-        "The sign-in page renders without broken image links in both local and deployed builds."
+        "The AuthGate login image is displayed without cropping any part of the image (e.g., uses object-contain or equivalent styling rather than object-cover).",
+        "The image remains visually contained within the existing 128x128 (h-32 w-32) area on the login card, without overflowing the layout."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui or any paths listed as immutable in SYSTEM_CONTEXT.",
-    "Keep backend logic unchanged (this is a frontend asset/UI change only)."
+    "Do not edit files under frontend/src/components/ui (read-only UI components).",
+    "Do not edit the immutable hook entry points listed in SYSTEM_CONTEXT (compose around them if needed)."
   ],
   "nonGoals": [
-    "Do not change the header logo in the authenticated AppShell header (frontend/src/components/layout/AppShell.tsx).",
-    "Do not add new authentication providers or change Internet Identity behavior."
+    "Do not change authentication behavior or Internet Identity flow.",
+    "Do not modify backend canister logic or data schema.",
+    "Do not redesign the rest of the app UI beyond what is necessary to display the new login image without cropping."
   ],
   "imageRequirements": {
     "required": [
-      "Square-cropped portrait photo (login-logo.dim_512x512.jpeg)"
+      "Portrait photo of a person in a striped shirt against a light background (login-logo-v3.dim_400x600.jpeg)"
     ],
-    "edits": []
+    "edits": [
+      "Replace the login logo asset (login-logo-v2.dim_512x512.jpeg > login-logo-v3.dim_400x600.jpeg)"
+    ]
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

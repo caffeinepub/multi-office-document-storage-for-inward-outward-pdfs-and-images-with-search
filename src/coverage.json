@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T03:06:22.897Z",
+  "generatedAt": "2026-02-16T04:09:53.815Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,18 +12,20 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add the user-uploaded image file (WhatsApp-Image-2020-10-24-at-11.11.10-PM-2.jpeg) to the frontend static assets under frontend/public/assets/generated as a properly sized login/sign-in logo image, and ensure it is the only image used on the login/sign-in screen.",
+        "summary": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/login-logo.dim_512x512.jpeg"
+          "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
+          "frontend/src/components/auth/AuthGate.tsx"
         ],
         "matchedFiles": [
-          "frontend/public/assets/generated/login-logo.dim_512x512.jpeg"
+          "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
+          "frontend/src/components/auth/AuthGate.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update the unauthenticated login/sign-in UI in frontend/src/components/auth/AuthGate.tsx to display the uploaded image (from frontend/public/assets/generated) in place of the current logo image, and update the <img> alt text to a generic English description (do not use a person’s name).",
+        "summary": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
         "status": "implemented",
         "plannedFiles": [
           "frontend/src/components/auth/AuthGate.tsx"
@@ -39,7 +41,7 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/login-logo.dim_512x512.jpeg",
+    "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
     "frontend/src/components/auth/AuthGate.tsx",
     "project_state.json",
     "scratch/component-selection.json",
