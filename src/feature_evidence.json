@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-on-the-dashboard-page-reduce-the-visual-size-of-the-browse-by-category-category-cards-buttons-by-50-padding-icon-size-and-typography-while-keeping-the-same-number-of-categories-and-the-same-click-navigation-behavior",
-      "featureTitle": "On the Dashboard page, reduce the visual size of the “Browse by Category” category cards/buttons by ~50% (padding, icon size, and typography) while keeping the same number of categories and the same click/navigation behavior.",
+      "featureId": "feature-add-a-mobile-navigation-control-hamburger-menu-in-the-appshell-header-that-is-shown-on-small-screens-below-the-current-md-breakpoint-and-contains-navigation-items-for-dashboard-documents-upload-and-settings",
+      "featureTitle": "Add a mobile navigation control (hamburger menu) in the AppShell header that is shown on small screens (below the current md breakpoint) and contains navigation items for Dashboard, Documents, Upload, and Settings.",
       "files": [
-        "frontend/src/pages/DashboardPage.tsx"
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/components/layout/MobileNavMenu.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -22,10 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-on-the-dashboard-page-update-the-category-action-button-styling-so-the-category-buttons-use-a-light-blue-color-as-the-primary-visual-accent-consistent-across-light-dark-modes",
-      "featureTitle": "On the Dashboard page, update the category action button styling so the category buttons use a light blue color as the primary visual accent (consistent across light/dark modes).",
+      "featureId": "feature-keep-role-based-behavior-consistent-with-the-existing-desktop-header-and-route-guards-only-render-the-settings-navigation-item-when-the-current-caller-is-an-admin-user",
+      "featureTitle": "Keep role-based behavior consistent with the existing desktop header and route guards: only render the Settings navigation item when the current caller is an admin user.",
       "files": [
-        "frontend/src/pages/DashboardPage.tsx"
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/components/layout/MobileNavMenu.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -42,10 +44,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-upload-page-primary-action-button-styling-so-the-upload-button-uses-color-0052cc-including-hover-active-states-and-remains-readable-in-both-light-and-dark-modes",
-      "featureTitle": "Update the Upload page primary action button styling so the upload button uses color #0052cc (including hover/active states) and remains readable in both light and dark modes.",
+      "featureId": "feature-ensure-the-mobile-header-layout-remains-usable-on-small-screens-the-logo-title-block-hamburger-control-theme-toggle-and-account-menu-must-not-overlap-or-overflow-horizontally-spacing-should-adapt-for-narrow-widths",
+      "featureTitle": "Ensure the mobile header layout remains usable on small screens: the logo/title block, hamburger control, theme toggle, and account menu must not overlap or overflow horizontally; spacing should adapt for narrow widths.",
       "files": [
-        "frontend/src/pages/UploadDocumentPage.tsx"
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/components/layout/MobileNavMenu.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -57,27 +60,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-4"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-in-settings-style-the-add-category-button-so-it-appears-inside-a-visually-distinct-box-using-color-0052cc-and-ensure-the-add-category-add-office-forms-have-a-solid-non-transparent-background-when-opened-solid-white-in-light-mode",
-      "featureTitle": "In Settings, style the “Add Category” button so it appears inside a visually distinct box using color #0052cc, and ensure the Add Category / Add Office forms have a solid (non-transparent) background when opened (solid white in light mode).",
-      "files": [
-        "frontend/src/pages/SettingsPage.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-5"
+        "REQ-3"
       ],
       "confidence": "high"
     }

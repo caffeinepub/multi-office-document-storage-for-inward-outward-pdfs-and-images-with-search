@@ -1,7 +1,7 @@
 {
   "frontend/src/App.tsx": "Main application component with TanStack Router setup, wrapping Dashboard and Settings routes with role enforcement (user-level and admin-only respectively) using RequireRole guards.",
   "frontend/src/components/auth/AuthGate.tsx": "Authentication gate component that displays a sign-in screen with the new versioned login image (/assets/generated/login-logo-v3.dim_400x600.jpeg) using object-contain to display the full image without cropping, protecting document routes using Internet Identity.",
-  "frontend/src/components/layout/AppShell.tsx": "Application shell layout with header navigation that conditionally shows Settings link only to admin users, using solid popover backgrounds for dropdown menus.",
+  "frontend/src/components/layout/AppShell.tsx": "Application shell layout with responsive header navigation that shows a hamburger menu on mobile (below md breakpoint) and desktop nav buttons on larger screens, with conditional Settings link visibility for admin users and improved mobile layout spacing.",
   "frontend/src/pages/DocumentListPage.tsx": "Document list page with filters, search, multi-select, and export functionality, now using backend-managed categoryId/officeId strings with route search param support.",
   "frontend/src/pages/UploadDocumentPage.tsx": "Document upload page with form using backend-managed categories and offices, with the submit button styled using #0052cc background color with proper hover and disabled states.",
   "frontend/src/pages/DocumentDetailPage.tsx": "Document detail page displaying metadata and file preview using PublicDocument type, showing category and office names resolved from backend-managed categories with appropriate icons and badges for all direction types.",
@@ -27,5 +27,6 @@
   "frontend/src/pages/SettingsPage.tsx": "Settings page for managing categories and offices with the \"Add Category\" button wrapped in a #0052cc box, and all dialog forms (Add Category and Add Office) using solid white backgrounds in light mode and dark gray in dark mode.",
   "frontend/src/features/auth/useCallerRole.ts": "React Query hook that fetches and caches the current caller's role from the backend, exposing loading states and helper flags for admin and user access checks.",
   "frontend/src/components/auth/UnauthorizedScreen.tsx": "Reusable unauthorized screen component displaying an English \"Unauthorized\" message with optional navigation back to the dashboard.",
-  "frontend/src/components/auth/RequireRole.tsx": "Route wrapper component that enforces role-based access control, showing loading state during role resolution and rendering UnauthorizedScreen for disallowed access."
+  "frontend/src/components/auth/RequireRole.tsx": "Route wrapper component that enforces role-based access control, showing loading state during role resolution and rendering UnauthorizedScreen for disallowed access.",
+  "frontend/src/components/layout/MobileNavMenu.tsx": "Mobile-only hamburger menu component using DropdownMenu that displays navigation items (Dashboard, Documents, Upload, and conditionally Settings for admins) with proper keyboard accessibility and dismissal behavior."
 }

@@ -1,68 +1,69 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Document Archive: Dashboard sizing + button color consistency + solid Settings dialogs",
+  "title": "Add mobile hamburger menu to AppShell header navigation",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Reduce Dashboard “Browse by Category” category card/button visual footprint ~50% while preserving navigation behavior.",
+      "summary": "Add a small-screen hamburger menu in the AppShell header that replaces the desktop nav buttons and navigates to existing routes (Dashboard, Documents, Upload, Settings).",
       "acceptanceCriteria": [
-        "In the Dashboard “Browse by Category” section, each category card occupies noticeably less space (approximately half the current visual footprint).",
-        "Clicking a category card still navigates to /documents with the correct categoryId search param.",
-        "Clicking the “View Documents” button inside a card still works and does not trigger double navigation."
+        "On viewport widths below the md breakpoint, the current desktop header nav buttons are not shown and a hamburger button is shown instead.",
+        "Tapping/clicking the hamburger button opens a menu listing: Dashboard, Documents, Upload, and Settings.",
+        "Selecting a menu item navigates to the correct existing routes: /, /documents, /upload, /settings.",
+        "The menu can be dismissed (e.g., by selecting an item, clicking outside, or pressing Escape)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/DashboardPage.tsx",
+          "path": "frontend/src/components/layout/MobileNavMenu.tsx",
+          "operation": "create",
+          "description": "Create a mobile-only header navigation control using existing shadcn-ui composed primitives (e.g., DropdownMenu + Button) to provide a hamburger trigger and menu items for Dashboard (/), Documents (/documents), Upload (/upload), and Settings (/settings). Ensure the menu closes on selection and supports Escape/outside click dismissal via the component behavior. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
           "operation": "modify",
-          "description": "Update the “Browse by Category” Card/CardContent sizing (reduce padding, icon container size, icon size, and typography) while keeping the same map over categories and existing navigate + stopPropagation behavior. Use shadcn-ui Card/Button via className overrides only; Verify the component's usage instructions before implementing."
+          "description": "Wire the new MobileNavMenu into the header so it is visible below the md breakpoint (e.g., md:hidden), while keeping the existing desktop nav hidden on small screens (already uses md:flex). Ensure menu item navigation uses the existing TanStack Router navigation and labels remain in English. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Make Dashboard category action buttons use a light-blue primary accent with readable contrast in light/dark modes.",
+      "summary": "Mirror existing role-based nav behavior in the mobile menu by showing Settings only for admin callers, without changing route guards.",
       "acceptanceCriteria": [
-        "The Dashboard “View Documents” button in each category card uses a light-blue appearance (not the default ghost style).",
-        "Text remains readable with sufficient contrast in both light and dark mode."
+        "When isAdmin is false, the Settings item is not visible in the mobile hamburger menu.",
+        "When isAdmin is true, the Settings item is visible in the mobile hamburger menu and navigates to /settings.",
+        "No change to the existing /settings route guard behavior (still admin-only)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/DashboardPage.tsx",
+          "path": "frontend/src/components/layout/MobileNavMenu.tsx",
           "operation": "modify",
-          "description": "Change the “View Documents” Button styling from ghost to a light-blue accented look using Tailwind className overrides (including hover/focus states) with explicit dark-mode classes to ensure consistent accent and contrast. Use shadcn-ui Button via composition/className (do not edit ui sources); Verify the component's usage instructions before implementing."
+          "description": "Use the existing authorization/role state already used by the desktop header (useCallerRole -> isAdmin) to conditionally render the Settings menu item only when isAdmin is true; keep other items always visible. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Pass through any required role state (or allow MobileNavMenu to read it directly) so mobile menu Settings visibility matches the current desktop header behavior. Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
-      "id": "REQ-4",
-      "summary": "Style the Upload page primary submit button to use #0052cc with accessible hover/active/disabled states across themes.",
+      "id": "REQ-3",
+      "summary": "Make the header responsive and accessible on small screens so controls don’t overlap/overflow and the hamburger menu is keyboard-navigable.",
       "acceptanceCriteria": [
-        "On UploadDocumentPage, the “Upload Document” submit button background is #0052cc.",
-        "Hover/focus states remain visually clear and accessible.",
-        "Disabled state remains visually distinct."
+        "On common mobile widths (e.g., 320px–430px), header controls remain visible and tappable without overlapping.",
+        "Header content does not cause horizontal scrolling on small screens.",
+        "Keyboard navigation works for the hamburger trigger and menu items (focusable, Enter/Space activates items)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/UploadDocumentPage.tsx",
+          "path": "frontend/src/components/layout/AppShell.tsx",
           "operation": "modify",
-          "description": "Override the submit Button (type=\"submit\") styling to use background #0052cc with explicit hover/active/focus-visible and disabled Tailwind classes, ensuring readable text in both light/dark modes. Use shadcn-ui Button via className overrides only; Verify the component's usage instructions before implementing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Improve Settings Add Category button presentation with #0052cc box treatment and ensure Add Category/Add Office dialogs have solid white backgrounds in light mode.",
-      "acceptanceCriteria": [
-        "On SettingsPage, the “Add Category” button is visually presented with a #0052cc box/background treatment (not default styling).",
-        "When the Add Category dialog opens, the dialog content has a solid white background in light mode (no transparency).",
-        "When the Add Office dialog opens, the dialog content has a solid white background in light mode (no transparency)."
-      ],
-      "file_operations": [
+          "description": "Adjust header layout classes for narrow widths (e.g., reduce gaps on mobile, ensure logo/title block can shrink and truncate, prevent overflow with min-w-0 where needed, and keep right-side controls aligned). Ensure hamburger trigger, theme toggle, and account menu remain tappable without overlap and do not cause horizontal scrolling."
+        },
         {
-          "path": "frontend/src/pages/SettingsPage.tsx",
+          "path": "frontend/src/components/layout/MobileNavMenu.tsx",
           "operation": "modify",
-          "description": "Restyle the “Add Category” trigger to present it in a visually distinct #0052cc box/background treatment using wrapper + Button className overrides. Update the Add Category and Add Office DialogContent className to use solid white background in light mode (e.g., bg-white) while preserving appropriate dark mode styling. Use shadcn-ui Dialog/Button via composition/className (do not edit ui sources); Verify the component's usage instructions before implementing."
+          "description": "Ensure the hamburger trigger is a focusable control and menu items are keyboard operable (Enter/Space) via the composed shadcn-ui menu primitives; confirm the menu supports focus management and dismissal behaviors. Verify the component's usage instructions before implementing."
         }
       ]
     }

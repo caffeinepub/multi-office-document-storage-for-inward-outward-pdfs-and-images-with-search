@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Improve Dashboard category card sizing and button styling, correct direction-based document metrics, and make Settings dialogs/backgrounds visually solid and consistent.
+**Goal:** Add a mobile-friendly primary navigation control in the AppShell header for small screens.
 
 **Planned changes:**
-- Reduce the visual size of the Dashboard “Browse by Category” category cards/buttons by ~50% (padding, icon size, typography) without changing category count or navigation behavior.
-- Update Dashboard category action button styling so “View Documents” uses a light-blue primary accent with readable contrast in light/dark mode.
-- Fix backend Dashboard metrics so “Documents by Direction” counts (Inward/Outward/Important) reflect actual stored documents by counting `document.direction` in `getDashboardMetrics`.
-- Update Upload page primary submit button styling so “Upload Document” uses color `#0052cc` (including hover/active/disabled states) with readable contrast in light/dark mode.
-- Update Settings styling so the “Add Category” button appears inside a visually distinct `#0052cc` box/background treatment, and ensure Add Category / Add Office dialogs use a solid (non-transparent) white background in light mode.
+- Hide the current desktop header navigation buttons below the md breakpoint and show a hamburger menu button instead.
+- Implement a hamburger menu that lists Dashboard, Documents, and Upload, and navigates to the existing routes: /, /documents, /upload.
+- Conditionally include Settings in the hamburger menu only when the current user is an admin, navigating to /settings (keeping existing route guards unchanged).
+- Adjust the header layout on small screens so the logo/title, hamburger button, theme toggle, and account menu remain visible, non-overlapping, and keyboard-accessible; ensure the menu can be dismissed via standard interactions (select, click outside, Escape).
 
-**User-visible outcome:** The Dashboard category cards take up less space, buttons use consistent blue styling, direction counts show accurate numbers, the Upload button uses `#0052cc`, and Settings dialogs/forms open with solid (non-transparent) backgrounds.
+**User-visible outcome:** On small screens, users can open a hamburger menu to navigate to Dashboard, Documents, and Upload (and Settings for admins) without header controls overlapping or causing horizontal scrolling.

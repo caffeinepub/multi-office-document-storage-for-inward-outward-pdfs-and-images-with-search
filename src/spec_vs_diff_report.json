@@ -1,88 +1,30 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T01:52:07.690Z",
-  "summary": "Diff shows UI changes on Dashboard metrics cards and direction section, plus broad frontend refactors/features mentioned in frontend-file-summaries. However, the provided truncated diffs do not contain enough direct evidence that the requested category-card resizing/light-blue button styling (Dashboard), backend direction-count fix, and Settings dialog/background requirements were implemented as specified.",
-  "missing_requirements": [
-    {
-      "id": "REQ-1",
-      "requirement": "On the Dashboard page, reduce the visual size of the “Browse by Category” category cards/buttons by ~50% (padding, icon size, and typography) while keeping the same number of categories and the same click/navigation behavior.",
-      "reason": "The shown portion of DashboardPage.tsx includes metrics and the beginning of the direction section, but the “Browse by Category” card/button markup and its sizing/padding/icon/typography changes are not present in the truncated excerpt, so implementation cannot be verified.",
-      "evidence": [
-        "frontend/src/pages/DashboardPage.tsx (truncated; category section not shown)"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "requirement": "On the Dashboard page, update the category action button styling so the category buttons use a light blue color as the primary visual accent (consistent across light/dark modes).",
-      "reason": "No “View Documents” button styling within the Dashboard category cards is visible in the provided DashboardPage.tsx excerpt due to truncation, so the required light-blue styling/contrast cannot be confirmed.",
-      "evidence": [
-        "frontend/src/pages/DashboardPage.tsx (truncated; category card buttons not shown)"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "requirement": "Fix “Documents by Direction” counts on the Dashboard so Inward/Outward/Important reflect the actual number of stored documents by reading the direction field from the backend documents data.",
-      "reason": "backend/main.mo is truncated before any getDashboardMetrics implementation; while Direction/Document types are shown, there is no visible change confirming getDashboardMetrics iterates stored documents and counts by document.direction.",
-      "evidence": [
-        "backend/main.mo (truncated; getDashboardMetrics not shown)"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "requirement": "In Settings, style the “Add Category” button so it appears inside a visually distinct box using color #0052cc, and ensure the Add Category / Add Office forms have a solid (non-transparent) background when opened (solid white in light mode).",
-      "reason": "SettingsPage.tsx excerpt shows dialog state/handlers but not the relevant JSX for the “Add Category” button styling or DialogContent classNames/background overrides; cannot verify solid (non-transparent) dialog backgrounds.",
-      "evidence": [
-        "frontend/src/pages/SettingsPage.tsx (truncated; relevant button/dialog content styling not shown)"
-      ]
-    }
-  ],
+  "generatedAt": "2026-02-17T02:29:44.809Z",
+  "summary": "The diff adds a new MobileNavMenu component and integrates it into AppShell with md-responsive visibility and admin-gated Settings. No clear missing functional requirements are evident from the provided diff summary, though some acceptance criteria (dismiss behaviors/keyboard specifics) are implicitly handled by the DropdownMenu implementation and not explicitly shown.",
+  "missing_requirements": [],
   "hallucinated_features": [
     {
-      "description": "AuthGate sign-in screen updated to use a new versioned login image (/assets/generated/login-logo-v3.dim_400x600.jpeg) and object-contain behavior.",
-      "reason": "BuildRequest does not ask for login image or AuthGate changes; only Dashboard/Upload/Settings styling and a backend metrics fix are requested.",
+      "description": "Claims/summary text indicating custom domain support (DNS + ic-domains configuration), which is explicitly a non-goal in the BuildRequest.",
+      "reason": "The BuildRequest lists custom domain connection changes as a non-goal, but the diff updates project documentation/state to describe the project as having custom domain support.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/auth/AuthGate.tsx)"
+        "project_state.json (\"summary\": \"Live web app with custom domain support (DNS + ic-domains configuration) ...\")"
       ]
     },
     {
-      "description": "Role enforcement/route guarding added in App.tsx and Settings link shown conditionally for admins in the AppShell header navigation.",
-      "reason": "BuildRequest explicitly lists non-goals around auth providers and does not request new/changed role enforcement or navigation behavior.",
+      "description": "Mentions of unrelated feature work (e.g., login image changes, document/category/office behavior changes, upload button styling, etc.) in the frontend file summaries, not requested in this BuildRequest.",
+      "reason": "These items are not part of REQ-1/2/3 and appear only as updated summary/documentation in the diff.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/App.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/layout/AppShell.tsx)"
-      ]
-    },
-    {
-      "description": "Global and component-level changes to ensure Radix popover-like surfaces render with solid backgrounds (index.css, dropdown menus, document actions).",
-      "reason": "BuildRequest only requests solid backgrounds for the Settings Add Category/Add Office dialogs, not global popover/menu surface changes across the app.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/index.css)",
-        "frontend-file-summaries.txt (frontend/src/components/layout/AppShell.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentActions.tsx)"
-      ]
-    },
-    {
-      "description": "Large unrequested refactor/feature work on document list/detail pages, filters, export, and backend-managed category/office string handling with new helper modules.",
-      "reason": "BuildRequest scope is limited to Dashboard category sizing/button color, dashboard metrics direction counts, upload button color, and Settings dialog/button styling; it explicitly lists non-goals about adding new metrics and changing category counts, and does not request document list/detail refactors.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/pages/DocumentListPage.tsx)",
-        "frontend-file-summaries.txt (frontend/src/pages/DocumentDetailPage.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentFilters.tsx)",
-        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentList.tsx)",
-        "frontend-file-summaries.txt (frontend/src/features/documents/useDocuments.ts)",
-        "frontend-file-summaries.txt (frontend/src/lib/officeHelpers.ts)",
-        "frontend-file-summaries.txt (frontend/src/lib/categoryHelpers.ts)"
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.58,
+  "confidence": 0.66,
   "changed_files": [
-    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/pages/DashboardPage.tsx",
-    "frontend/src/pages/SettingsPage.tsx",
-    "frontend/src/pages/UploadDocumentPage.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/components/layout/MobileNavMenu.tsx",
     "project_state.json"
   ]
 }

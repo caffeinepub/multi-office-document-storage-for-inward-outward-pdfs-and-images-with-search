@@ -13,6 +13,7 @@ import {
 import { LayoutDashboard, FileText, Upload, User, LogOut, Moon, Sun, Settings } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { SiX } from 'react-icons/si';
+import { MobileNavMenu } from './MobileNavMenu';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -31,20 +32,21 @@ export function AppShell({ children }: AppShellProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b" style={{ backgroundColor: '#0B2554' }}>
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-6">
+        <div className="container flex h-16 items-center justify-between gap-2">
+          <div className="flex items-center gap-2 md:gap-6 min-w-0">
+            <MobileNavMenu />
             <button
               onClick={() => navigate({ to: '/' })}
-              className="flex items-center gap-3 transition-opacity hover:opacity-80"
+              className="flex items-center gap-2 md:gap-3 transition-opacity hover:opacity-80 min-w-0"
             >
               <img
                 src="/assets/generated/header-logo.dim_512x512.png"
                 alt="DMS"
-                className="h-10 w-10"
+                className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0"
               />
-              <div className="flex flex-col">
-                <span className="text-lg font-semibold text-white">Dr Sudhir Dhone</span>
-                <span className="text-sm text-white/80">Document Archive</span>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm md:text-lg font-semibold text-white truncate">Dr Sudhir Dhone</span>
+                <span className="text-xs md:text-sm text-white/80 truncate">Document Archive</span>
               </div>
             </button>
             <nav className="hidden items-center gap-1 md:flex">
@@ -89,7 +91,7 @@ export function AppShell({ children }: AppShellProps) {
             </nav>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Button
               variant="ghost"
               size="icon"
