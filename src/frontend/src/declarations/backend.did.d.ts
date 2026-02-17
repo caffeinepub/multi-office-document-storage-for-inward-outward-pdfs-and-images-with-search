@@ -15,13 +15,6 @@ export interface Category {
   'name' : string,
   'offices' : Array<Office>,
 }
-export interface DashboardMetrics {
-  'outwardDocuments' : bigint,
-  'inwardDocuments' : bigint,
-  'importantDocuments' : bigint,
-  'uniqueUserCount' : bigint,
-  'totalDocuments' : bigint,
-}
 export type Direction = { 'importantDocuments' : null } |
   { 'inward' : null } |
   { 'outward' : null };
@@ -42,15 +35,8 @@ export interface PublicDocument {
   'officeId' : string,
 }
 export type Time = bigint;
-export interface UserAccount {
-  'username' : string,
-  'role' : UserRole,
-  'passwordHash' : string,
-}
 export interface UserProfile { 'name' : string }
-export type UserRole = { 'supervisor' : null } |
-  { 'admin' : null };
-export type UserRole__1 = { 'admin' : null } |
+export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _CaffeineStorageCreateCertificateResult {
@@ -99,10 +85,7 @@ export interface _SERVICE {
     undefined
   >,
   'addOfficeToCategory' : ActorMethod<[string, string, string], undefined>,
-  'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
-  'authenticate' : ActorMethod<[string, string], boolean>,
-  'createUser' : ActorMethod<[string, string, UserRole], undefined>,
-  'deleteUser' : ActorMethod<[string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'filterDocuments' : ActorMethod<
     [
       [] | [string],
@@ -115,24 +98,17 @@ export interface _SERVICE {
     Array<PublicDocument>
   >,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
-  'getCallerUserRole' : ActorMethod<[], UserRole__1>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCategories' : ActorMethod<[], Array<Category>>,
-  'getDashboardMetrics' : ActorMethod<[], DashboardMetrics>,
   'getDocument' : ActorMethod<[string], PublicDocument>,
-  'getUser' : ActorMethod<[string], [] | [UserAccount]>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'listUsers' : ActorMethod<[], Array<UserAccount>>,
   'removeCategory' : ActorMethod<[string], undefined>,
   'removeDocument' : ActorMethod<[string], undefined>,
   'removeOfficeFromCategory' : ActorMethod<[string, string], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'updateCategory' : ActorMethod<[string, string], undefined>,
   'updateOfficeInCategory' : ActorMethod<[string, string, string], undefined>,
-  'updateUser' : ActorMethod<
-    [string, [] | [string], [] | [UserRole]],
-    undefined
-  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

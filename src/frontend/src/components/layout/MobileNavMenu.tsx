@@ -29,7 +29,7 @@ export function MobileNavMenu() {
           <Menu className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56 bg-popover dark:bg-popover">
+      <DropdownMenuContent align="start" className="w-56 !bg-white dark:!bg-white">
         <DropdownMenuItem onClick={() => handleNavigate('/')}>
           <LayoutDashboard className="mr-2 h-4 w-4" />
           Dashboard

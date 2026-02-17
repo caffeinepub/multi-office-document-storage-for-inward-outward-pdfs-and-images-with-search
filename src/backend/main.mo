@@ -9,11 +9,12 @@ import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
 import Set "mo:core/Set";
 import List "mo:core/List";
-
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
+import Migration "migration";
 
 // Roll forward migration
+(with migration = Migration.run)
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
@@ -104,80 +105,7 @@ actor {
     persistentCategories_internal;
   };
 
-  // User Management (admin-only)
-  public shared ({ caller }) func createUser(username : Text, passwordHash : Text, role : UserRole) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can create users");
-    };
-
-    let newUser : UserAccount = {
-      username;
-      passwordHash;
-      role;
-    };
-
-    userAccounts.add(username, newUser);
-  };
-
-  public shared ({ caller }) func updateUser(username : Text, newPasswordHash : ?Text, newRole : ?UserRole) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update users");
-    };
-
-    switch (userAccounts.get(username)) {
-      case (null) { Runtime.trap("User not found") };
-      case (?existingUser) {
-        let updatedUser : UserAccount = {
-          existingUser with
-          passwordHash = switch (newPasswordHash) {
-            case (null) { existingUser.passwordHash };
-            case (?hash) { hash };
-          };
-          role = switch (newRole) {
-            case (null) { existingUser.role };
-            case (?r) { r };
-          };
-        };
-        userAccounts.add(username, updatedUser);
-      };
-    };
-  };
-
-  public shared ({ caller }) func deleteUser(username : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can delete users");
-    };
-
-    userAccounts.remove(username);
-  };
-
-  public query ({ caller }) func listUsers() : async [UserAccount] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can list users");
-    };
-
-    userAccounts.values().toArray();
-  };
-
-  public query ({ caller }) func getUser(username : Text) : async ?UserAccount {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can get user details");
-    };
-
-    userAccounts.get(username);
-  };
-
-  // Authentication - accessible to all including guests (no authorization check needed for login)
-  public query ({ caller }) func authenticate(username : Text, passwordHash : Text) : async Bool {
-    switch (userAccounts.get(username)) {
-      case (null) { false };
-      case (?user) {
-        user.passwordHash == passwordHash;
-      };
-    };
-  };
-
-  // User Profile Management
+  // User Profile Management Functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can view profiles");
@@ -197,40 +125,6 @@ actor {
       Runtime.trap("Unauthorized: Only users can save profiles");
     };
     userProfiles.add(caller, profile);
-  };
-
-  // Expose dashboard metrics (authenticated query - user level, accessible to both admin and supervisor)
-  public query ({ caller }) func getDashboardMetrics() : async DashboardMetrics {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only users can view dashboard metrics");
-    };
-
-    let allDocuments = documents.values().toArray();
-    let uniqueUsers = Set.empty<Principal>();
-
-    for (doc in allDocuments.values()) {
-      uniqueUsers.add(doc.uploader);
-    };
-
-    var inward = 0;
-    var outward = 0;
-    var important = 0;
-
-    for (doc in allDocuments.values()) {
-      switch (doc.direction) {
-        case (#inward) { inward += 1 };
-        case (#outward) { outward += 1 };
-        case (#importantDocuments) { important += 1 };
-      };
-    };
-
-    {
-      totalDocuments = documents.size();
-      uniqueUserCount = uniqueUsers.size();
-      inwardDocuments = inward;
-      outwardDocuments = outward;
-      importantDocuments = important;
-    };
   };
 
   // Category Management (admin-only - Settings page access)

@@ -1,63 +1,65 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T02:29:44.812Z",
+  "generatedAt": "2026-02-17T03:02:26.116Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 3,
-    "implemented": 3,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a mobile navigation control (hamburger menu) in the AppShell header that is shown on small screens (below the current md breakpoint) and contains navigation items for Dashboard, Documents, Upload, and Settings.",
+        "summary": "Fix the authenticated route gate so the app does not remain indefinitely on the \"Checking permissions...\" loading UI after a successful Internet Identity login, and instead proceeds to render the requested page (default: dashboard at \"/\") once the caller role has been resolved or a terminal error state has been reached.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/MobileNavMenu.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/components/auth/RequireRole.tsx",
+          "frontend/src/components/auth/PermissionsErrorScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/MobileNavMenu.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/components/auth/RequireRole.tsx",
+          "frontend/src/components/auth/PermissionsErrorScreen.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Keep role-based behavior consistent with the existing desktop header and route guards: only render the Settings navigation item when the current caller is an admin user.",
+        "summary": "Update the caller-role fetching flow used by the permissions gate to be resilient to actor initialization edge cases (e.g., actor not ready yet, initialization errors) so that it reaches a success or error state reliably after login.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/MobileNavMenu.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/auth/useCallerRole.ts",
+          "frontend/src/components/auth/RequireRole.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/MobileNavMenu.tsx",
-          "frontend/src/components/layout/AppShell.tsx"
+          "frontend/src/features/auth/useCallerRole.ts",
+          "frontend/src/components/auth/RequireRole.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Ensure the mobile header layout remains usable on small screens: the logo/title block, hamburger control, theme toggle, and account menu must not overlap or overflow horizontally; spacing should adapt for narrow widths.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/AppShell.tsx",
-          "frontend/src/components/layout/MobileNavMenu.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/layout/AppShell.tsx",
-          "frontend/src/components/layout/MobileNavMenu.tsx"
-        ]
+        "summary": "Ensure backend authorization initialization and role lookup do not block normal authenticated usage when no admin secret token is provided, so frontend role checks can complete promptly after Internet Identity login.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/layout/AppShell.tsx",
-    "frontend/src/components/layout/MobileNavMenu.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/auth/PermissionsErrorScreen.tsx",
+    "frontend/src/components/auth/RequireRole.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/features/auth/useCallerRole.ts",
+    "frontend/src/features/dashboard/useDashboardMetrics.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

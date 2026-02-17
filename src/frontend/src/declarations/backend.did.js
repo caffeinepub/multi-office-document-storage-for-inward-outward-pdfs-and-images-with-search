@@ -25,14 +25,10 @@ export const Direction = IDL.Variant({
   'outward' : IDL.Null,
 });
 export const Time = IDL.Int;
-export const UserRole__1 = IDL.Variant({
+export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
-});
-export const UserRole = IDL.Variant({
-  'supervisor' : IDL.Null,
-  'admin' : IDL.Null,
 });
 export const PublicDocument = IDL.Record({
   'id' : IDL.Text,
@@ -55,18 +51,6 @@ export const Category = IDL.Record({
   'id' : IDL.Text,
   'name' : IDL.Text,
   'offices' : IDL.Vec(Office),
-});
-export const DashboardMetrics = IDL.Record({
-  'outwardDocuments' : IDL.Nat,
-  'inwardDocuments' : IDL.Nat,
-  'importantDocuments' : IDL.Nat,
-  'uniqueUserCount' : IDL.Nat,
-  'totalDocuments' : IDL.Nat,
-});
-export const UserAccount = IDL.Record({
-  'username' : IDL.Text,
-  'role' : UserRole,
-  'passwordHash' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
@@ -116,10 +100,7 @@ export const idlService = IDL.Service({
       [],
     ),
   'addOfficeToCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
-  'authenticate' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
-  'createUser' : IDL.Func([IDL.Text, IDL.Text, UserRole], [], []),
-  'deleteUser' : IDL.Func([IDL.Text], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'filterDocuments' : IDL.Func(
       [
         IDL.Opt(IDL.Text),
@@ -133,29 +114,21 @@ export const idlService = IDL.Service({
       [],
     ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-  'getDashboardMetrics' : IDL.Func([], [DashboardMetrics], ['query']),
   'getDocument' : IDL.Func([IDL.Text], [PublicDocument], ['query']),
-  'getUser' : IDL.Func([IDL.Text], [IDL.Opt(UserAccount)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'listUsers' : IDL.Func([], [IDL.Vec(UserAccount)], ['query']),
   'removeCategory' : IDL.Func([IDL.Text], [], []),
   'removeDocument' : IDL.Func([IDL.Text], [], []),
   'removeOfficeFromCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'updateCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'updateOfficeInCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-  'updateUser' : IDL.Func(
-      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(UserRole)],
-      [],
-      [],
-    ),
 });
 
 export const idlInitArgs = [];
@@ -178,12 +151,11 @@ export const idlFactory = ({ IDL }) => {
     'outward' : IDL.Null,
   });
   const Time = IDL.Int;
-  const UserRole__1 = IDL.Variant({
+  const UserRole = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserRole = IDL.Variant({ 'supervisor' : IDL.Null, 'admin' : IDL.Null });
   const PublicDocument = IDL.Record({
     'id' : IDL.Text,
     'categoryId' : IDL.Text,
@@ -205,18 +177,6 @@ export const idlFactory = ({ IDL }) => {
     'id' : IDL.Text,
     'name' : IDL.Text,
     'offices' : IDL.Vec(Office),
-  });
-  const DashboardMetrics = IDL.Record({
-    'outwardDocuments' : IDL.Nat,
-    'inwardDocuments' : IDL.Nat,
-    'importantDocuments' : IDL.Nat,
-    'uniqueUserCount' : IDL.Nat,
-    'totalDocuments' : IDL.Nat,
-  });
-  const UserAccount = IDL.Record({
-    'username' : IDL.Text,
-    'role' : UserRole,
-    'passwordHash' : IDL.Text,
   });
   
   return IDL.Service({
@@ -266,10 +226,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'addOfficeToCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
-    'authenticate' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
-    'createUser' : IDL.Func([IDL.Text, IDL.Text, UserRole], [], []),
-    'deleteUser' : IDL.Func([IDL.Text], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'filterDocuments' : IDL.Func(
         [
           IDL.Opt(IDL.Text),
@@ -283,29 +240,21 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-    'getDashboardMetrics' : IDL.Func([], [DashboardMetrics], ['query']),
     'getDocument' : IDL.Func([IDL.Text], [PublicDocument], ['query']),
-    'getUser' : IDL.Func([IDL.Text], [IDL.Opt(UserAccount)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'listUsers' : IDL.Func([], [IDL.Vec(UserAccount)], ['query']),
     'removeCategory' : IDL.Func([IDL.Text], [], []),
     'removeDocument' : IDL.Func([IDL.Text], [], []),
     'removeOfficeFromCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'updateCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'updateOfficeInCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
-    'updateUser' : IDL.Func(
-        [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(UserRole)],
-        [],
-        [],
-      ),
   });
 };
 

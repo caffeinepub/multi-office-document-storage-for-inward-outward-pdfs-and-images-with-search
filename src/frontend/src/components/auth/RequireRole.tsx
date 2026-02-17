@@ -1,7 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useCallerRole } from '@/features/auth/useCallerRole';
 import { UnauthorizedScreen } from './UnauthorizedScreen';
+import { PermissionsErrorScreen } from './PermissionsErrorScreen';
 import { Loader2 } from 'lucide-react';
+import { useInternetIdentity } from '@/hooks/useInternetIdentity';
 
 interface RequireRoleProps {
   children: ReactNode;
@@ -9,8 +11,42 @@ interface RequireRoleProps {
   requireUser?: boolean;
 }
 
+const PERMISSIONS_CHECK_TIMEOUT = 15000; // 15 seconds
+
 export function RequireRole({ children, requireAdmin = false, requireUser = false }: RequireRoleProps) {
-  const { isLoading, isFetched, isAdmin, isUser, data: role } = useCallerRole();
+  const { isLoading, isFetched, isAdmin, isUser, data: role, error, refetch } = useCallerRole();
+  const { identity } = useInternetIdentity();
+  const [hasTimedOut, setHasTimedOut] = useState(false);
+
+  // Reset timeout when identity changes (e.g., after login)
+  useEffect(() => {
+    setHasTimedOut(false);
+  }, [identity]);
+
+  // Set up timeout for prolonged loading
+  useEffect(() => {
+    if (isLoading && !isFetched) {
+      const timeoutId = setTimeout(() => {
+        setHasTimedOut(true);
+      }, PERMISSIONS_CHECK_TIMEOUT);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isLoading, isFetched]);
+
+  // Show error screen if there's an error or timeout
+  if (error || hasTimedOut) {
+    return (
+      <PermissionsErrorScreen
+        error={error}
+        hasTimedOut={hasTimedOut}
+        onRetry={() => {
+          setHasTimedOut(false);
+          refetch();
+        }}
+      />
+    );
+  }
 
   // Show loading state while role is being fetched
   if (isLoading || !isFetched) {

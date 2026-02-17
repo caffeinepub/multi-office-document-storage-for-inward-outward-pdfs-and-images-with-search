@@ -2,11 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-mobile-navigation-control-hamburger-menu-in-the-appshell-header-that-is-shown-on-small-screens-below-the-current-md-breakpoint-and-contains-navigation-items-for-dashboard-documents-upload-and-settings",
-      "featureTitle": "Add a mobile navigation control (hamburger menu) in the AppShell header that is shown on small screens (below the current md breakpoint) and contains navigation items for Dashboard, Documents, Upload, and Settings.",
+      "featureId": "feature-fix-the-authenticated-route-gate-so-the-app-does-not-remain-indefinitely-on-the-checking-permissions-loading-ui-after-a-successful-internet-identity-login-and-instead-proceeds-to-render-the-requested-page-default-dashboard-at-once-the-caller-role-has-been-resolved-or-a-terminal-error-state-has-been-reached",
+      "featureTitle": "Fix the authenticated route gate so the app does not remain indefinitely on the \"Checking permissions...\" loading UI after a successful Internet Identity login, and instead proceeds to render the requested page (default: dashboard at \"/\") once the caller role has been resolved or a terminal error state has been reached.",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/components/layout/MobileNavMenu.tsx"
+        "frontend/src/components/auth/PermissionsErrorScreen.tsx",
+        "frontend/src/components/auth/RequireRole.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -23,11 +23,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-keep-role-based-behavior-consistent-with-the-existing-desktop-header-and-route-guards-only-render-the-settings-navigation-item-when-the-current-caller-is-an-admin-user",
-      "featureTitle": "Keep role-based behavior consistent with the existing desktop header and route guards: only render the Settings navigation item when the current caller is an admin user.",
+      "featureId": "feature-update-the-caller-role-fetching-flow-used-by-the-permissions-gate-to-be-resilient-to-actor-initialization-edge-cases-e-g-actor-not-ready-yet-initialization-errors-so-that-it-reaches-a-success-or-error-state-reliably-after-login",
+      "featureTitle": "Update the caller-role fetching flow used by the permissions gate to be resilient to actor initialization edge cases (e.g., actor not ready yet, initialization errors) so that it reaches a success or error state reliably after login.",
       "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/components/layout/MobileNavMenu.tsx"
+        "frontend/src/components/auth/RequireRole.tsx",
+        "frontend/src/features/auth/useCallerRole.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -40,27 +40,6 @@
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-the-mobile-header-layout-remains-usable-on-small-screens-the-logo-title-block-hamburger-control-theme-toggle-and-account-menu-must-not-overlap-or-overflow-horizontally-spacing-should-adapt-for-narrow-widths",
-      "featureTitle": "Ensure the mobile header layout remains usable on small screens: the logo/title block, hamburger control, theme toggle, and account menu must not overlap or overflow horizontally; spacing should adapt for narrow widths.",
-      "files": [
-        "frontend/src/components/layout/AppShell.tsx",
-        "frontend/src/components/layout/MobileNavMenu.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
       ],
       "confidence": "high"
     }

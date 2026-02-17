@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a mobile-friendly primary navigation control in the AppShell header for small screens.
+**Goal:** Prevent the app from getting stuck on the post-login “Checking permissions...” screen by making role/permission resolution reliably complete (success or error) and navigating to the requested page (default: dashboard at “/”).
 
 **Planned changes:**
-- Hide the current desktop header navigation buttons below the md breakpoint and show a hamburger menu button instead.
-- Implement a hamburger menu that lists Dashboard, Documents, and Upload, and navigates to the existing routes: /, /documents, /upload.
-- Conditionally include Settings in the hamburger menu only when the current user is an admin, navigating to /settings (keeping existing route guards unchanged).
-- Adjust the header layout on small screens so the logo/title, hamburger button, theme toggle, and account menu remain visible, non-overlapping, and keyboard-accessible; ensure the menu can be dismissed via standard interactions (select, click outside, Escape).
+- Update the authenticated route/permissions gate to always exit the loading state after Internet Identity login and render the target route (default “/”) once the caller role is resolved.
+- Add a clear terminal error UI for role-resolution failures with an in-app retry option (no full refresh) and/or a way to proceed to the dashboard.
+- Make the caller-role fetching flow more resilient to actor initialization edge cases so it reliably reaches success or error after login (without changing the immutable Internet Identity/actor hooks).
+- Adjust backend authorization initialization and role lookup so requests don’t hang for non-admin users when an admin secret/token is missing/empty, returning a prompt result or explicit error.
 
-**User-visible outcome:** On small screens, users can open a hamburger menu to navigate to Dashboard, Documents, and Upload (and Settings for admins) without header controls overlapping or causing horizontal scrolling.
+**User-visible outcome:** After Internet Identity login, users are no longer stuck on “Checking permissions...”; authorized users land on the dashboard (or requested page), and failures show a helpful error with a retry option instead of an infinite spinner.

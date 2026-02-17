@@ -1,49 +1,39 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Live web app with custom domain support (DNS + ic-domains configuration) and responsive navigation including a mobile hamburger menu.",
-  "architectural_notes": [],
+  "summary": "New project",
+  "architectural_notes": [
+    "Post-Internet Identity login flow should proceed to dashboard; adjust existing permission-checking step to avoid indefinite 'checking permissions' state."
+  ],
   "known_issues": [
-    "Header menu buttons (Documents/Upload/Settings) are missing on mobile; replace with a hamburger menu showing Dashboard, Documents, Upload, Settings."
+    "App gets stuck on 'checking permissions' immediately after login (likely related to Internet Identity return/permission-check step) instead of navigating to dashboard."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-mobile-navigation-control-hamburger-menu-in-the-appshell-header-that-is-shown-on-small-screens-below-the-current-md-breakpoint-and-contains-navigation-items-for-dashboard-documents-upload-and-settings",
-      "title": "Add a mobile navigation control (hamburger menu) in the AppShell header that is shown on small screens (below the current md breakpoint) and contains navigation items for Dashboard, Documents, Upload, and Settings.",
+      "id": "feature-fix-the-authenticated-route-gate-so-the-app-does-not-remain-indefinitely-on-the-checking-permissions-loading-ui-after-a-successful-internet-identity-login-and-instead-proceeds-to-render-the-requested-page-default-dashboard-at-once-the-caller-role-has-been-resolved-or-a-terminal-error-state-has-been-reached",
+      "title": "Fix the authenticated route gate so the app does not remain indefinitely on the \"Checking permissions...\" loading UI after a successful Internet Identity login, and instead proceeds to render the requested page (default: dashboard at \"/\") once the caller role has been resolved or a terminal error state has been reached.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-keep-role-based-behavior-consistent-with-the-existing-desktop-header-and-route-guards-only-render-the-settings-navigation-item-when-the-current-caller-is-an-admin-user",
-      "title": "Keep role-based behavior consistent with the existing desktop header and route guards: only render the Settings navigation item when the current caller is an admin user.",
+      "id": "feature-update-the-caller-role-fetching-flow-used-by-the-permissions-gate-to-be-resilient-to-actor-initialization-edge-cases-e-g-actor-not-ready-yet-initialization-errors-so-that-it-reaches-a-success-or-error-state-reliably-after-login",
+      "title": "Update the caller-role fetching flow used by the permissions gate to be resilient to actor initialization edge cases (e.g., actor not ready yet, initialization errors) so that it reaches a success or error state reliably after login.",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-the-mobile-header-layout-remains-usable-on-small-screens-the-logo-title-block-hamburger-control-theme-toggle-and-account-menu-must-not-overlap-or-overflow-horizontally-spacing-should-adapt-for-narrow-widths",
-      "title": "Ensure the mobile header layout remains usable on small screens: the logo/title block, hamburger control, theme toggle, and account menu must not overlap or overflow horizontally; spacing should adapt for narrow widths.",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
     {
-      "id": "AR-1",
-      "summary": "Support connecting the deployed app to a custom domain (DNS records + ic-domains file + redeploy).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Add a mobile hamburger menu in the header containing Dashboard, Documents, Upload, and Settings, adapted for small screens.",
-      "reqIds": [],
+      "id": "AR-3",
+      "summary": "Ensure backend authorization initialization and role lookup do not block normal authenticated usage when no admin secret token is provided, so frontend role checks can complete promptly after Internet Identity login.",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],

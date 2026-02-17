@@ -1,73 +1,72 @@
 {
   "kind": "build_request",
-  "title": "Add mobile hamburger menu for primary navigation",
+  "title": "Fix post-login permissions check getting stuck and navigate to dashboard",
   "projectName": "Document Archive",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a mobile navigation control (hamburger menu) in the AppShell header that is shown on small screens (below the current md breakpoint) and contains navigation items for Dashboard, Documents, Upload, and Settings.",
+      "text": "Fix the authenticated route gate so the app does not remain indefinitely on the \"Checking permissions...\" loading UI after a successful Internet Identity login, and instead proceeds to render the requested page (default: dashboard at \"/\") once the caller role has been resolved or a terminal error state has been reached.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-8"
+          "msg-1"
         ],
         "quotes": [
-          "1 hamburger menu. 2 yes dashboard,documents,upload,setting. 3 just adapt for small screens."
+          "app stuck on checking permissions",
+          "1 navigate to dashboard 2 modify existing 3 internet identity i guess not sure"
         ]
       },
       "acceptanceCriteria": [
-        "On viewport widths below the md breakpoint, the current desktop header nav buttons are not shown and a hamburger button is shown instead.",
-        "Tapping/clicking the hamburger button opens a menu listing: Dashboard, Documents, Upload, and Settings.",
-        "Selecting a menu item navigates to the correct existing routes: /, /documents, /upload, /settings.",
-        "The menu can be dismissed (e.g., by selecting an item, clicking outside, or pressing Escape)."
+        "After completing an Internet Identity login redirect, the app does not remain on the \"Checking permissions...\" screen indefinitely.",
+        "When role resolution completes successfully, the dashboard at path \"/\" renders normally for authorized users.",
+        "If role resolution fails (e.g., backend call error), the UI shows a clear error state with an actionable way to retry and/or navigate to the dashboard, rather than showing an infinite spinner."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Keep role-based behavior consistent with the existing desktop header and route guards: only render the Settings navigation item when the current caller is an admin user.",
+      "text": "Update the caller-role fetching flow used by the permissions gate to be resilient to actor initialization edge cases (e.g., actor not ready yet, initialization errors) so that it reaches a success or error state reliably after login.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-8"
+          "msg-1"
         ],
         "quotes": [
-          "yes dashboard,documents,upload,setting."
+          "app stuck on checking permissions"
         ]
       },
       "acceptanceCriteria": [
-        "When isAdmin is false, the Settings item is not visible in the mobile hamburger menu.",
-        "When isAdmin is true, the Settings item is visible in the mobile hamburger menu and navigates to /settings.",
-        "No change to the existing /settings route guard behavior (still admin-only)."
+        "Role fetching transitions out of the loading state reliably after login (either to success or a visible error state).",
+        "A user can trigger a retry of the role check from the UI without a full page refresh (if the first attempt fails)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Ensure the mobile header layout remains usable on small screens: the logo/title block, hamburger control, theme toggle, and account menu must not overlap or overflow horizontally; spacing should adapt for narrow widths.",
-      "target": "frontend",
+      "text": "Ensure backend authorization initialization and role lookup do not block normal authenticated usage when no admin secret token is provided, so frontend role checks can complete promptly after Internet Identity login.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-8"
+          "msg-1"
         ],
         "quotes": [
-          "just adapt for small screens."
+          "app stuck on checking permissions",
+          "internet identity i guess not sure"
         ]
       },
       "acceptanceCriteria": [
-        "On common mobile widths (e.g., 320px–430px), header controls remain visible and tappable without overlapping.",
-        "Header content does not cause horizontal scrolling on small screens.",
-        "Keyboard navigation works for the hamburger trigger and menu items (focusable, Enter/Space activates items)."
+        "Calls involved in initializing access control for non-admin users complete promptly even when the secret/token parameter is empty or missing.",
+        "The backend method used by the frontend to determine the caller's role returns a result or an explicit error promptly (no hanging behavior) after login."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui (Shadcn UI sources are read-only and must be composed, not edited).",
-    "Do not modify files listed in frontend.immutablePaths (e.g., frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx).",
-    "Keep all navigation paths and labels in English."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts(x) or frontend/src/hooks/useActor.ts (they are immutable).",
+    "Keep all Motoko logic within the single backend actor in backend/main.mo; only add backend/migration.mo if an upgrade requires state migration."
   ],
   "nonGoals": [
-    "Implementing custom domain connection (DNS/ic-domains) changes.",
-    "Adding new routes or changing existing route authorization rules beyond mirroring current admin-only Settings visibility."
+    "Adding a new authentication provider (only Internet Identity is in scope).",
+    "Implementing real-time features (WebSockets/push).",
+    "Introducing external databases or non-Motoko backend services."
   ],
   "imageRequirements": {
     "required": [],
