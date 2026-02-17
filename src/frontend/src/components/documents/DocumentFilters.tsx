@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Office, Direction, Category } from '@/backend';
+import { Direction } from '@/backend';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -16,8 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CalendarIcon, X, Search } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { stringToOffice, officeToString, getOfficeOptionsByCategory, officeMatchesCategory } from '@/lib/officeHelpers';
-import { getAllCategoryOptions } from '@/lib/categoryHelpers';
+import { useCategories } from '@/features/categories/useCategories';
 
 const DIRECTION_LABELS: Record<Direction, string> = {
   [Direction.inward]: 'Inward',
@@ -26,14 +25,14 @@ const DIRECTION_LABELS: Record<Direction, string> = {
 };
 
 interface DocumentFiltersProps {
-  category: Category | null;
-  office: Office | null;
+  categoryId: string | null;
+  officeId: string | null;
   direction: Direction | null;
   startDate: Date | null;
   endDate: Date | null;
   searchText: string;
-  onCategoryChange: (category: Category | null) => void;
-  onOfficeChange: (office: Office | null) => void;
+  onCategoryChange: (categoryId: string | null) => void;
+  onOfficeChange: (officeId: string | null) => void;
   onDirectionChange: (direction: Direction | null) => void;
   onStartDateChange: (date: Date | null) => void;
   onEndDateChange: (date: Date | null) => void;
@@ -41,8 +40,8 @@ interface DocumentFiltersProps {
 }
 
 export function DocumentFilters({
-  category,
-  office,
+  categoryId,
+  officeId,
   direction,
   startDate,
   endDate,
@@ -54,7 +53,8 @@ export function DocumentFilters({
   onEndDateChange,
   onSearchTextChange,
 }: DocumentFiltersProps) {
-  const hasActiveFilters = category || office || direction || startDate || endDate || searchText;
+  const { data: categories } = useCategories();
+  const hasActiveFilters = categoryId || officeId || direction || startDate || endDate || searchText;
 
   const clearFilters = () => {
     onCategoryChange(null);
@@ -65,26 +65,16 @@ export function DocumentFilters({
     onSearchTextChange('');
   };
 
-  // Get office options filtered by selected category
-  const officeOptions = getOfficeOptionsByCategory(category);
-  const categoryOptions = getAllCategoryOptions();
-  const officeStringValue = office ? officeToString(office) : 'all';
+  // Get selected category and its offices
+  const selectedCategory = categories?.find((c) => c.id === categoryId);
+  const officeOptions = selectedCategory?.offices || [];
 
   // Clear office selection when category changes and office is no longer valid
   useEffect(() => {
-    if (office && !officeMatchesCategory(office, category)) {
+    if (officeId && !officeOptions.find((o) => o.id === officeId)) {
       onOfficeChange(null);
     }
-  }, [category, office, onOfficeChange]);
-
-  const handleOfficeChange = (value: string) => {
-    if (value === 'all') {
-      onOfficeChange(null);
-    } else {
-      const officeValue = stringToOffice(value);
-      onOfficeChange(officeValue);
-    }
-  };
+  }, [categoryId, officeId, officeOptions, onOfficeChange]);
 
   return (
     <Card>
@@ -110,19 +100,17 @@ export function DocumentFilters({
             <div className="space-y-2">
               <Label htmlFor="category-filter">Category</Label>
               <Select
-                value={category || 'all'}
-                onValueChange={(value) =>
-                  onCategoryChange(value === 'all' ? null : (value as Category))
-                }
+                value={categoryId || 'all'}
+                onValueChange={(value) => onCategoryChange(value === 'all' ? null : value)}
               >
                 <SelectTrigger id="category-filter" className="bg-white dark:bg-white">
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
                   <SelectItem value="all">All categories</SelectItem>
-                  {categoryOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {categories?.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -132,15 +120,19 @@ export function DocumentFilters({
             {/* Office Filter */}
             <div className="space-y-2 min-w-0">
               <Label htmlFor="office-filter">Office</Label>
-              <Select value={officeStringValue} onValueChange={handleOfficeChange}>
+              <Select
+                value={officeId || 'all'}
+                onValueChange={(value) => onOfficeChange(value === 'all' ? null : value)}
+                disabled={!categoryId}
+              >
                 <SelectTrigger id="office-filter" className="bg-white dark:bg-white w-full min-w-0 [&>span]:truncate [&>span]:block">
-                  <SelectValue placeholder="All offices" />
+                  <SelectValue placeholder={categoryId ? "All offices" : "Select category first"} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
                   <SelectItem value="all">All offices</SelectItem>
-                  {officeOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <span className="truncate block">{option.label}</span>
+                  {officeOptions.map((office) => (
+                    <SelectItem key={office.id} value={office.id}>
+                      <span className="truncate block">{office.name}</span>
                     </SelectItem>
                   ))}
                 </SelectContent>

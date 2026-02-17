@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from '@/hooks/useActor';
-import { Office, Direction, Category } from '@/backend';
+import { Direction } from '@/backend';
 
 interface UploadDocumentParams {
   file: File;
-  category: Category;
-  office: Office;
+  categoryId: string;
+  officeId: string;
   direction: Direction;
   title: string;
   referenceNumber: string | null;
@@ -22,7 +22,7 @@ export function useUploadDocument() {
     mutationFn: async (params: UploadDocumentParams) => {
       if (!actor) throw new Error('Not authenticated');
 
-      const { file, category, office, direction, title, referenceNumber, documentDate } = params;
+      const { file, categoryId, officeId, direction, title, referenceNumber, documentDate } = params;
 
       setUploadProgress(10);
 
@@ -55,8 +55,8 @@ export function useUploadDocument() {
       // Add document metadata to backend
       await actor.addDocument(
         documentId,
-        category,
-        office,
+        categoryId,
+        officeId,
         direction,
         title,
         referenceNumber,
@@ -64,7 +64,7 @@ export function useUploadDocument() {
         file.name,
         file.type,
         BigInt(file.size),
-        dataUrl // Store data URL as blobId
+        dataUrl
       );
 
       setUploadProgress(100);
@@ -72,8 +72,9 @@ export function useUploadDocument() {
       return documentId;
     },
     onSuccess: () => {
-      // Invalidate documents query to refresh the list
+      // Invalidate documents and dashboard queries to refresh
       queryClient.invalidateQueries({ queryKey: ['documents'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboardMetrics'] });
       setUploadProgress(0);
     },
     onError: () => {

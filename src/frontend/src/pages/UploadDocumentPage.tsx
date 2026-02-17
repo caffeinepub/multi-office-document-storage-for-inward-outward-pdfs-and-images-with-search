@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useUploadDocument } from '@/features/documents/useUploadDocument';
-import { Office, Direction, Category } from '@/backend';
+import { useCategories } from '@/features/categories/useCategories';
+import { Direction } from '@/backend';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,8 +21,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { CalendarIcon, Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { stringToOffice, getOfficeOptionsByCategory, isOfficeStringInCategory } from '@/lib/officeHelpers';
-import { getAllCategoryOptions } from '@/lib/categoryHelpers';
 
 const DIRECTION_LABELS: Record<Direction, string> = {
   [Direction.inward]: 'Inward',
@@ -32,21 +31,26 @@ const DIRECTION_LABELS: Record<Direction, string> = {
 export function UploadDocumentPage() {
   const navigate = useNavigate();
   const { uploadDocument, isUploading, uploadProgress, error, isSuccess } = useUploadDocument();
+  const { data: categories } = useCategories();
 
   const [file, setFile] = useState<File | null>(null);
-  const [category, setCategory] = useState<Category | null>(null);
-  const [officeString, setOfficeString] = useState<string>('');
+  const [categoryId, setCategoryId] = useState<string>('');
+  const [officeId, setOfficeId] = useState<string>('');
   const [direction, setDirection] = useState<Direction | null>(null);
   const [title, setTitle] = useState('');
   const [referenceNumber, setReferenceNumber] = useState('');
   const [documentDate, setDocumentDate] = useState<Date | null>(null);
 
+  // Get selected category and its offices
+  const selectedCategory = categories?.find((c) => c.id === categoryId);
+  const officeOptions = selectedCategory?.offices || [];
+
   // Clear office selection when category changes if the office doesn't belong to the new category
   useEffect(() => {
-    if (officeString && !isOfficeStringInCategory(officeString, category)) {
-      setOfficeString('');
+    if (officeId && !officeOptions.find((o) => o.id === officeId)) {
+      setOfficeId('');
     }
-  }, [category, officeString]);
+  }, [categoryId, officeId, officeOptions]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -63,16 +67,15 @@ export function UploadDocumentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const office = stringToOffice(officeString);
-    if (!file || !category || !office || !direction || !title || !documentDate) {
+    if (!file || !categoryId || !officeId || !direction || !title || !documentDate) {
       alert('Please fill in all required fields');
       return;
     }
 
     await uploadDocument({
       file,
-      category,
-      office,
+      categoryId,
+      officeId,
       direction,
       title,
       referenceNumber: referenceNumber || null,
@@ -80,7 +83,7 @@ export function UploadDocumentPage() {
     });
   };
 
-  const canSubmit = file && category && officeString && direction && title && documentDate && !isUploading;
+  const canSubmit = file && categoryId && officeId && direction && title && documentDate && !isUploading;
 
   if (isSuccess) {
     return (
@@ -94,7 +97,7 @@ export function UploadDocumentPage() {
             <CardDescription>Your document has been uploaded successfully</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button onClick={() => navigate({ to: '/' })} className="w-full">
+            <Button onClick={() => navigate({ to: '/documents' })} className="w-full">
               View Documents
             </Button>
             <Button
@@ -109,10 +112,6 @@ export function UploadDocumentPage() {
       </div>
     );
   }
-
-  // Get office options filtered by selected category
-  const officeOptions = getOfficeOptionsByCategory(category);
-  const categoryOptions = getAllCategoryOptions();
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -153,9 +152,6 @@ export function UploadDocumentPage() {
                   </div>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Supported formats: PDF, PNG, JPEG (max 10MB)
-              </p>
             </div>
 
             {/* Category */}
@@ -163,18 +159,14 @@ export function UploadDocumentPage() {
               <Label htmlFor="category">
                 Category <span className="text-destructive">*</span>
               </Label>
-              <Select
-                value={category || ''}
-                onValueChange={(value) => setCategory(value as Category)}
-                disabled={isUploading}
-              >
+              <Select value={categoryId} onValueChange={setCategoryId} disabled={isUploading}>
                 <SelectTrigger id="category" className="bg-white dark:bg-white">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
-                  {categoryOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {categories?.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -187,17 +179,17 @@ export function UploadDocumentPage() {
                 Office <span className="text-destructive">*</span>
               </Label>
               <Select
-                value={officeString}
-                onValueChange={setOfficeString}
-                disabled={isUploading}
+                value={officeId}
+                onValueChange={setOfficeId}
+                disabled={isUploading || !categoryId}
               >
                 <SelectTrigger id="office" className="bg-white dark:bg-white">
-                  <SelectValue placeholder="Select office" />
+                  <SelectValue placeholder={categoryId ? "Select an office" : "Select category first"} />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
-                  {officeOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                  {officeOptions.map((office) => (
+                    <SelectItem key={office.id} value={office.id}>
+                      {office.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -230,25 +222,25 @@ export function UploadDocumentPage() {
             {/* Title */}
             <div className="space-y-2">
               <Label htmlFor="title">
-                Document Title <span className="text-destructive">*</span>
+                Title <span className="text-destructive">*</span>
               </Label>
               <Input
                 id="title"
+                placeholder="Enter document title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter document title"
                 disabled={isUploading}
               />
             </div>
 
             {/* Reference Number */}
             <div className="space-y-2">
-              <Label htmlFor="reference">Reference Number (Optional)</Label>
+              <Label htmlFor="reference">Reference Number</Label>
               <Input
                 id="reference"
+                placeholder="Enter reference number (optional)"
                 value={referenceNumber}
                 onChange={(e) => setReferenceNumber(e.target.value)}
-                placeholder="Enter reference number"
                 disabled={isUploading}
               />
             </div>
@@ -269,7 +261,7 @@ export function UploadDocumentPage() {
                     disabled={isUploading}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {documentDate ? format(documentDate, 'PP') : 'Select date'}
+                    {documentDate ? format(documentDate, 'PPP') : 'Select date'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-white dark:bg-white" align="start">
@@ -303,7 +295,7 @@ export function UploadDocumentPage() {
             )}
 
             {/* Submit Button */}
-            <Button type="submit" disabled={!canSubmit} className="w-full">
+            <Button type="submit" className="w-full" disabled={!canSubmit}>
               {isUploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

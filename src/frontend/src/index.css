@@ -76,3 +76,13 @@
         word-break: break-word;
     }
 }
+
+/* Ensure all popover-like surfaces are solid (not transparent) */
+@layer components {
+    [data-radix-popper-content-wrapper],
+    [role="dialog"],
+    [role="alertdialog"],
+    [role="menu"] {
+        background-color: oklch(var(--popover));
+    }
+}

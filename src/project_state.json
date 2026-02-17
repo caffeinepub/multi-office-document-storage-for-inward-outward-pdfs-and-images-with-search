@@ -1,44 +1,37 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Build a document app with a dashboard showing category buttons (loaded from the database) that filter documents by category; documents belong to a single category and office; allow exporting a multi-selected, filtered document list to Excel.",
+  "summary": "New project",
   "architectural_notes": [
-    "Dashboard categories should be loaded dynamically from the database (no hardcoded category list).",
-    "Each document is associated with exactly one category and one office.",
-    "Excel export should operate on the currently filtered document list and support exporting only user-selected documents."
+    "Store users in backend with username, hashed password, and role (admin/supervisor).",
+    "Enforce role-based access control for dashboard and settings."
   ],
-  "known_issues": [],
+  "known_issues": [
+    "Some error popups are currently transparent; should be solid white background for popups/dropdowns."
+  ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-add-a-new-dashboard-page-that-shows-large-category-buttons-loaded-dynamically-from-the-backend-not-hardcoded-in-the-frontend",
-      "title": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
+      "id": "feature-reduce-the-size-of-the-three-documents-by-direction-count-boxes-on-the-dashboard-page-inward-outward-important-by-approximately-30-while-keeping-their-current-content-and-structure",
+      "title": "Reduce the size of the three \"Documents by Direction\" count boxes on the Dashboard page (Inward/Outward/Important) by approximately 30% while keeping their current content and structure.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-when-a-user-clicks-a-category-button-on-the-dashboard-navigate-to-the-documents-list-and-show-only-documents-for-that-category-category-filter-pre-applied",
-      "title": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-documents-list-ui-to-support-selecting-multiple-documents-from-the-currently-filtered-list-e-g-via-row-checkboxes-and-provide-an-export-action-that-exports-only-the-filtered-list-items-the-user-selected",
-      "title": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
+      "id": "feature-enforce-role-based-access-control-so-that-admin-supervisor-roles-actually-control-access-to-the-settings-page-and-the-dashboard",
+      "title": "Enforce role-based access control so that admin/supervisor roles actually control access to the Settings page and the Dashboard.",
       "reqIds": [
         "REQ-3"
       ],
       "version": 1
     },
     {
-      "id": "feature-adjust-the-application-routing-navigation-so-the-dashboard-is-accessible-from-the-main-navigation-while-preserving-access-to-the-documents-list-and-upload-page",
-      "title": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+      "id": "feature-ensure-all-popups-dialogs-and-dropdown-menus-use-a-solid-non-transparent-white-background-in-light-mode-and-a-solid-non-transparent-background-in-dark-mode-across-the-app",
+      "title": "Ensure all popups, dialogs, and dropdown menus use a solid (non-transparent) white background in light mode, and a solid non-transparent background in dark mode, across the app.",
       "reqIds": [
-        "REQ-5"
+        "REQ-4"
       ],
       "version": 1
     }
@@ -46,32 +39,38 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add dashboard page with large category buttons loaded dynamically from database; clicking a category shows only documents for that category.",
+      "summary": "Reduce the 'Documents by Direction' dashboard count boxes size by 30%",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Documents data model: each document belongs to exactly one category and one office; support filtering document list by selected category.",
+      "summary": "Add backend user management with username + hashed password + role (admin, supervisor)",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Add Excel export on documents page for the currently filtered list, with multi-select option to export selected documents.",
+      "summary": "Implement role-based access control to restrict/enforce access to the dashboard and settings based on admin/supervisor roles",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-7",
-      "summary": "Add backend APIs needed to support dynamic category listing for the Dashboard (and any other UI that needs a category list) using the backend’s authoritative category set.",
+      "id": "AR-4",
+      "summary": "Update all popups and dropdowns to use a solid white (non-transparent) background",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Implement backend-stored user accounts that include username, hashed password, and role (admin or supervisor), and provide admin-only APIs to create, update (role/password), list, and delete users.",
       "reqIds": [
-        "REQ-4"
+        "REQ-2"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Document Archive",
+  "projectName": "Doc Archive",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

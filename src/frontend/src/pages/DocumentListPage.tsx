@@ -4,16 +4,16 @@ import { DocumentFilters } from '@/components/documents/DocumentFilters';
 import { DocumentList } from '@/components/documents/DocumentList';
 import { EmptyState } from '@/components/documents/EmptyState';
 import { useDocuments } from '@/features/documents/useDocuments';
-import { Office, Direction, Category, Document } from '@/backend';
+import { Direction, PublicDocument } from '@/backend';
 import { Loader2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { exportDocumentsToCSV } from '@/lib/exportDocuments';
 import { toast } from 'sonner';
 
 export function DocumentListPage() {
-  const search = useSearch({ strict: false }) as { category?: Category };
-  const [category, setCategory] = useState<Category | null>(search.category || null);
-  const [office, setOffice] = useState<Office | null>(null);
+  const search = useSearch({ strict: false }) as { categoryId?: string };
+  const [categoryId, setCategoryId] = useState<string | null>(search.categoryId || null);
+  const [officeId, setOfficeId] = useState<string | null>(null);
   const [direction, setDirection] = useState<Direction | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -22,44 +22,24 @@ export function DocumentListPage() {
 
   // Initialize category from route search params
   useEffect(() => {
-    if (search.category) {
-      setCategory(search.category);
+    if (search.categoryId) {
+      setCategoryId(search.categoryId);
     }
-  }, [search.category]);
+  }, [search.categoryId]);
 
   // Clear selection when filters change
   useEffect(() => {
     setSelectedDocuments(new Set());
-  }, [category, office, direction, startDate, endDate, searchText]);
+  }, [categoryId, officeId, direction, startDate, endDate, searchText]);
 
   const { documents, isLoading, error, loadMore, hasMore, isLoadingMore } = useDocuments({
-    category,
-    office,
+    categoryId,
+    officeId,
     direction,
     startDate,
     endDate,
     searchText,
   });
-
-  const handleSelectDocument = (documentId: string, selected: boolean) => {
-    setSelectedDocuments((prev) => {
-      const newSet = new Set(prev);
-      if (selected) {
-        newSet.add(documentId);
-      } else {
-        newSet.delete(documentId);
-      }
-      return newSet;
-    });
-  };
-
-  const handleSelectAll = (selected: boolean) => {
-    if (selected) {
-      setSelectedDocuments(new Set(documents.map((doc) => doc.id)));
-    } else {
-      setSelectedDocuments(new Set());
-    }
-  };
 
   const handleExport = () => {
     if (selectedDocuments.size === 0) {
@@ -69,30 +49,26 @@ export function DocumentListPage() {
 
     const selectedDocs = documents.filter((doc) => selectedDocuments.has(doc.id));
     exportDocumentsToCSV(selectedDocs);
-    toast.success(`Exported ${selectedDocs.length} document${selectedDocs.length > 1 ? 's' : ''}`);
+    toast.success(`Exported ${selectedDocs.length} document${selectedDocs.length !== 1 ? 's' : ''}`);
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Loading documents...</p>
-        </div>
-      </div>
-    );
-  }
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedDocuments(new Set(documents.map((doc) => doc.id)));
+    } else {
+      setSelectedDocuments(new Set());
+    }
+  };
 
-  if (error) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="text-center">
-          <p className="text-sm text-destructive">Error loading documents</p>
-          <p className="text-xs text-muted-foreground mt-2">{error.message}</p>
-        </div>
-      </div>
-    );
-  }
+  const handleSelectDocument = (documentId: string, checked: boolean) => {
+    const newSelection = new Set(selectedDocuments);
+    if (checked) {
+      newSelection.add(documentId);
+    } else {
+      newSelection.delete(documentId);
+    }
+    setSelectedDocuments(newSelection);
+  };
 
   return (
     <div className="space-y-6">
@@ -100,11 +76,11 @@ export function DocumentListPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Documents</h1>
           <p className="text-muted-foreground mt-2">
-            Search and manage documents across all offices
+            Browse and manage your document archive
           </p>
         </div>
-        {documents.length > 0 && (
-          <Button onClick={handleExport} disabled={selectedDocuments.size === 0}>
+        {selectedDocuments.size > 0 && (
+          <Button onClick={handleExport} variant="outline">
             <Download className="mr-2 h-4 w-4" />
             Export Selected ({selectedDocuments.size})
           </Button>
@@ -112,32 +88,59 @@ export function DocumentListPage() {
       </div>
 
       <DocumentFilters
-        category={category}
-        office={office}
+        categoryId={categoryId}
+        officeId={officeId}
         direction={direction}
         startDate={startDate}
         endDate={endDate}
         searchText={searchText}
-        onCategoryChange={setCategory}
-        onOfficeChange={setOffice}
+        onCategoryChange={setCategoryId}
+        onOfficeChange={setOfficeId}
         onDirectionChange={setDirection}
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
         onSearchTextChange={setSearchText}
       />
 
-      {documents.length === 0 ? (
+      {isLoading ? (
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Loading documents...</p>
+          </div>
+        </div>
+      ) : error ? (
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <p className="text-sm text-destructive">Error loading documents</p>
+            <p className="text-xs text-muted-foreground mt-2">{error.message}</p>
+          </div>
+        </div>
+      ) : documents.length === 0 ? (
         <EmptyState />
       ) : (
-        <DocumentList
-          documents={documents}
-          selectedDocuments={selectedDocuments}
-          onSelectDocument={handleSelectDocument}
-          onSelectAll={handleSelectAll}
-          onLoadMore={loadMore}
-          hasMore={hasMore}
-          isLoadingMore={isLoadingMore}
-        />
+        <>
+          <DocumentList
+            documents={documents}
+            selectedDocuments={selectedDocuments}
+            onSelectAll={handleSelectAll}
+            onSelectDocument={handleSelectDocument}
+          />
+          {hasMore && (
+            <div className="flex justify-center pt-4">
+              <Button onClick={loadMore} variant="outline" disabled={isLoadingMore}>
+                {isLoadingMore ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Loading...
+                  </>
+                ) : (
+                  'Load More'
+                )}
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

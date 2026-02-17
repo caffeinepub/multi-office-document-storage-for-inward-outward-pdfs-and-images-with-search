@@ -1,100 +1,88 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Dashboard categories from backend + filtered multi-select Excel export",
+  "title": "Doc Archive: smaller Dashboard direction cards, role-gated Settings/Dashboard, and solid popover backgrounds",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create a Dashboard page that fetches categories at runtime from the backend and renders them as large, clickable buttons (English UI).",
+      "summary": "Shrink the three “Documents by Direction” cards on the Dashboard by ~30% without changing their content/structure.",
       "acceptanceCriteria": [
-        "A new route/page exists for a dashboard that lists all available categories as large clickable buttons.",
-        "The list of categories is fetched from the backend at runtime (no hardcoded category options list used for the dashboard).",
-        "User-facing text on the dashboard is in English."
+        "On the Dashboard page, the three Cards under \"Documents by Direction\" are visibly ~30% smaller (reduced padding and/or icon and font sizing), without removing any fields (label + count).",
+        "No other dashboard sections (e.g., top metrics cards, category cards) change size as part of this requirement."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "create",
-          "description": "Implement the Dashboard page UI that loads categories via the existing backend actor capability (getCategories) at runtime and displays them as large buttons/cards; use shadcn-ui components for consistent styling. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/features/categories/useCategories.ts",
-          "operation": "create",
-          "description": "Add a React Query hook that calls the backend actor to fetch the authoritative categories list for the dashboard and other category-driven UIs."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Enable category-button navigation from Dashboard to Documents list with the category filter pre-applied and compatible with office filter auto-clearing behavior.",
-      "acceptanceCriteria": [
-        "Clicking a category on the dashboard opens the documents list view with that category already selected.",
-        "The documents table shows only documents that belong to the selected category until the user changes/clears filters.",
-        "Existing office filtering behavior remains compatible with the selected category (invalid office selections are cleared as today)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Update routing to support passing an optional category selection into the Documents list via route search params/state, and add a dashboard route so navigation can target it."
-        },
-        {
-          "path": "frontend/src/pages/DashboardPage.tsx",
-          "operation": "modify",
-          "description": "Wire category button clicks to navigate to the Documents list route with the selected category pre-applied (e.g., via router search params). Use shadcn-ui Button styling for large clickable category actions. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/DocumentListPage.tsx",
-          "operation": "modify",
-          "description": "Initialize and keep the category filter in sync with the router-provided preselected category when arriving from the Dashboard, without breaking existing filter interactions."
+          "description": "Reduce only the “Documents by Direction” section Card sizing (padding, icon container padding, icon size, and label/count typography) by approximately 30% while keeping the same label + count structure; do not change the top metrics cards or category cards."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Add multi-select to the filtered Documents table and export only the user-selected items from the currently filtered results as an Excel-compatible download.",
+      "summary": "Add frontend role gating so Settings is admin-only and Dashboard is accessible only to authenticated users with a recognized role, showing an English Unauthorized state otherwise.",
       "acceptanceCriteria": [
-        "The documents table supports multi-select of documents currently shown under the active filters (including category).",
-        "An Export control is available on the documents list page.",
-        "Export generates an Excel-compatible file for download containing only the selected documents from the filtered results (not all documents).",
-        "If no documents are selected, the UI clearly indicates that selection is required before export (English message)."
+        "Frontend: attempting to navigate to /settings as a non-admin shows an English “Unauthorized” message and/or redirects to an allowed page (e.g., Dashboard).",
+        "Frontend: the Settings navigation entry is hidden or disabled for non-admin users.",
+        "Backend: Settings-related mutations already require admin permission; additionally, any new user-management endpoints are admin-only.",
+        "Dashboard remains accessible only to authenticated users who have a recognized role (admin or supervisor); unauthorized identities are blocked with an English message."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/documents/DocumentList.tsx",
-          "operation": "modify",
-          "description": "Add row checkboxes (and an optional select-all for currently displayed rows) to support multi-select of documents shown in the current filtered view; ensure row click-to-navigate remains usable (e.g., checkbox click does not navigate). Use shadcn-ui checkbox/table patterns where applicable. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/pages/DocumentListPage.tsx",
-          "operation": "modify",
-          "description": "Add selection state management, an Export action control, and an English validation message when exporting with zero selected items; ensure selection is cleared/reset appropriately when filters change so export cannot include items outside the current filtered results."
-        },
-        {
-          "path": "frontend/src/lib/exportDocuments.ts",
+          "path": "frontend/src/features/auth/useCallerRole.ts",
           "operation": "create",
-          "description": "Implement a small client-side export utility that generates an Excel-compatible file (e.g., CSV with appropriate headers) from selected Document rows and triggers browser download, using only the selected subset passed in."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Expose the Dashboard from main navigation while preserving existing access to Documents list, document detail, and Upload routes.",
-      "acceptanceCriteria": [
-        "The app has a dedicated route for the Dashboard page.",
-        "The header navigation includes a way to reach the Dashboard and the Documents list (labels in English).",
-        "Existing routes for document detail and upload continue to work."
-      ],
-      "file_operations": [
+          "description": "Create a React Query hook that fetches and caches the current caller’s role from the backend actor (for UI gating) and exposes loading/error states; ensure it runs only when an actor is available."
+        },
+        {
+          "path": "frontend/src/components/auth/UnauthorizedScreen.tsx",
+          "operation": "create",
+          "description": "Create a simple, reusable Unauthorized screen component with English messaging (e.g., “Unauthorized”) and an optional action to navigate back to an allowed page."
+        },
+        {
+          "path": "frontend/src/components/auth/RequireRole.tsx",
+          "operation": "create",
+          "description": "Create a route/page wrapper component that uses the caller role hook to enforce access (admin-only or any recognized role), rendering a loading state while role is resolving and rendering UnauthorizedScreen (and/or redirect) when disallowed."
+        },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Register the new Dashboard route in the router while keeping existing routes for documents list, upload, and document detail working as-is."
+          "description": "Wire role enforcement into routing by wrapping the Settings route component in RequireRole configured for admin-only; additionally ensure the Dashboard route is wrapped/guarded to block authenticated but unrecognized roles with an English Unauthorized state."
         },
         {
           "path": "frontend/src/components/layout/AppShell.tsx",
           "operation": "modify",
-          "description": "Add a Dashboard navigation item in the header (English label), alongside existing Documents and Upload navigation, using existing shadcn-ui Button styling. Verify the component's usage instructions before implementing."
+          "description": "Hide or disable the Settings navigation entry for non-admin users by using the caller role hook; keep English labels and ensure navigation does not expose Settings access for non-admins."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Ensure dropdowns, dialogs, and popovers render with solid (non-transparent) surfaces in light and dark themes across the app.",
+      "acceptanceCriteria": [
+        "Dropdown menus (e.g., the user menu in the header) render with an opaque background (no transparency artifacts).",
+        "Dialogs and alert dialogs (e.g., Settings add/edit/delete dialogs) render with opaque backgrounds.",
+        "No popover/dropdown surfaces appear translucent against page content in either light or dark theme."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add global CSS/Tailwind-layer overrides to enforce solid backgrounds for Radix/shadcn popover-like surfaces (dropdowns, popovers, dialogs, alert dialogs) using the existing theme tokens (e.g., popover/background variables) for both light and dark modes."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Adjust the header user DropdownMenuContent styling to use an explicitly solid surface in both themes (solid white in light mode and a solid dark surface in dark mode) to eliminate any transparency artifacts."
+        },
+        {
+          "path": "frontend/src/pages/SettingsPage.tsx",
+          "operation": "modify",
+          "description": "Ensure all DialogContent and AlertDialogContent usages in Settings explicitly use solid surface classes for both themes (not just the first dialog), relying on shared tokens/classes so all settings popups are opaque."
+        },
+        {
+          "path": "frontend/src/components/documents/DocumentActions.tsx",
+          "operation": "modify",
+          "description": "Update any confirmation dialogs/menus used by document actions to ensure their dialog/popover surfaces render with solid backgrounds in both light and dark modes."
         }
       ]
     }

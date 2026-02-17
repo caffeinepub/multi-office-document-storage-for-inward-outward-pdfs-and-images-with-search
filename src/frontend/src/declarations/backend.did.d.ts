@@ -10,49 +10,49 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export type Category = { 'pharmacyCollege' : null } |
-  { 'ayurvedCollege' : null } |
-  { 'ayurvedHospital' : null } |
-  { 'paramedicalInstitute' : null } |
-  { 'generalCorrespondence' : null } |
-  { 'socialMediaEvents' : null } |
-  { 'nursingInstitute' : null };
+export interface Category {
+  'id' : string,
+  'name' : string,
+  'offices' : Array<Office>,
+}
+export interface DashboardMetrics {
+  'outwardDocuments' : bigint,
+  'inwardDocuments' : bigint,
+  'importantDocuments' : bigint,
+  'uniqueUserCount' : bigint,
+  'totalDocuments' : bigint,
+}
 export type Direction = { 'importantDocuments' : null } |
   { 'inward' : null } |
   { 'outward' : null };
-export interface Document {
+export interface Office { 'id' : string, 'name' : string }
+export interface PublicDocument {
   'id' : string,
+  'categoryId' : string,
   'documentDate' : Time,
   'title' : string,
   'direction' : Direction,
   'referenceNumber' : [] | [string],
   'mimeType' : string,
-  'office' : Office,
   'fileSize' : bigint,
   'uploadTimestamp' : Time,
   'filename' : string,
   'blobId' : string,
-  'category' : Category,
   'uploader' : Principal,
+  'officeId' : string,
 }
-export type GenericOffice = { 'office1' : null } |
-  { 'office2' : null };
-export type NursingOffice = { 'mahatmaPhuleInstitutePbbsc' : null } |
-  { 'mahatmaPhuleNursingSchoolAkola' : null } |
-  { 'kalaskarNursingInstituteNandura' : null } |
-  { 'mahatmaPhuleInstituteAnm' : null } |
-  { 'mahatmaPhuleInstituteBsc' : null } |
-  { 'mahatmaPhuleInstituteGnm' : null } |
-  { 'mahatmaPhuleNursingSchoolBabhulgaonAnm' : null } |
-  { 'mahatmaPhuleNursingSchoolBabhulgaonGnm' : null };
-export type Office = { 'pharmacyCollege' : GenericOffice } |
-  { 'ayurvedCollege' : GenericOffice } |
-  { 'ayurvedHospital' : GenericOffice } |
-  { 'paramedicalInstitute' : GenericOffice } |
-  { 'generalCorrespondence' : GenericOffice } |
-  { 'socialMediaEvents' : GenericOffice } |
-  { 'nursingInstitute' : NursingOffice };
 export type Time = bigint;
+export interface UserAccount {
+  'username' : string,
+  'role' : UserRole,
+  'passwordHash' : string,
+}
+export interface UserProfile { 'name' : string }
+export type UserRole = { 'supervisor' : null } |
+  { 'admin' : null };
+export type UserRole__1 = { 'admin' : null } |
+  { 'user' : null } |
+  { 'guest' : null };
 export interface _CaffeineStorageCreateCertificateResult {
   'method' : string,
   'blob_hash' : string,
@@ -80,12 +80,13 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
-  'addCategory' : ActorMethod<[Category], undefined>,
+  '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addCategory' : ActorMethod<[string, string], undefined>,
   'addDocument' : ActorMethod<
     [
       string,
-      Category,
-      Office,
+      string,
+      string,
       Direction,
       string,
       [] | [string],
@@ -97,20 +98,41 @@ export interface _SERVICE {
     ],
     undefined
   >,
+  'addOfficeToCategory' : ActorMethod<[string, string, string], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
+  'authenticate' : ActorMethod<[string, string], boolean>,
+  'createUser' : ActorMethod<[string, string, UserRole], undefined>,
+  'deleteUser' : ActorMethod<[string], undefined>,
   'filterDocuments' : ActorMethod<
     [
-      [] | [Category],
-      [] | [Office],
+      [] | [string],
+      [] | [string],
       [] | [Direction],
       [] | [Time],
       [] | [Time],
       [] | [boolean],
     ],
-    Array<Document>
+    Array<PublicDocument>
   >,
+  'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole__1>,
   'getCategories' : ActorMethod<[], Array<Category>>,
-  'getDocument' : ActorMethod<[string], Document>,
+  'getDashboardMetrics' : ActorMethod<[], DashboardMetrics>,
+  'getDocument' : ActorMethod<[string], PublicDocument>,
+  'getUser' : ActorMethod<[string], [] | [UserAccount]>,
+  'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'isCallerAdmin' : ActorMethod<[], boolean>,
+  'listUsers' : ActorMethod<[], Array<UserAccount>>,
+  'removeCategory' : ActorMethod<[string], undefined>,
   'removeDocument' : ActorMethod<[string], undefined>,
+  'removeOfficeFromCategory' : ActorMethod<[string, string], undefined>,
+  'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'updateCategory' : ActorMethod<[string, string], undefined>,
+  'updateOfficeInCategory' : ActorMethod<[string, string, string], undefined>,
+  'updateUser' : ActorMethod<
+    [string, [] | [string], [] | [UserRole]],
+    undefined
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

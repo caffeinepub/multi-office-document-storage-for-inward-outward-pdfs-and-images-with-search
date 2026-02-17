@@ -1,116 +1,93 @@
 {
   "kind": "build_request",
-  "title": "Dashboard categories from backend + filtered multi-select Excel export",
-  "projectName": "Document Archive",
+  "title": "Add backend user roles (admin/supervisor) with enforced access + shrink Documents-by-Direction boxes + solid popover backgrounds",
+  "projectName": "Doc Archive",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
-      "target": "both",
+      "text": "Reduce the size of the three \"Documents by Direction\" count boxes on the Dashboard page (Inward/Outward/Important) by approximately 30% while keeping their current content and structure.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-8"
+          "msg-4"
         ],
         "quotes": [
-          "1 category names from data base."
+          "reduce their size by 30%"
         ]
       },
       "acceptanceCriteria": [
-        "A new route/page exists for a dashboard that lists all available categories as large clickable buttons.",
-        "The list of categories is fetched from the backend at runtime (no hardcoded category options list used for the dashboard).",
-        "User-facing text on the dashboard is in English."
+        "On the Dashboard page, the three Cards under \"Documents by Direction\" are visibly ~30% smaller (reduced padding and/or icon and font sizing), without removing any fields (label + count).",
+        "No other dashboard sections (e.g., top metrics cards, category cards) change size as part of this requirement."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
-      "target": "frontend",
+      "text": "Implement backend-stored user accounts that include username, hashed password, and role (admin or supervisor), and provide admin-only APIs to create, update (role/password), list, and delete users.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-6",
-          "msg-8"
+          "msg-4"
         ],
         "quotes": [
-          "i want to add a dashboard page with large buttons for categories when we click on them documents list for that category only should be seen.",
-          "3 only filtered list"
+          "store users and passwords in backend.",
+          "username + hashed password + role (admin/supervisor)? 1 yes"
         ]
       },
       "acceptanceCriteria": [
-        "Clicking a category on the dashboard opens the documents list view with that category already selected.",
-        "The documents table shows only documents that belong to the selected category until the user changes/clears filters.",
-        "Existing office filtering behavior remains compatible with the selected category (invalid office selections are cleared as today)."
+        "Backend persists a user record containing: username, password hash (not plaintext), and role (admin|supervisor).",
+        "Only admins can create/update/delete/list users; non-admin callers receive an authorization error.",
+        "There is a backend API to retrieve the current caller’s role (for frontend gating)."
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
-      "target": "frontend",
+      "text": "Enforce role-based access control so that admin/supervisor roles actually control access to the Settings page and the Dashboard.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-8"
+          "msg-4"
         ],
         "quotes": [
-          "only filtered list and add multiple selection option to select list for export"
+          "actually control access to settings and dashboard."
         ]
       },
       "acceptanceCriteria": [
-        "The documents table supports multi-select of documents currently shown under the active filters (including category).",
-        "An Export control is available on the documents list page.",
-        "Export generates an Excel-compatible file for download containing only the selected documents from the filtered results (not all documents).",
-        "If no documents are selected, the UI clearly indicates that selection is required before export (English message)."
+        "Frontend: attempting to navigate to /settings as a non-admin shows an English “Unauthorized” message and/or redirects to an allowed page (e.g., Dashboard).",
+        "Frontend: the Settings navigation entry is hidden or disabled for non-admin users.",
+        "Backend: Settings-related mutations already require admin permission; additionally, any new user-management endpoints are admin-only.",
+        "Dashboard remains accessible only to authenticated users who have a recognized role (admin or supervisor); unauthorized identities are blocked with an English message."
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Add backend APIs needed to support dynamic category listing for the Dashboard (and any other UI that needs a category list) using the backend’s authoritative category set.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-8"
-        ],
-        "quotes": [
-          "1 category names from data base."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend exposes a method that returns the list of categories available in the system.",
-        "Frontend can call the backend method to render the category buttons on the dashboard.",
-        "No change breaks existing document upload or filterDocuments behavior."
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+      "text": "Ensure all popups, dialogs, and dropdown menus use a solid (non-transparent) white background in light mode, and a solid non-transparent background in dark mode, across the app.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6",
-          "msg-8"
+          "msg-1",
+          "msg-4"
         ],
         "quotes": [
-          "i want to add a dashboard page with large buttons for categories",
-          "documents list for that category only should be seen"
+          "error pop up is transparent use solid white  background for all pop up and dropdowns",
+          "Use solid white backgrounds for all popups and dropdowns"
         ]
       },
       "acceptanceCriteria": [
-        "The app has a dedicated route for the Dashboard page.",
-        "The header navigation includes a way to reach the Dashboard and the Documents list (labels in English).",
-        "Existing routes for document detail and upload continue to work."
+        "Dropdown menus (e.g., the user menu in the header) render with an opaque background (no transparency artifacts).",
+        "Dialogs and alert dialogs (e.g., Settings add/edit/delete dialogs) render with opaque backgrounds.",
+        "No popover/dropdown surfaces appear translucent against page content in either light or dark theme."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo; only add migration logic if state schema changes require it.",
-    "Do not edit files under frontend/src/components/ui or any paths listed as immutable in SYSTEM_CONTEXT.",
-    "Use English for any user-facing text.",
-    "Export must be limited to the currently filtered list and user-selected documents (no exporting unfiltered/global data)."
+    "Backend must remain a single Motoko actor in backend/main.mo; only add migration logic in backend/migration.mo if state schema changes require it per the project migration policy.",
+    "Do not edit frontend paths marked immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui). Compose/wrap instead."
   ],
   "nonGoals": [
-    "Implementing third-party authentication providers beyond Internet Identity.",
-    "Adding external databases or non-IC backend services.",
-    "Real-time collaboration or live updates (WebSockets, push notifications).",
-    "Allowing a document to belong to multiple categories (documents remain in exactly one category and one office)."
+    "Implementing third-party authentication providers (only Internet Identity is supported).",
+    "Adding real-time features (WebSockets, push notifications, chat).",
+    "Reintroducing the canceled dashboard color changes request (no new color theming changes beyond fixing popup backgrounds)."
   ],
   "imageRequirements": {
     "required": [],
@@ -119,7 +96,9 @@
   "userProfileUpdate": {
     "goalsToAdd": [],
     "goalsToRemove": [],
-    "preferencesToAdd": [],
+    "preferencesToAdd": [
+      "Use English for any user-facing text"
+    ],
     "preferencesToRemove": [],
     "miscToAdd": [],
     "miscToRemove": [],

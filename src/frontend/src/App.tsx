@@ -1,10 +1,12 @@
 import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import { AuthGate } from './components/auth/AuthGate';
+import { RequireRole } from './components/auth/RequireRole';
 import { AppShell } from './components/layout/AppShell';
 import { DashboardPage } from './pages/DashboardPage';
 import { DocumentListPage } from './pages/DocumentListPage';
 import { UploadDocumentPage } from './pages/UploadDocumentPage';
 import { DocumentDetailPage } from './pages/DocumentDetailPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from 'next-themes';
 
@@ -26,36 +28,63 @@ const rootRoute = createRootRoute({
   ),
 });
 
-// Dashboard route (default)
+// Dashboard route (default) - requires user role
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: DashboardPage,
+  component: () => (
+    <RequireRole requireUser>
+      <DashboardPage />
+    </RequireRole>
+  ),
 });
 
-// Document list route
+// Document list route - requires user role
 const documentsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/documents',
-  component: DocumentListPage,
+  component: () => (
+    <RequireRole requireUser>
+      <DocumentListPage />
+    </RequireRole>
+  ),
 });
 
-// Upload document route
+// Upload document route - requires user role
 const uploadRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/upload',
-  component: UploadDocumentPage,
+  component: () => (
+    <RequireRole requireUser>
+      <UploadDocumentPage />
+    </RequireRole>
+  ),
 });
 
-// Document detail route
+// Document detail route - requires user role
 const documentRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/document/$documentId',
-  component: DocumentDetailPage,
+  component: () => (
+    <RequireRole requireUser>
+      <DocumentDetailPage />
+    </RequireRole>
+  ),
+});
+
+// Settings route - requires admin role
+const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/settings',
+  component: () => (
+    <RequireRole requireAdmin>
+      <SettingsPage />
+    </RequireRole>
+  ),
 });
 
 // Create router
-const routeTree = rootRoute.addChildren([indexRoute, documentsRoute, uploadRoute, documentRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, documentsRoute, uploadRoute, documentRoute, settingsRoute]);
 
 const router = createRouter({ routeTree });
 

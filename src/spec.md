@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a Dashboard with backend-driven category buttons, enable category-based navigation to a filtered Documents list, and support multi-select export of only selected filtered documents.
+**Goal:** Add backend-managed admin/supervisor roles with enforced access control, and refine key dashboard/UI visuals (smaller “Documents by Direction” cards and solid popover backgrounds).
 
 **Planned changes:**
-- Add a new Dashboard route/page that fetches available categories from the backend at runtime and renders them as large clickable buttons (English UI text).
-- Add backend API(s) to return the authoritative list of categories from stored data, without breaking existing upload or document filtering behavior.
-- Update navigation/routing to include access to the Dashboard while preserving existing access to Documents list, document detail, and Upload.
-- When a category is clicked on the Dashboard, navigate to the Documents list with that category filter pre-applied and compatible with existing office filtering behavior.
-- Update the Documents list to support multi-select (e.g., row checkboxes) and an Export action that downloads an Excel-compatible file containing only the user-selected documents from the currently filtered results, with an English message when nothing is selected.
+- Reduce the size of the three “Documents by Direction” cards on the Dashboard (Inward/Outward/Important) by ~30% via padding/icon/font sizing, without changing their content/structure.
+- Add backend-persisted user accounts containing username, hashed password, and role (admin|supervisor), plus admin-only APIs to create, update (role/password), list, and delete users.
+- Enforce role-based access across frontend and backend: restrict Settings to admins (including hiding/disabling Settings navigation for non-admins) and ensure Dashboard requires an authenticated user with a recognized role.
+- Update UI surfaces so dropdowns, popups, dialogs, and menus use solid, non-transparent backgrounds in both light and dark modes.
 
-**User-visible outcome:** Users can open a Dashboard to pick a category, see only documents for that category in the Documents list, select multiple documents from the filtered list, and export only those selected documents to an Excel-compatible file.
+**User-visible outcome:** Dashboard “Documents by Direction” cards appear smaller; all menus/dialogs render with opaque backgrounds; admins can manage users and access Settings while supervisors are blocked from Settings and unauthorized access shows an English “Unauthorized” message and/or redirects.

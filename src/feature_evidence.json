@@ -2,10 +2,9 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-a-new-dashboard-page-that-shows-large-category-buttons-loaded-dynamically-from-the-backend-not-hardcoded-in-the-frontend",
-      "featureTitle": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
+      "featureId": "feature-reduce-the-size-of-the-three-documents-by-direction-count-boxes-on-the-dashboard-page-inward-outward-important-by-approximately-30-while-keeping-their-current-content-and-structure",
+      "featureTitle": "Reduce the size of the three \"Documents by Direction\" count boxes on the Dashboard page (Inward/Outward/Important) by approximately 30% while keeping their current content and structure.",
       "files": [
-        "frontend/src/features/categories/useCategories.ts",
         "frontend/src/pages/DashboardPage.tsx"
       ],
       "components": [
@@ -14,7 +13,8 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
         "REQ-1"
@@ -22,12 +22,14 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-when-a-user-clicks-a-category-button-on-the-dashboard-navigate-to-the-documents-list-and-show-only-documents-for-that-category-category-filter-pre-applied",
-      "featureTitle": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
+      "featureId": "feature-enforce-role-based-access-control-so-that-admin-supervisor-roles-actually-control-access-to-the-settings-page-and-the-dashboard",
+      "featureTitle": "Enforce role-based access control so that admin/supervisor roles actually control access to the Settings page and the Dashboard.",
       "files": [
         "frontend/src/App.tsx",
-        "frontend/src/pages/DashboardPage.tsx",
-        "frontend/src/pages/DocumentListPage.tsx"
+        "frontend/src/components/auth/RequireRole.tsx",
+        "frontend/src/components/auth/UnauthorizedScreen.tsx",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/features/auth/useCallerRole.ts"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -35,28 +37,8 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-the-documents-list-ui-to-support-selecting-multiple-documents-from-the-currently-filtered-list-e-g-via-row-checkboxes-and-provide-an-export-action-that-exports-only-the-filtered-list-items-the-user-selected",
-      "featureTitle": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
-      "files": [
-        "frontend/src/components/documents/DocumentList.tsx",
-        "frontend/src/lib/exportDocuments.ts",
-        "frontend/src/pages/DocumentListPage.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
         "REQ-3"
@@ -64,11 +46,13 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-adjust-the-application-routing-navigation-so-the-dashboard-is-accessible-from-the-main-navigation-while-preserving-access-to-the-documents-list-and-upload-page",
-      "featureTitle": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+      "featureId": "feature-ensure-all-popups-dialogs-and-dropdown-menus-use-a-solid-non-transparent-white-background-in-light-mode-and-a-solid-non-transparent-background-in-dark-mode-across-the-app",
+      "featureTitle": "Ensure all popups, dialogs, and dropdown menus use a solid (non-transparent) white background in light mode, and a solid non-transparent background in dark mode, across the app.",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppShell.tsx"
+        "frontend/src/components/documents/DocumentActions.tsx",
+        "frontend/src/components/layout/AppShell.tsx",
+        "frontend/src/index.css",
+        "frontend/src/pages/SettingsPage.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -76,10 +60,11 @@
         "shadcn-ui@1.0.0",
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-5"
+        "REQ-4"
       ],
       "confidence": "high"
     }

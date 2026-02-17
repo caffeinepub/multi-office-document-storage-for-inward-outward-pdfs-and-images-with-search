@@ -19,58 +19,54 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const Category = IDL.Variant({
-  'pharmacyCollege' : IDL.Null,
-  'ayurvedCollege' : IDL.Null,
-  'ayurvedHospital' : IDL.Null,
-  'paramedicalInstitute' : IDL.Null,
-  'generalCorrespondence' : IDL.Null,
-  'socialMediaEvents' : IDL.Null,
-  'nursingInstitute' : IDL.Null,
-});
-export const GenericOffice = IDL.Variant({
-  'office1' : IDL.Null,
-  'office2' : IDL.Null,
-});
-export const NursingOffice = IDL.Variant({
-  'mahatmaPhuleInstitutePbbsc' : IDL.Null,
-  'mahatmaPhuleNursingSchoolAkola' : IDL.Null,
-  'kalaskarNursingInstituteNandura' : IDL.Null,
-  'mahatmaPhuleInstituteAnm' : IDL.Null,
-  'mahatmaPhuleInstituteBsc' : IDL.Null,
-  'mahatmaPhuleInstituteGnm' : IDL.Null,
-  'mahatmaPhuleNursingSchoolBabhulgaonAnm' : IDL.Null,
-  'mahatmaPhuleNursingSchoolBabhulgaonGnm' : IDL.Null,
-});
-export const Office = IDL.Variant({
-  'pharmacyCollege' : GenericOffice,
-  'ayurvedCollege' : GenericOffice,
-  'ayurvedHospital' : GenericOffice,
-  'paramedicalInstitute' : GenericOffice,
-  'generalCorrespondence' : GenericOffice,
-  'socialMediaEvents' : GenericOffice,
-  'nursingInstitute' : NursingOffice,
-});
 export const Direction = IDL.Variant({
   'importantDocuments' : IDL.Null,
   'inward' : IDL.Null,
   'outward' : IDL.Null,
 });
 export const Time = IDL.Int;
-export const Document = IDL.Record({
+export const UserRole__1 = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
+});
+export const UserRole = IDL.Variant({
+  'supervisor' : IDL.Null,
+  'admin' : IDL.Null,
+});
+export const PublicDocument = IDL.Record({
   'id' : IDL.Text,
+  'categoryId' : IDL.Text,
   'documentDate' : Time,
   'title' : IDL.Text,
   'direction' : Direction,
   'referenceNumber' : IDL.Opt(IDL.Text),
   'mimeType' : IDL.Text,
-  'office' : Office,
   'fileSize' : IDL.Nat,
   'uploadTimestamp' : Time,
   'filename' : IDL.Text,
   'blobId' : IDL.Text,
-  'category' : Category,
   'uploader' : IDL.Principal,
+  'officeId' : IDL.Text,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const Office = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
+export const Category = IDL.Record({
+  'id' : IDL.Text,
+  'name' : IDL.Text,
+  'offices' : IDL.Vec(Office),
+});
+export const DashboardMetrics = IDL.Record({
+  'outwardDocuments' : IDL.Nat,
+  'inwardDocuments' : IDL.Nat,
+  'importantDocuments' : IDL.Nat,
+  'uniqueUserCount' : IDL.Nat,
+  'totalDocuments' : IDL.Nat,
+});
+export const UserAccount = IDL.Record({
+  'username' : IDL.Text,
+  'role' : UserRole,
+  'passwordHash' : IDL.Text,
 });
 
 export const idlService = IDL.Service({
@@ -100,12 +96,13 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-  'addCategory' : IDL.Func([Category], [], []),
+  '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'addDocument' : IDL.Func(
       [
         IDL.Text,
-        Category,
-        Office,
+        IDL.Text,
+        IDL.Text,
         Direction,
         IDL.Text,
         IDL.Opt(IDL.Text),
@@ -118,21 +115,47 @@ export const idlService = IDL.Service({
       [],
       [],
     ),
+  'addOfficeToCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
+  'authenticate' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
+  'createUser' : IDL.Func([IDL.Text, IDL.Text, UserRole], [], []),
+  'deleteUser' : IDL.Func([IDL.Text], [], []),
   'filterDocuments' : IDL.Func(
       [
-        IDL.Opt(Category),
-        IDL.Opt(Office),
+        IDL.Opt(IDL.Text),
+        IDL.Opt(IDL.Text),
         IDL.Opt(Direction),
         IDL.Opt(Time),
         IDL.Opt(Time),
         IDL.Opt(IDL.Bool),
       ],
-      [IDL.Vec(Document)],
+      [IDL.Vec(PublicDocument)],
       [],
     ),
+  'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
   'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-  'getDocument' : IDL.Func([IDL.Text], [Document], []),
+  'getDashboardMetrics' : IDL.Func([], [DashboardMetrics], ['query']),
+  'getDocument' : IDL.Func([IDL.Text], [PublicDocument], ['query']),
+  'getUser' : IDL.Func([IDL.Text], [IDL.Opt(UserAccount)], ['query']),
+  'getUserProfile' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Opt(UserProfile)],
+      ['query'],
+    ),
+  'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'listUsers' : IDL.Func([], [IDL.Vec(UserAccount)], ['query']),
+  'removeCategory' : IDL.Func([IDL.Text], [], []),
   'removeDocument' : IDL.Func([IDL.Text], [], []),
+  'removeOfficeFromCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'updateCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'updateOfficeInCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+  'updateUser' : IDL.Func(
+      [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(UserRole)],
+      [],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
@@ -149,58 +172,51 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const Category = IDL.Variant({
-    'pharmacyCollege' : IDL.Null,
-    'ayurvedCollege' : IDL.Null,
-    'ayurvedHospital' : IDL.Null,
-    'paramedicalInstitute' : IDL.Null,
-    'generalCorrespondence' : IDL.Null,
-    'socialMediaEvents' : IDL.Null,
-    'nursingInstitute' : IDL.Null,
-  });
-  const GenericOffice = IDL.Variant({
-    'office1' : IDL.Null,
-    'office2' : IDL.Null,
-  });
-  const NursingOffice = IDL.Variant({
-    'mahatmaPhuleInstitutePbbsc' : IDL.Null,
-    'mahatmaPhuleNursingSchoolAkola' : IDL.Null,
-    'kalaskarNursingInstituteNandura' : IDL.Null,
-    'mahatmaPhuleInstituteAnm' : IDL.Null,
-    'mahatmaPhuleInstituteBsc' : IDL.Null,
-    'mahatmaPhuleInstituteGnm' : IDL.Null,
-    'mahatmaPhuleNursingSchoolBabhulgaonAnm' : IDL.Null,
-    'mahatmaPhuleNursingSchoolBabhulgaonGnm' : IDL.Null,
-  });
-  const Office = IDL.Variant({
-    'pharmacyCollege' : GenericOffice,
-    'ayurvedCollege' : GenericOffice,
-    'ayurvedHospital' : GenericOffice,
-    'paramedicalInstitute' : GenericOffice,
-    'generalCorrespondence' : GenericOffice,
-    'socialMediaEvents' : GenericOffice,
-    'nursingInstitute' : NursingOffice,
-  });
   const Direction = IDL.Variant({
     'importantDocuments' : IDL.Null,
     'inward' : IDL.Null,
     'outward' : IDL.Null,
   });
   const Time = IDL.Int;
-  const Document = IDL.Record({
+  const UserRole__1 = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
+  });
+  const UserRole = IDL.Variant({ 'supervisor' : IDL.Null, 'admin' : IDL.Null });
+  const PublicDocument = IDL.Record({
     'id' : IDL.Text,
+    'categoryId' : IDL.Text,
     'documentDate' : Time,
     'title' : IDL.Text,
     'direction' : Direction,
     'referenceNumber' : IDL.Opt(IDL.Text),
     'mimeType' : IDL.Text,
-    'office' : Office,
     'fileSize' : IDL.Nat,
     'uploadTimestamp' : Time,
     'filename' : IDL.Text,
     'blobId' : IDL.Text,
-    'category' : Category,
     'uploader' : IDL.Principal,
+    'officeId' : IDL.Text,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const Office = IDL.Record({ 'id' : IDL.Text, 'name' : IDL.Text });
+  const Category = IDL.Record({
+    'id' : IDL.Text,
+    'name' : IDL.Text,
+    'offices' : IDL.Vec(Office),
+  });
+  const DashboardMetrics = IDL.Record({
+    'outwardDocuments' : IDL.Nat,
+    'inwardDocuments' : IDL.Nat,
+    'importantDocuments' : IDL.Nat,
+    'uniqueUserCount' : IDL.Nat,
+    'totalDocuments' : IDL.Nat,
+  });
+  const UserAccount = IDL.Record({
+    'username' : IDL.Text,
+    'role' : UserRole,
+    'passwordHash' : IDL.Text,
   });
   
   return IDL.Service({
@@ -230,12 +246,13 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
-    'addCategory' : IDL.Func([Category], [], []),
+    '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'addCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'addDocument' : IDL.Func(
         [
           IDL.Text,
-          Category,
-          Office,
+          IDL.Text,
+          IDL.Text,
           Direction,
           IDL.Text,
           IDL.Opt(IDL.Text),
@@ -248,21 +265,47 @@ export const idlFactory = ({ IDL }) => {
         [],
         [],
       ),
+    'addOfficeToCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
+    'authenticate' : IDL.Func([IDL.Text, IDL.Text], [IDL.Bool], ['query']),
+    'createUser' : IDL.Func([IDL.Text, IDL.Text, UserRole], [], []),
+    'deleteUser' : IDL.Func([IDL.Text], [], []),
     'filterDocuments' : IDL.Func(
         [
-          IDL.Opt(Category),
-          IDL.Opt(Office),
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
           IDL.Opt(Direction),
           IDL.Opt(Time),
           IDL.Opt(Time),
           IDL.Opt(IDL.Bool),
         ],
-        [IDL.Vec(Document)],
+        [IDL.Vec(PublicDocument)],
         [],
       ),
+    'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
     'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
-    'getDocument' : IDL.Func([IDL.Text], [Document], []),
+    'getDashboardMetrics' : IDL.Func([], [DashboardMetrics], ['query']),
+    'getDocument' : IDL.Func([IDL.Text], [PublicDocument], ['query']),
+    'getUser' : IDL.Func([IDL.Text], [IDL.Opt(UserAccount)], ['query']),
+    'getUserProfile' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(UserProfile)],
+        ['query'],
+      ),
+    'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'listUsers' : IDL.Func([], [IDL.Vec(UserAccount)], ['query']),
+    'removeCategory' : IDL.Func([IDL.Text], [], []),
     'removeDocument' : IDL.Func([IDL.Text], [], []),
+    'removeOfficeFromCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'updateCategory' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'updateOfficeInCategory' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
+    'updateUser' : IDL.Func(
+        [IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(UserRole)],
+        [],
+        [],
+      ),
   });
 };
 

@@ -1,55 +1,68 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T00:05:25.349Z",
-  "summary": "Most frontend requirements appear implemented: a new Dashboard route/page fetches categories via a backend call and navigates to a pre-filtered Documents view; Documents list supports multi-select and an export action limited to selected items from the currently filtered results; main navigation includes Dashboard/Documents/Upload. The main gap is that the backend API for dynamic category listing (getCategories) is not evidenced in the diff summary for backend/main.mo.",
+  "generatedAt": "2026-02-17T01:23:11.390Z",
+  "summary": "Diff adds role-gated routing and unauthorized UI, introduces backend user account types and admin-only CRUD endpoints, reduces Dashboard “Documents by Direction” card sizing, and adds global CSS/popover classes for solid popover backgrounds. However, there are notable mismatches with requested roles (supervisor vs user) and Dashboard sizing constraints, and backend user persistence/migration evidence is unclear.",
   "missing_requirements": [
     {
-      "id": "REQ-4",
-      "requirement": "Backend exposes a method that returns the list of categories available in the system (authoritative category set) for the Dashboard.",
-      "reason": "Frontend calls actor.getCategories(), but the backend diff excerpt does not show any public method like getCategories being implemented/exported; only a var persistentCategories is shown. With truncated backend file, the method cannot be confirmed from provided evidence.",
+      "id": "REQ-1",
+      "requirement": "Only the three “Documents by Direction” cards should be ~30% smaller; no other dashboard sections should change size.",
+      "reason": "Dashboard metrics section appears to have been altered (comment indicates 30% smaller), which violates the constraint that no other dashboard sections change size as part of REQ-1.",
       "evidence": [
-        "frontend/src/features/categories/useCategories.ts",
-        "backend/main.mo (truncated)"
+        "frontend/src/pages/DashboardPage.tsx (comment: \"Metrics Section - 30% smaller with colored backgrounds\")"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Backend persists user accounts (username, password hash, role) and provides admin-only APIs to create/update/list/delete users, plus an API to retrieve the current caller’s role.",
+      "reason": "User accounts are stored in an in-memory Map with no visible stable/persistence mechanism in the provided snippet, and the required role-retrieval API is not shown in backend diff excerpt (though frontend calls it). Also, migration file is a no-op and does not demonstrate schema migration if persistence was added/changed.",
+      "evidence": [
+        "backend/main.mo (\"let userAccounts = Map.empty<Text, UserAccount>();\")",
+        "frontend/src/features/auth/useCallerRole.ts (calls \"actor.getCallerUserRole()\")",
+        "backend/migration.mo (State is empty; run returns state unchanged)"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Admin/supervisor roles must control access to Settings and Dashboard; Dashboard accessible only to authenticated users with a recognized role (admin or supervisor).",
+      "reason": "Frontend role logic uses a 'user' role rather than 'supervisor'. This mismatches the BuildRequest (admin|supervisor) and may block supervisors or incorrectly gate access.",
+      "evidence": [
+        "backend/main.mo (UserRole has #admin and #supervisor)",
+        "frontend/src/features/auth/useCallerRole.ts (\"isUser: query.data === 'admin' || query.data === 'user'\")",
+        "frontend/src/components/auth/RequireRole.tsx (checks requireUser via isUser; checks role === 'guest')"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Theme toggle (light/dark) controls and related theme provider integration",
-      "reason": "Not requested in the BuildRequest requirements/non-goals; appears to be additional functionality/UI work.",
+      "description": "Dashboard top metrics cards were changed in size and given new colored backgrounds.",
+      "reason": "BuildRequest explicitly restricted size changes to only the 'Documents by Direction' cards and noted no new color theming changes beyond popover background fixes.",
       "evidence": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/layout/AppShell.tsx"
+        "frontend/src/pages/DashboardPage.tsx (comment: \"Metrics Section - 30% smaller with colored backgrounds\"; cards use bg-green-50 / bg-orange-50 etc.)"
       ]
     },
     {
-      "description": "Login screen image update to a versioned asset and object-contain rendering behavior",
-      "reason": "Not requested by any REQ; appears as unrelated UI change per file summaries.",
+      "description": "Updated AuthGate login image to a new versioned asset (/assets/generated/login-logo-v3.dim_400x600.jpeg) and adjusted its display.",
+      "reason": "Not requested by any requirement; authentication-provider changes were a non-goal and UI login image change is outside scope.",
       "evidence": [
-        "frontend-file-summaries.txt (frontend/src/components/auth/AuthGate.tsx summary)"
-      ]
-    },
-    {
-      "description": "Global styling overhaul with new OKLCH color system tokens and Tailwind theme extensions",
-      "reason": "Not requested by the BuildRequest; styling/token changes are unrelated to dashboard/categories/export requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/index.css summary)",
-        "frontend-file-summaries.txt (frontend/tailwind.config.js summary)"
+        "frontend-file-summaries.txt (\"AuthGate... new versioned login image (/assets/generated/login-logo-v3.dim_400x600.jpeg)\")"
       ]
     }
   ],
-  "confidence": 0.64,
+  "confidence": 0.72,
   "changed_files": [
     "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
-    "frontend/src/components/documents/DocumentList.tsx",
+    "frontend/src/components/auth/RequireRole.tsx",
+    "frontend/src/components/auth/UnauthorizedScreen.tsx",
+    "frontend/src/components/documents/DocumentActions.tsx",
     "frontend/src/components/layout/AppShell.tsx",
-    "frontend/src/features/categories/useCategories.ts",
-    "frontend/src/lib/exportDocuments.ts",
+    "frontend/src/features/auth/useCallerRole.ts",
+    "frontend/src/index.css",
     "frontend/src/pages/DashboardPage.tsx",
-    "frontend/src/pages/DocumentListPage.tsx",
+    "frontend/src/pages/SettingsPage.tsx",
     "project_state.json"
   ]
 }

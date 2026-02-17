@@ -1,9 +1,8 @@
-import { Document } from '@/backend';
-import { getCategoryLabel } from './categoryHelpers';
-import { getOfficeLabel } from './officeHelpers';
+import { PublicDocument } from '@/backend';
+import { useCategories } from '@/features/categories/useCategories';
 import { format } from 'date-fns';
 
-export function exportDocumentsToCSV(documents: Document[]) {
+export function exportDocumentsToCSV(documents: PublicDocument[]) {
   // Define CSV headers
   const headers = [
     'Title',
@@ -28,8 +27,8 @@ export function exportDocumentsToCSV(documents: Document[]) {
 
     return [
       `"${doc.title.replace(/"/g, '""')}"`,
-      `"${getCategoryLabel(doc.category)}"`,
-      `"${getOfficeLabel(doc.office)}"`,
+      `"${doc.categoryId}"`,
+      `"${doc.officeId}"`,
       direction,
       format(new Date(Number(doc.documentDate) / 1000000), 'yyyy-MM-dd'),
       doc.referenceNumber ? `"${doc.referenceNumber.replace(/"/g, '""')}"` : '',

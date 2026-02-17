@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { useCallerRole } from '@/features/auth/useCallerRole';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -9,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, FileText, Upload, User, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, FileText, Upload, User, LogOut, Moon, Sun, Settings } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { SiX } from 'react-icons/si';
 
@@ -21,6 +22,7 @@ export function AppShell({ children }: AppShellProps) {
   const navigate = useNavigate();
   const { identity, clear } = useInternetIdentity();
   const { theme, setTheme } = useTheme();
+  const { isAdmin } = useCallerRole();
 
   const handleLogout = () => {
     clear();
@@ -73,6 +75,17 @@ export function AppShell({ children }: AppShellProps) {
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
               </Button>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate({ to: '/settings' })}
+                  className="text-white hover:bg-white/10 hover:text-white"
+                >
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
+                </Button>
+              )}
             </nav>
           </div>
 
@@ -94,7 +107,7 @@ export function AppShell({ children }: AppShellProps) {
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-white dark:bg-white text-foreground">
+              <DropdownMenuContent align="end" className="w-56 bg-popover dark:bg-popover">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">Account</p>

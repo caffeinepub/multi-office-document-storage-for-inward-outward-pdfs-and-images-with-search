@@ -1,14 +1,15 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { useDocument } from '@/features/documents/useDocument';
+import { useCategories } from '@/features/categories/useCategories';
 import { DocumentActions } from '@/components/documents/DocumentActions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, FileText, Calendar, Building2, ArrowDownToLine, ArrowUpFromLine, FileCheck, User, Clock, Hash } from 'lucide-react';
+import { Loader2, ArrowLeft, FileText, Calendar, Building2, ArrowDownToLine, ArrowUpFromLine, FileCheck, User, Clock, Hash, FolderOpen } from 'lucide-react';
 import { format } from 'date-fns';
 import { Direction } from '@/backend';
-import { getOfficeLabel } from '@/lib/officeHelpers';
+import { getOfficeName } from '@/lib/officeHelpers';
 
 const DIRECTION_LABELS: Record<Direction, string> = {
   [Direction.inward]: 'Inward',
@@ -20,6 +21,7 @@ export function DocumentDetailPage() {
   const { documentId } = useParams({ from: '/document/$documentId' });
   const navigate = useNavigate();
   const { document, isLoading, error } = useDocument(documentId);
+  const { data: categories } = useCategories();
 
   if (isLoading) {
     return (
@@ -38,7 +40,7 @@ export function DocumentDetailPage() {
         <div className="text-center space-y-4">
           <p className="text-sm text-destructive">Error loading document</p>
           {error && <p className="text-xs text-muted-foreground">{error.message}</p>}
-          <Button onClick={() => navigate({ to: '/' })} variant="outline">
+          <Button onClick={() => navigate({ to: '/documents' })} variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Documents
           </Button>
@@ -49,6 +51,11 @@ export function DocumentDetailPage() {
 
   const isPdf = document.mimeType === 'application/pdf';
   const isImage = document.mimeType.startsWith('image/');
+
+  // Get category and office names
+  const category = categories?.find((c) => c.id === document.categoryId);
+  const categoryName = category?.name || document.categoryId;
+  const officeName = getOfficeName(category || null, document.officeId);
 
   const getDirectionIcon = (direction: Direction) => {
     switch (direction) {
@@ -75,7 +82,7 @@ export function DocumentDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button onClick={() => navigate({ to: '/' })} variant="ghost" size="sm">
+        <Button onClick={() => navigate({ to: '/documents' })} variant="ghost" size="sm">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Documents
         </Button>
@@ -137,10 +144,20 @@ export function DocumentDetailPage() {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
+                  <FolderOpen className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                  <div className="flex-1 space-y-1">
+                    <p className="text-xs text-muted-foreground">Category</p>
+                    <p className="text-sm font-medium">{categoryName}</p>
+                  </div>
+                </div>
+
+                <Separator />
+
+                <div className="flex items-start gap-3">
                   <Building2 className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
                     <p className="text-xs text-muted-foreground">Office</p>
-                    <p className="text-sm font-medium">{getOfficeLabel(document.office)}</p>
+                    <p className="text-sm font-medium">{officeName}</p>
                   </div>
                 </div>
 

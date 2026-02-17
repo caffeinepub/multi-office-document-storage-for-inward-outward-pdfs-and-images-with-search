@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Document } from '@/backend';
+import { PublicDocument } from '@/backend';
 import { useDeleteDocument } from '@/features/documents/useDeleteDocument';
 import { Button } from '@/components/ui/button';
 import {
@@ -25,7 +25,7 @@ import { Download, Trash2, MoreVertical, ExternalLink, Loader2 } from 'lucide-re
 import { toast } from 'sonner';
 
 interface DocumentActionsProps {
-  document: Document;
+  document: PublicDocument;
 }
 
 export function DocumentActions({ document }: DocumentActionsProps) {
@@ -71,7 +71,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
     try {
       await deleteDocument(document.id);
       toast.success('Document deleted successfully');
-      navigate({ to: '/' });
+      navigate({ to: '/documents' });
     } catch (error) {
       toast.error('Failed to delete document');
     }
@@ -95,7 +95,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="bg-popover dark:bg-popover">
             <DropdownMenuItem onClick={handleView}>
               <ExternalLink className="mr-2 h-4 w-4" />
               Open in new tab
@@ -114,7 +114,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-popover dark:bg-popover">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Document</AlertDialogTitle>
             <AlertDialogDescription>

@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useActor } from '@/hooks/useActor';
-import { Document, Office, Direction, Category } from '@/backend';
+import { PublicDocument, Direction } from '@/backend';
 
 interface UseDocumentsOptions {
-  category: Category | null;
-  office: Office | null;
+  categoryId: string | null;
+  officeId: string | null;
   direction: Direction | null;
   startDate: Date | null;
   endDate: Date | null;
@@ -15,8 +15,8 @@ interface UseDocumentsOptions {
 const PAGE_SIZE = 20;
 
 export function useDocuments({
-  category,
-  office,
+  categoryId,
+  officeId,
   direction,
   startDate,
   endDate,
@@ -25,16 +25,15 @@ export function useDocuments({
   const { actor, isFetching: isActorFetching } = useActor();
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
-  const query = useQuery<Document[]>({
-    queryKey: ['documents', category, office, direction, startDate, endDate],
+  const query = useQuery<PublicDocument[]>({
+    queryKey: ['documents', categoryId, officeId, direction, startDate, endDate],
     queryFn: async () => {
       if (!actor) return [];
 
       const startTime = startDate ? BigInt(startDate.getTime() * 1000000) : null;
       const endTime = endDate ? BigInt(endDate.getTime() * 1000000) : null;
 
-      // Pass null for _dummy parameter (no-op param for canister restart)
-      return actor.filterDocuments(category, office, direction, startTime, endTime, null);
+      return actor.filterDocuments(categoryId, officeId, direction, startTime, endTime, null);
     },
     enabled: !!actor && !isActorFetching,
   });
