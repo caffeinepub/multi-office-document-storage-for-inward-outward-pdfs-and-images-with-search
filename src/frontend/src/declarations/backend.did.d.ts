@@ -80,6 +80,7 @@ export interface _SERVICE {
     _CaffeineStorageRefillResult
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
+  'addCategory' : ActorMethod<[Category], undefined>,
   'addDocument' : ActorMethod<
     [
       string,
@@ -103,9 +104,11 @@ export interface _SERVICE {
       [] | [Direction],
       [] | [Time],
       [] | [Time],
+      [] | [boolean],
     ],
     Array<Document>
   >,
+  'getCategories' : ActorMethod<[], Array<Category>>,
   'getDocument' : ActorMethod<[string], Document>,
   'removeDocument' : ActorMethod<[string], undefined>,
 }

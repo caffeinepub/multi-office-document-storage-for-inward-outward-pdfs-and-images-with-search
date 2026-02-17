@@ -1,48 +1,99 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-16T04:09:53.815Z",
+  "generatedAt": "2026-02-17T00:05:25.352Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 5,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
+        "summary": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
-          "frontend/src/components/auth/AuthGate.tsx"
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/features/categories/useCategories.ts"
         ],
         "matchedFiles": [
-          "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
-          "frontend/src/components/auth/AuthGate.tsx"
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/features/categories/useCategories.ts"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
+        "summary": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/auth/AuthGate.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/pages/DocumentListPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/auth/AuthGate.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/pages/DashboardPage.tsx",
+          "frontend/src/pages/DocumentListPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/documents/DocumentList.tsx",
+          "frontend/src/pages/DocumentListPage.tsx",
+          "frontend/src/lib/exportDocuments.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/documents/DocumentList.tsx",
+          "frontend/src/pages/DocumentListPage.tsx",
+          "frontend/src/lib/exportDocuments.ts"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Add backend APIs needed to support dynamic category listing for the Dashboard (and any other UI that needs a category list) using the backend’s authoritative category set.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/layout/AppShell.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/layout/AppShell.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
-    "frontend/src/components/auth/AuthGate.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/documents/DocumentList.tsx",
+    "frontend/src/components/layout/AppShell.tsx",
+    "frontend/src/config.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/features/categories/useCategories.ts",
+    "frontend/src/lib/exportDocuments.ts",
+    "frontend/src/pages/DashboardPage.tsx",
+    "frontend/src/pages/DocumentListPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the login screen image with the user-uploaded photo (as-is), ensure it isn’t cropped, and bust browser caching by using a new versioned asset filename.
+**Goal:** Add a Dashboard with backend-driven category buttons, enable category-based navigation to a filtered Documents list, and support multi-select export of only selected filtered documents.
 
 **Planned changes:**
-- Add the uploaded image `WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg` into `frontend/public/assets/generated/` under a new versioned filename, and stop referencing `/assets/generated/login-logo-v2.dim_512x512.jpeg`.
-- Update `frontend/src/components/auth/AuthGate.tsx` to use the new versioned asset path for the unauthenticated login screen image.
-- Adjust the login image CSS in `AuthGate` so the image is displayed without cropping (use contain-style rendering) while staying within the existing `128x128` area.
+- Add a new Dashboard route/page that fetches available categories from the backend at runtime and renders them as large clickable buttons (English UI text).
+- Add backend API(s) to return the authoritative list of categories from stored data, without breaking existing upload or document filtering behavior.
+- Update navigation/routing to include access to the Dashboard while preserving existing access to Documents list, document detail, and Upload.
+- When a category is clicked on the Dashboard, navigate to the Documents list with that category filter pre-applied and compatible with existing office filtering behavior.
+- Update the Documents list to support multi-select (e.g., row checkboxes) and an Export action that downloads an Excel-compatible file containing only the user-selected documents from the currently filtered results, with an English message when nothing is selected.
 
-**User-visible outcome:** After a hard refresh, the login screen shows the newly uploaded photo and displays the full image without cropping, contained within the existing login card image area.
+**User-visible outcome:** Users can open a Dashboard to pick a category, see only documents for that category in the Documents list, select multiple documents from the filtered list, and export only those selected documents to an Excel-compatible file.

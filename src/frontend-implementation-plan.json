@@ -1,41 +1,100 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update login screen image asset (versioned) and render without cropping",
+  "title": "Dashboard categories from backend + filtered multi-select Excel export",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Add the uploaded login photo as a new versioned static asset and update AuthGate to reference it to bust cache.",
+      "summary": "Create a Dashboard page that fetches categories at runtime from the backend and renders them as large, clickable buttons (English UI).",
       "acceptanceCriteria": [
-        "A new static image file exists in frontend/public/assets/generated with a new, versioned filename (different from login-logo-v2.dim_512x512.jpeg) and contains the pixels from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg.",
-        "frontend/src/components/auth/AuthGate.tsx uses the new versioned asset path in the <img src=...> for the unauthenticated login screen.",
-        "After a hard refresh in the browser, the login screen displays the newly uploaded image (not the previously cached one)."
+        "A new route/page exists for a dashboard that lists all available categories as large clickable buttons.",
+        "The list of categories is fetched from the backend at runtime (no hardcoded category options list used for the dashboard).",
+        "User-facing text on the dashboard is in English."
       ],
       "file_operations": [
         {
-          "path": "frontend/public/assets/generated/login-logo-v3.dim_400x600.jpeg",
+          "path": "frontend/src/pages/DashboardPage.tsx",
           "operation": "create",
-          "description": "Add the uploaded image (pixels exactly from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg) as a new, versioned static asset file to bust browser cache."
+          "description": "Implement the Dashboard page UI that loads categories via the existing backend actor capability (getCategories) at runtime and displays them as large buttons/cards; use shadcn-ui components for consistent styling. Verify the component's usage instructions before implementing."
         },
         {
-          "path": "frontend/src/components/auth/AuthGate.tsx",
-          "operation": "modify",
-          "description": "Update the unauthenticated login screen <img> to use the new asset path \"/assets/generated/login-logo-v3.dim_400x600.jpeg\" instead of \"/assets/generated/login-logo-v2.dim_512x512.jpeg\" so the new image loads after hard refresh."
+          "path": "frontend/src/features/categories/useCategories.ts",
+          "operation": "create",
+          "description": "Add a React Query hook that calls the backend actor to fetch the authoritative categories list for the dashboard and other category-driven UIs."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Ensure the AuthGate login image is displayed as-is (no crop) while staying contained within the existing 128x128 area.",
+      "summary": "Enable category-button navigation from Dashboard to Documents list with the category filter pre-applied and compatible with office filter auto-clearing behavior.",
       "acceptanceCriteria": [
-        "The AuthGate login image is displayed without cropping any part of the image (e.g., uses object-contain or equivalent styling rather than object-cover).",
-        "The image remains visually contained within the existing 128x128 (h-32 w-32) area on the login card, without overflowing the layout."
+        "Clicking a category on the dashboard opens the documents list view with that category already selected.",
+        "The documents table shows only documents that belong to the selected category until the user changes/clears filters.",
+        "Existing office filtering behavior remains compatible with the selected category (invalid office selections are cleared as today)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/auth/AuthGate.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Change the login image Tailwind/CSS classes to avoid cropping (replace object-cover/object-top behavior with object-contain and appropriate positioning) while keeping the existing h-32 w-32 sizing and preventing overflow."
+          "description": "Update routing to support passing an optional category selection into the Documents list via route search params/state, and add a dashboard route so navigation can target it."
+        },
+        {
+          "path": "frontend/src/pages/DashboardPage.tsx",
+          "operation": "modify",
+          "description": "Wire category button clicks to navigate to the Documents list route with the selected category pre-applied (e.g., via router search params). Use shadcn-ui Button styling for large clickable category actions. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/DocumentListPage.tsx",
+          "operation": "modify",
+          "description": "Initialize and keep the category filter in sync with the router-provided preselected category when arriving from the Dashboard, without breaking existing filter interactions."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add multi-select to the filtered Documents table and export only the user-selected items from the currently filtered results as an Excel-compatible download.",
+      "acceptanceCriteria": [
+        "The documents table supports multi-select of documents currently shown under the active filters (including category).",
+        "An Export control is available on the documents list page.",
+        "Export generates an Excel-compatible file for download containing only the selected documents from the filtered results (not all documents).",
+        "If no documents are selected, the UI clearly indicates that selection is required before export (English message)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/documents/DocumentList.tsx",
+          "operation": "modify",
+          "description": "Add row checkboxes (and an optional select-all for currently displayed rows) to support multi-select of documents shown in the current filtered view; ensure row click-to-navigate remains usable (e.g., checkbox click does not navigate). Use shadcn-ui checkbox/table patterns where applicable. Verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/pages/DocumentListPage.tsx",
+          "operation": "modify",
+          "description": "Add selection state management, an Export action control, and an English validation message when exporting with zero selected items; ensure selection is cleared/reset appropriately when filters change so export cannot include items outside the current filtered results."
+        },
+        {
+          "path": "frontend/src/lib/exportDocuments.ts",
+          "operation": "create",
+          "description": "Implement a small client-side export utility that generates an Excel-compatible file (e.g., CSV with appropriate headers) from selected Document rows and triggers browser download, using only the selected subset passed in."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Expose the Dashboard from main navigation while preserving existing access to Documents list, document detail, and Upload routes.",
+      "acceptanceCriteria": [
+        "The app has a dedicated route for the Dashboard page.",
+        "The header navigation includes a way to reach the Dashboard and the Documents list (labels in English).",
+        "Existing routes for document detail and upload continue to work."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register the new Dashboard route in the router while keeping existing routes for documents list, upload, and document detail working as-is."
+        },
+        {
+          "path": "frontend/src/components/layout/AppShell.tsx",
+          "operation": "modify",
+          "description": "Add a Dashboard navigation item in the header (English label), alongside existing Documents and Upload navigation, using existing shadcn-ui Button styling. Verify the component's usage instructions before implementing."
         }
       ]
     }

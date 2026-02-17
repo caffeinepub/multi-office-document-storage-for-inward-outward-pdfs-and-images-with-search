@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { FileText, Upload, User, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, FileText, Upload, User, LogOut, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { SiX } from 'react-icons/si';
 
@@ -50,6 +50,15 @@ export function AppShell({ children }: AppShellProps) {
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate({ to: '/' })}
+                className="text-white hover:bg-white/10 hover:text-white"
+              >
+                <LayoutDashboard className="mr-2 h-4 w-4" />
+                Dashboard
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate({ to: '/documents' })}
                 className="text-white hover:bg-white/10 hover:text-white"
               >
                 <FileText className="mr-2 h-4 w-4" />

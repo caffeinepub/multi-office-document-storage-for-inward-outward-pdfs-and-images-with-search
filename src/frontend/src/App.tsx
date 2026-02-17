@@ -1,6 +1,7 @@
 import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
 import { AuthGate } from './components/auth/AuthGate';
 import { AppShell } from './components/layout/AppShell';
+import { DashboardPage } from './pages/DashboardPage';
 import { DocumentListPage } from './pages/DocumentListPage';
 import { UploadDocumentPage } from './pages/UploadDocumentPage';
 import { DocumentDetailPage } from './pages/DocumentDetailPage';
@@ -25,10 +26,17 @@ const rootRoute = createRootRoute({
   ),
 });
 
-// Document list route (default)
+// Dashboard route (default)
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
+  component: DashboardPage,
+});
+
+// Document list route
+const documentsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/documents',
   component: DocumentListPage,
 });
 
@@ -47,7 +55,7 @@ const documentRoute = createRoute({
 });
 
 // Create router
-const routeTree = rootRoute.addChildren([indexRoute, uploadRoute, documentRoute]);
+const routeTree = rootRoute.addChildren([indexRoute, documentsRoute, uploadRoute, documentRoute]);
 
 const router = createRouter({ routeTree });
 

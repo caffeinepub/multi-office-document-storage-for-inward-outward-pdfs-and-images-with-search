@@ -33,7 +33,8 @@ export function useDocuments({
       const startTime = startDate ? BigInt(startDate.getTime() * 1000000) : null;
       const endTime = endDate ? BigInt(endDate.getTime() * 1000000) : null;
 
-      return actor.filterDocuments(category, office, direction, startTime, endTime);
+      // Pass null for _dummy parameter (no-op param for canister restart)
+      return actor.filterDocuments(category, office, direction, startTime, endTime, null);
     },
     enabled: !!actor && !isActorFetching,
   });

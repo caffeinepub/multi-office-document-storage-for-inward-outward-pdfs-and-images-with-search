@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-add-the-user-uploaded-image-file-whatsapp-image-2020-10-24-at-11-11-10-pm-4-jpeg-to-the-frontend-static-assets-under-frontend-public-assets-generated-using-a-new-versioned-filename-and-update-the-login-screen-to-use-this-new-asset-instead-of-the-currently-referenced-assets-generated-login-logo-v2-dim-512x512-jpeg",
-      "featureTitle": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
+      "featureId": "feature-add-a-new-dashboard-page-that-shows-large-category-buttons-loaded-dynamically-from-the-backend-not-hardcoded-in-the-frontend",
+      "featureTitle": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
       "files": [
-        "frontend/src/components/auth/AuthGate.tsx"
+        "frontend/src/features/categories/useCategories.ts",
+        "frontend/src/pages/DashboardPage.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -21,10 +22,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-honor-the-user-s-request-to-use-the-uploaded-image-exactly-as-is-no-crop-update-the-login-image-rendering-on-the-authgate-sign-in-screen-so-the-image-is-not-cropped-by-css-i-e-it-must-not-use-object-cover-cropping",
-      "featureTitle": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
+      "featureId": "feature-when-a-user-clicks-a-category-button-on-the-dashboard-navigate-to-the-documents-list-and-show-only-documents-for-that-category-category-filter-pre-applied",
+      "featureTitle": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
       "files": [
-        "frontend/src/components/auth/AuthGate.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/pages/DashboardPage.tsx",
+        "frontend/src/pages/DocumentListPage.tsx"
       ],
       "components": [
         "blob-storage@4.0.0",
@@ -36,6 +39,47 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-documents-list-ui-to-support-selecting-multiple-documents-from-the-currently-filtered-list-e-g-via-row-checkboxes-and-provide-an-export-action-that-exports-only-the-filtered-list-items-the-user-selected",
+      "featureTitle": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
+      "files": [
+        "frontend/src/components/documents/DocumentList.tsx",
+        "frontend/src/lib/exportDocuments.ts",
+        "frontend/src/pages/DocumentListPage.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-adjust-the-application-routing-navigation-so-the-dashboard-is-accessible-from-the-main-navigation-while-preserving-access-to-the-documents-list-and-upload-page",
+      "featureTitle": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/layout/AppShell.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
       ],
       "confidence": "high"
     }

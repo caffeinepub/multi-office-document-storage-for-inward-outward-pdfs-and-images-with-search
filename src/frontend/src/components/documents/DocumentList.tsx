@@ -3,6 +3,7 @@ import { Document, Direction } from '@/backend';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -24,6 +25,9 @@ const DIRECTION_LABELS: Record<Direction, string> = {
 
 interface DocumentListProps {
   documents: Document[];
+  selectedDocuments: Set<string>;
+  onSelectDocument: (documentId: string, selected: boolean) => void;
+  onSelectAll: (selected: boolean) => void;
   onLoadMore?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
@@ -31,11 +35,17 @@ interface DocumentListProps {
 
 export function DocumentList({
   documents,
+  selectedDocuments,
+  onSelectDocument,
+  onSelectAll,
   onLoadMore,
   hasMore,
   isLoadingMore,
 }: DocumentListProps) {
   const navigate = useNavigate();
+
+  const allSelected = documents.length > 0 && documents.every((doc) => selectedDocuments.has(doc.id));
+  const someSelected = documents.some((doc) => selectedDocuments.has(doc.id)) && !allSelected;
 
   const getDirectionIcon = (direction: Direction) => {
     switch (direction) {
@@ -67,6 +77,14 @@ export function DocumentList({
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={allSelected}
+                      onCheckedChange={(checked) => onSelectAll(checked === true)}
+                      aria-label="Select all documents"
+                      className={someSelected ? 'data-[state=checked]:bg-primary/50' : ''}
+                    />
+                  </TableHead>
                   <TableHead>Title</TableHead>
                   <TableHead>Category</TableHead>
                   <TableHead>Office</TableHead>
@@ -84,6 +102,13 @@ export function DocumentList({
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => navigate({ to: '/document/$documentId', params: { documentId: doc.id } })}
                   >
+                    <TableCell onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={selectedDocuments.has(doc.id)}
+                        onCheckedChange={(checked) => onSelectDocument(doc.id, checked === true)}
+                        aria-label={`Select ${doc.title}`}
+                      />
+                    </TableCell>
                     <TableCell className="font-medium">
                       <div className="flex items-center gap-2">
                         <FileText className="h-4 w-4 text-muted-foreground" />

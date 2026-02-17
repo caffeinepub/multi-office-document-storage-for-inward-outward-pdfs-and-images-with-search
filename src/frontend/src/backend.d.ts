@@ -74,8 +74,10 @@ export enum NursingOffice {
     mahatmaPhuleNursingSchoolBabhulgaonGnm = "mahatmaPhuleNursingSchoolBabhulgaonGnm"
 }
 export interface backendInterface {
-    addDocument(id: string, category: Category, office: Office, direction: Direction, title: string, referenceNumber: string | null, documentDate: Time, filename: string, mimeType: string, fileSize: bigint, fileId: string): Promise<void>;
-    filterDocuments(category: Category | null, office: Office | null, direction: Direction | null, startDate: Time | null, endDate: Time | null): Promise<Array<Document>>;
+    addCategory(category: Category): Promise<void>;
+    addDocument(id: string, category: Category, office: Office, direction: Direction, title: string, referenceNumber: string | null, documentDate: Time, filename: string, mimeType: string, fileSize: bigint, blobId: string): Promise<void>;
+    filterDocuments(category: Category | null, office: Office | null, direction: Direction | null, startDate: Time | null, endDate: Time | null, _dummy: boolean | null): Promise<Array<Document>>;
+    getCategories(): Promise<Array<Category>>;
     getDocument(id: string): Promise<Document>;
     removeDocument(id: string): Promise<void>;
 }

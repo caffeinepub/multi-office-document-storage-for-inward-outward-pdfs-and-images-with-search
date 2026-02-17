@@ -100,6 +100,7 @@ export const idlService = IDL.Service({
       [],
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+  'addCategory' : IDL.Func([Category], [], []),
   'addDocument' : IDL.Func(
       [
         IDL.Text,
@@ -124,10 +125,12 @@ export const idlService = IDL.Service({
         IDL.Opt(Direction),
         IDL.Opt(Time),
         IDL.Opt(Time),
+        IDL.Opt(IDL.Bool),
       ],
       [IDL.Vec(Document)],
       [],
     ),
+  'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
   'getDocument' : IDL.Func([IDL.Text], [Document], []),
   'removeDocument' : IDL.Func([IDL.Text], [], []),
 });
@@ -227,6 +230,7 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
+    'addCategory' : IDL.Func([Category], [], []),
     'addDocument' : IDL.Func(
         [
           IDL.Text,
@@ -251,10 +255,12 @@ export const idlFactory = ({ IDL }) => {
           IDL.Opt(Direction),
           IDL.Opt(Time),
           IDL.Opt(Time),
+          IDL.Opt(IDL.Bool),
         ],
         [IDL.Vec(Document)],
         [],
       ),
+    'getCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
     'getDocument' : IDL.Func([IDL.Text], [Document], []),
     'removeDocument' : IDL.Func([IDL.Text], [], []),
   });

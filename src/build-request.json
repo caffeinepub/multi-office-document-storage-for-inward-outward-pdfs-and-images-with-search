@@ -1,64 +1,120 @@
 {
   "kind": "build_request",
-  "title": "Replace login screen image with uploaded photo (as-is) and bust cache",
+  "title": "Dashboard categories from backend + filtered multi-select Excel export",
+  "projectName": "Document Archive",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add the user-uploaded image file \"WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg\" to the frontend static assets under frontend/public/assets/generated using a new versioned filename, and update the login screen to use this new asset instead of the currently referenced \"/assets/generated/login-logo-v2.dim_512x512.jpeg\".",
-      "target": "frontend",
+      "text": "Add a new Dashboard page that shows large category buttons loaded dynamically from the backend (not hardcoded in the frontend).",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-8"
         ],
         "quotes": [
-          "still login image is same can you share with me all images used in app so i could tell which ones to change",
-          "yes",
-          "yes include all",
-          "yes",
-          "as it is"
+          "1 category names from data base."
         ]
       },
       "acceptanceCriteria": [
-        "A new static image file exists in frontend/public/assets/generated with a new, versioned filename (different from login-logo-v2.dim_512x512.jpeg) and contains the pixels from WhatsApp-Image-2020-10-24-at-11.11.10-PM-4.jpeg.",
-        "frontend/src/components/auth/AuthGate.tsx uses the new versioned asset path in the <img src=...> for the unauthenticated login screen.",
-        "After a hard refresh in the browser, the login screen displays the newly uploaded image (not the previously cached one)."
+        "A new route/page exists for a dashboard that lists all available categories as large clickable buttons.",
+        "The list of categories is fetched from the backend at runtime (no hardcoded category options list used for the dashboard).",
+        "User-facing text on the dashboard is in English."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Honor the user's request to use the uploaded image exactly as-is (no crop). Update the login image rendering on the AuthGate sign-in screen so the image is not cropped by CSS (i.e., it must not use object-cover cropping).",
+      "text": "When a user clicks a category button on the Dashboard, navigate to the Documents list and show only documents for that category (category filter pre-applied).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "as it is"
+          "i want to add a dashboard page with large buttons for categories when we click on them documents list for that category only should be seen.",
+          "3 only filtered list"
         ]
       },
       "acceptanceCriteria": [
-        "The AuthGate login image is displayed without cropping any part of the image (e.g., uses object-contain or equivalent styling rather than object-cover).",
-        "The image remains visually contained within the existing 128x128 (h-32 w-32) area on the login card, without overflowing the layout."
+        "Clicking a category on the dashboard opens the documents list view with that category already selected.",
+        "The documents table shows only documents that belong to the selected category until the user changes/clears filters.",
+        "Existing office filtering behavior remains compatible with the selected category (invalid office selections are cleared as today)."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update the Documents list UI to support selecting multiple documents from the currently filtered list (e.g., via row checkboxes) and provide an export action that exports only the filtered list items the user selected.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-8"
+        ],
+        "quotes": [
+          "only filtered list and add multiple selection option to select list for export"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The documents table supports multi-select of documents currently shown under the active filters (including category).",
+        "An Export control is available on the documents list page.",
+        "Export generates an Excel-compatible file for download containing only the selected documents from the filtered results (not all documents).",
+        "If no documents are selected, the UI clearly indicates that selection is required before export (English message)."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Add backend APIs needed to support dynamic category listing for the Dashboard (and any other UI that needs a category list) using the backend’s authoritative category set.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8"
+        ],
+        "quotes": [
+          "1 category names from data base."
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes a method that returns the list of categories available in the system.",
+        "Frontend can call the backend method to render the category buttons on the dashboard.",
+        "No change breaks existing document upload or filterDocuments behavior."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Adjust the application routing/navigation so the Dashboard is accessible from the main navigation, while preserving access to the Documents list and Upload page.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6",
+          "msg-8"
+        ],
+        "quotes": [
+          "i want to add a dashboard page with large buttons for categories",
+          "documents list for that category only should be seen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app has a dedicated route for the Dashboard page.",
+        "The header navigation includes a way to reach the Dashboard and the Documents list (labels in English).",
+        "Existing routes for document detail and upload continue to work."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (read-only UI components).",
-    "Do not edit the immutable hook entry points listed in SYSTEM_CONTEXT (compose around them if needed)."
+    "Backend must remain a single Motoko actor in backend/main.mo; only add migration logic if state schema changes require it.",
+    "Do not edit files under frontend/src/components/ui or any paths listed as immutable in SYSTEM_CONTEXT.",
+    "Use English for any user-facing text.",
+    "Export must be limited to the currently filtered list and user-selected documents (no exporting unfiltered/global data)."
   ],
   "nonGoals": [
-    "Do not change authentication behavior or Internet Identity flow.",
-    "Do not modify backend canister logic or data schema.",
-    "Do not redesign the rest of the app UI beyond what is necessary to display the new login image without cropping."
+    "Implementing third-party authentication providers beyond Internet Identity.",
+    "Adding external databases or non-IC backend services.",
+    "Real-time collaboration or live updates (WebSockets, push notifications).",
+    "Allowing a document to belong to multiple categories (documents remain in exactly one category and one office)."
   ],
   "imageRequirements": {
-    "required": [
-      "Portrait photo of a person in a striped shirt against a light background (login-logo-v3.dim_400x600.jpeg)"
-    ],
-    "edits": [
-      "Replace the login logo asset (login-logo-v2.dim_512x512.jpeg > login-logo-v3.dim_400x600.jpeg)"
-    ]
+    "required": [],
+    "edits": []
   },
   "userProfileUpdate": {
     "goalsToAdd": [],

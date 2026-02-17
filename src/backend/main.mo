@@ -7,7 +7,9 @@ import Array "mo:core/Array";
 import Iter "mo:core/Iter";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
+import List "mo:core/List";
 
+// Old versions of Office and NursingOffice kept for migration logic
 actor {
   include MixinStorage();
 
@@ -69,7 +71,11 @@ actor {
     blobId : Text;
   };
 
+  // Document storage (persistent type)
   let documents = Map.empty<Text, Document>();
+
+  // Persistent list of categories
+  var persistentCategories : List.List<Category> = List.empty<Category>();
 
   // Add a new document (must be authenticated)
   public shared ({ caller }) func addDocument(
@@ -83,7 +89,7 @@ actor {
     filename : Text,
     mimeType : Text,
     fileSize : Nat,
-    fileId : Text,
+    blobId : Text,
   ) : async () {
     ensureAuthenticated(caller);
 
@@ -100,7 +106,7 @@ actor {
       filename;
       mimeType;
       fileSize;
-      blobId = fileId; // Store only the reference to the blob ID
+      blobId;
     };
 
     documents.add(id, document);
@@ -133,6 +139,7 @@ actor {
     direction : ?Direction,
     startDate : ?Time.Time,
     endDate : ?Time.Time,
+    _dummy : ?Bool,
   ) : async [Document] {
     ensureAuthenticated(caller);
 
@@ -176,11 +183,22 @@ actor {
     afterStart and beforeEnd;
   };
 
-  // Helper function to ensure the caller is authenticated
   func ensureAuthenticated(caller : Principal) {
     let anonymous : Principal = Principal.fromText("2vxsx-fae");
     if (caller == anonymous) {
       Runtime.trap("Anonymous calls are not allowed");
     };
+  };
+
+  // Add a new category to the persistent category list
+  public shared ({ caller }) func addCategory(category : Category) : async () {
+    ensureAuthenticated(caller);
+    persistentCategories.add(category);
+  };
+
+  // Get all categories from the persistent list (public query)
+  public query ({ caller }) func getCategories() : async [Category] {
+    ensureAuthenticated(caller);
+    persistentCategories.toArray();
   };
 };
