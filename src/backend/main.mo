@@ -12,10 +12,8 @@ import List "mo:core/List";
 
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-import Migration "migration";
 
 // Roll forward migration
-(with migration = Migration.run)
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
@@ -100,7 +98,6 @@ actor {
   let documents = Map.empty<Text, Document>();
   let userProfiles = Map.empty<Principal, UserProfile>();
 
-  // Persistent list of categories (now fully dynamic)
   var persistentCategories_internal : List.List<Category> = List.empty<Category>();
 
   func persistentCategories() : List.List<Category> {
@@ -215,36 +212,24 @@ actor {
       uniqueUsers.add(doc.uploader);
     };
 
-    let docCount = switch (documents.size()) {
-      case (0) { 1 };
-      case (s) { s };
-    };
-
-    let total = allDocuments.size();
-    let per1000 = 1000 * total / docCount;
-
     var inward = 0;
     var outward = 0;
     var important = 0;
 
-    var processed = 0;
     for (doc in allDocuments.values()) {
-      processed += 1;
-      if (processed % 20 == 0) {
-        switch (doc.direction) {
-          case (#inward) { inward += 20 };
-          case (#outward) { outward += 20 };
-          case (#importantDocuments) { important += 20 };
-        };
+      switch (doc.direction) {
+        case (#inward) { inward += 1 };
+        case (#outward) { outward += 1 };
+        case (#importantDocuments) { important += 1 };
       };
     };
 
     {
       totalDocuments = documents.size();
       uniqueUserCount = uniqueUsers.size();
-      inwardDocuments = (inward * per1000) / 1000;
-      outwardDocuments = (outward * per1000) / 1000;
-      importantDocuments = (important * per1000) / 1000;
+      inwardDocuments = inward;
+      outwardDocuments = outward;
+      importantDocuments = important;
     };
   };
 

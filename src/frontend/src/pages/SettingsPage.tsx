@@ -161,13 +161,15 @@ export function SettingsPage() {
           <p className="text-muted-foreground mt-2">Manage categories and offices</p>
         </div>
         <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openAddCategoryDialog}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Category
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="bg-popover dark:bg-popover">
+          <div className="rounded-lg p-3" style={{ backgroundColor: '#0052cc' }}>
+            <DialogTrigger asChild>
+              <Button onClick={openAddCategoryDialog} className="bg-white text-[#0052cc] hover:bg-gray-100">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Category
+              </Button>
+            </DialogTrigger>
+          </div>
+          <DialogContent className="bg-white dark:bg-gray-900">
             <DialogHeader>
               <DialogTitle>{editingCategory ? 'Edit Category' : 'Add Category'}</DialogTitle>
               <DialogDescription>
@@ -234,7 +236,7 @@ export function SettingsPage() {
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent className="bg-popover dark:bg-popover">
+                    <AlertDialogContent className="bg-white dark:bg-gray-900">
                       <AlertDialogHeader>
                         <AlertDialogTitle>Delete Category</AlertDialogTitle>
                         <AlertDialogDescription>
@@ -269,7 +271,7 @@ export function SettingsPage() {
                         Add Office
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="bg-popover dark:bg-popover">
+                    <DialogContent className="bg-white dark:bg-gray-900">
                       <DialogHeader>
                         <DialogTitle>{editingOffice ? 'Edit Office' : 'Add Office'}</DialogTitle>
                         <DialogDescription>
@@ -344,7 +346,7 @@ export function SettingsPage() {
                                 <Trash2 className="h-3 w-3 text-destructive" />
                               </Button>
                             </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-popover dark:bg-popover">
+                            <AlertDialogContent className="bg-white dark:bg-gray-900">
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Delete Office</AlertDialogTitle>
                                 <AlertDialogDescription>

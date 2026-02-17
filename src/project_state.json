@@ -1,37 +1,44 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "UI/UX updates and a dashboard data bugfix: resize category buttons, standardize button colors, fix documents-by-direction count from backend, and improve settings form styling.",
   "architectural_notes": [
-    "Store users in backend with username, hashed password, and role (admin/supervisor).",
-    "Enforce role-based access control for dashboard and settings."
+    "Dashboard 'Documents by direction' count should be sourced from an existing backend documents field (not computed client-side)."
   ],
   "known_issues": [
-    "Some error popups are currently transparent; should be solid white background for popups/dropdowns."
+    "Dashboard 'Documents by direction' count currently shows 0 (not responding)."
   ],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-reduce-the-size-of-the-three-documents-by-direction-count-boxes-on-the-dashboard-page-inward-outward-important-by-approximately-30-while-keeping-their-current-content-and-structure",
-      "title": "Reduce the size of the three \"Documents by Direction\" count boxes on the Dashboard page (Inward/Outward/Important) by approximately 30% while keeping their current content and structure.",
+      "id": "feature-on-the-dashboard-page-reduce-the-visual-size-of-the-browse-by-category-category-cards-buttons-by-50-padding-icon-size-and-typography-while-keeping-the-same-number-of-categories-and-the-same-click-navigation-behavior",
+      "title": "On the Dashboard page, reduce the visual size of the “Browse by Category” category cards/buttons by ~50% (padding, icon size, and typography) while keeping the same number of categories and the same click/navigation behavior.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-enforce-role-based-access-control-so-that-admin-supervisor-roles-actually-control-access-to-the-settings-page-and-the-dashboard",
-      "title": "Enforce role-based access control so that admin/supervisor roles actually control access to the Settings page and the Dashboard.",
+      "id": "feature-on-the-dashboard-page-update-the-category-action-button-styling-so-the-category-buttons-use-a-light-blue-color-as-the-primary-visual-accent-consistent-across-light-dark-modes",
+      "title": "On the Dashboard page, update the category action button styling so the category buttons use a light blue color as the primary visual accent (consistent across light/dark modes).",
       "reqIds": [
-        "REQ-3"
+        "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-all-popups-dialogs-and-dropdown-menus-use-a-solid-non-transparent-white-background-in-light-mode-and-a-solid-non-transparent-background-in-dark-mode-across-the-app",
-      "title": "Ensure all popups, dialogs, and dropdown menus use a solid (non-transparent) white background in light mode, and a solid non-transparent background in dark mode, across the app.",
+      "id": "feature-update-the-upload-page-primary-action-button-styling-so-the-upload-button-uses-color-0052cc-including-hover-active-states-and-remains-readable-in-both-light-and-dark-modes",
+      "title": "Update the Upload page primary action button styling so the upload button uses color #0052cc (including hover/active states) and remains readable in both light and dark modes.",
       "reqIds": [
         "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-in-settings-style-the-add-category-button-so-it-appears-inside-a-visually-distinct-box-using-color-0052cc-and-ensure-the-add-category-add-office-forms-have-a-solid-non-transparent-background-when-opened-solid-white-in-light-mode",
+      "title": "In Settings, style the “Add Category” button so it appears inside a visually distinct box using color #0052cc, and ensure the Add Category / Add Office forms have a solid (non-transparent) background when opened (solid white in light mode).",
+      "reqIds": [
+        "REQ-5"
       ],
       "version": 1
     }
@@ -39,38 +46,44 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Reduce the 'Documents by Direction' dashboard count boxes size by 30%",
+      "summary": "Dashboard: reduce category button size by 50% and use light blue button color",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Add backend user management with username + hashed password + role (admin, supervisor)",
+      "summary": "Dashboard: fix 'Documents by direction' count showing 0 by pulling correct count from backend documents field",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Implement role-based access control to restrict/enforce access to the dashboard and settings based on admin/supervisor roles",
+      "summary": "Upload screen: set upload/download button color to #0052cc",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-4",
-      "summary": "Update all popups and dropdowns to use a solid white (non-transparent) background",
+      "summary": "Settings: style 'Add category' button inside a box colored #0052cc",
       "reqIds": [],
       "status": "pending"
     },
     {
-      "id": "AR-6",
-      "summary": "Implement backend-stored user accounts that include username, hashed password, and role (admin or supervisor), and provide admin-only APIs to create, update (role/password), list, and delete users.",
+      "id": "AR-5",
+      "summary": "Settings: when Add Category/Add Office forms open, use solid (non-transparent) white background for the form container",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Fix “Documents by Direction” counts on the Dashboard so Inward/Outward/Important reflect the actual number of stored documents by reading the direction field from the backend documents data (not returning 0 when documents exist).",
       "reqIds": [
-        "REQ-2"
+        "REQ-3"
       ],
       "status": "pending"
     }
   ],
-  "projectName": "Doc Archive",
+  "projectName": "Document Archive",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

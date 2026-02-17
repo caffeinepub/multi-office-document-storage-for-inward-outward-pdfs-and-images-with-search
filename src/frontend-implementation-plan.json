@@ -1,88 +1,68 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Doc Archive: smaller Dashboard direction cards, role-gated Settings/Dashboard, and solid popover backgrounds",
+  "title": "Document Archive: Dashboard sizing + button color consistency + solid Settings dialogs",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Shrink the three “Documents by Direction” cards on the Dashboard by ~30% without changing their content/structure.",
+      "summary": "Reduce Dashboard “Browse by Category” category card/button visual footprint ~50% while preserving navigation behavior.",
       "acceptanceCriteria": [
-        "On the Dashboard page, the three Cards under \"Documents by Direction\" are visibly ~30% smaller (reduced padding and/or icon and font sizing), without removing any fields (label + count).",
-        "No other dashboard sections (e.g., top metrics cards, category cards) change size as part of this requirement."
+        "In the Dashboard “Browse by Category” section, each category card occupies noticeably less space (approximately half the current visual footprint).",
+        "Clicking a category card still navigates to /documents with the correct categoryId search param.",
+        "Clicking the “View Documents” button inside a card still works and does not trigger double navigation."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/DashboardPage.tsx",
           "operation": "modify",
-          "description": "Reduce only the “Documents by Direction” section Card sizing (padding, icon container padding, icon size, and label/count typography) by approximately 30% while keeping the same label + count structure; do not change the top metrics cards or category cards."
+          "description": "Update the “Browse by Category” Card/CardContent sizing (reduce padding, icon container size, icon size, and typography) while keeping the same map over categories and existing navigate + stopPropagation behavior. Use shadcn-ui Card/Button via className overrides only; Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
-      "id": "REQ-3",
-      "summary": "Add frontend role gating so Settings is admin-only and Dashboard is accessible only to authenticated users with a recognized role, showing an English Unauthorized state otherwise.",
+      "id": "REQ-2",
+      "summary": "Make Dashboard category action buttons use a light-blue primary accent with readable contrast in light/dark modes.",
       "acceptanceCriteria": [
-        "Frontend: attempting to navigate to /settings as a non-admin shows an English “Unauthorized” message and/or redirects to an allowed page (e.g., Dashboard).",
-        "Frontend: the Settings navigation entry is hidden or disabled for non-admin users.",
-        "Backend: Settings-related mutations already require admin permission; additionally, any new user-management endpoints are admin-only.",
-        "Dashboard remains accessible only to authenticated users who have a recognized role (admin or supervisor); unauthorized identities are blocked with an English message."
+        "The Dashboard “View Documents” button in each category card uses a light-blue appearance (not the default ghost style).",
+        "Text remains readable with sufficient contrast in both light and dark mode."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/features/auth/useCallerRole.ts",
-          "operation": "create",
-          "description": "Create a React Query hook that fetches and caches the current caller’s role from the backend actor (for UI gating) and exposes loading/error states; ensure it runs only when an actor is available."
-        },
-        {
-          "path": "frontend/src/components/auth/UnauthorizedScreen.tsx",
-          "operation": "create",
-          "description": "Create a simple, reusable Unauthorized screen component with English messaging (e.g., “Unauthorized”) and an optional action to navigate back to an allowed page."
-        },
-        {
-          "path": "frontend/src/components/auth/RequireRole.tsx",
-          "operation": "create",
-          "description": "Create a route/page wrapper component that uses the caller role hook to enforce access (admin-only or any recognized role), rendering a loading state while role is resolving and rendering UnauthorizedScreen (and/or redirect) when disallowed."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/DashboardPage.tsx",
           "operation": "modify",
-          "description": "Wire role enforcement into routing by wrapping the Settings route component in RequireRole configured for admin-only; additionally ensure the Dashboard route is wrapped/guarded to block authenticated but unrecognized roles with an English Unauthorized state."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Hide or disable the Settings navigation entry for non-admin users by using the caller role hook; keep English labels and ensure navigation does not expose Settings access for non-admins."
+          "description": "Change the “View Documents” Button styling from ghost to a light-blue accented look using Tailwind className overrides (including hover/focus states) with explicit dark-mode classes to ensure consistent accent and contrast. Use shadcn-ui Button via composition/className (do not edit ui sources); Verify the component's usage instructions before implementing."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Ensure dropdowns, dialogs, and popovers render with solid (non-transparent) surfaces in light and dark themes across the app.",
+      "summary": "Style the Upload page primary submit button to use #0052cc with accessible hover/active/disabled states across themes.",
       "acceptanceCriteria": [
-        "Dropdown menus (e.g., the user menu in the header) render with an opaque background (no transparency artifacts).",
-        "Dialogs and alert dialogs (e.g., Settings add/edit/delete dialogs) render with opaque backgrounds.",
-        "No popover/dropdown surfaces appear translucent against page content in either light or dark theme."
+        "On UploadDocumentPage, the “Upload Document” submit button background is #0052cc.",
+        "Hover/focus states remain visually clear and accessible.",
+        "Disabled state remains visually distinct."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/pages/UploadDocumentPage.tsx",
           "operation": "modify",
-          "description": "Add global CSS/Tailwind-layer overrides to enforce solid backgrounds for Radix/shadcn popover-like surfaces (dropdowns, popovers, dialogs, alert dialogs) using the existing theme tokens (e.g., popover/background variables) for both light and dark modes."
-        },
-        {
-          "path": "frontend/src/components/layout/AppShell.tsx",
-          "operation": "modify",
-          "description": "Adjust the header user DropdownMenuContent styling to use an explicitly solid surface in both themes (solid white in light mode and a solid dark surface in dark mode) to eliminate any transparency artifacts."
-        },
+          "description": "Override the submit Button (type=\"submit\") styling to use background #0052cc with explicit hover/active/focus-visible and disabled Tailwind classes, ensuring readable text in both light/dark modes. Use shadcn-ui Button via className overrides only; Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Improve Settings Add Category button presentation with #0052cc box treatment and ensure Add Category/Add Office dialogs have solid white backgrounds in light mode.",
+      "acceptanceCriteria": [
+        "On SettingsPage, the “Add Category” button is visually presented with a #0052cc box/background treatment (not default styling).",
+        "When the Add Category dialog opens, the dialog content has a solid white background in light mode (no transparency).",
+        "When the Add Office dialog opens, the dialog content has a solid white background in light mode (no transparency)."
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/pages/SettingsPage.tsx",
           "operation": "modify",
-          "description": "Ensure all DialogContent and AlertDialogContent usages in Settings explicitly use solid surface classes for both themes (not just the first dialog), relying on shared tokens/classes so all settings popups are opaque."
-        },
-        {
-          "path": "frontend/src/components/documents/DocumentActions.tsx",
-          "operation": "modify",
-          "description": "Update any confirmation dialogs/menus used by document actions to ensure their dialog/popover surfaces render with solid backgrounds in both light and dark modes."
+          "description": "Restyle the “Add Category” trigger to present it in a visually distinct #0052cc box/background treatment using wrapper + Button className overrides. Update the Add Category and Add Office DialogContent className to use solid white background in light mode (e.g., bg-white) while preserving appropriate dark mode styling. Use shadcn-ui Dialog/Button via composition/className (do not edit ui sources); Verify the component's usage instructions before implementing."
         }
       ]
     }

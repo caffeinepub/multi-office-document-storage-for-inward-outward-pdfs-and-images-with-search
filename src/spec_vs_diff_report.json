@@ -1,68 +1,88 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-17T01:23:11.390Z",
-  "summary": "Diff adds role-gated routing and unauthorized UI, introduces backend user account types and admin-only CRUD endpoints, reduces Dashboard “Documents by Direction” card sizing, and adds global CSS/popover classes for solid popover backgrounds. However, there are notable mismatches with requested roles (supervisor vs user) and Dashboard sizing constraints, and backend user persistence/migration evidence is unclear.",
+  "generatedAt": "2026-02-17T01:52:07.690Z",
+  "summary": "Diff shows UI changes on Dashboard metrics cards and direction section, plus broad frontend refactors/features mentioned in frontend-file-summaries. However, the provided truncated diffs do not contain enough direct evidence that the requested category-card resizing/light-blue button styling (Dashboard), backend direction-count fix, and Settings dialog/background requirements were implemented as specified.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "Only the three “Documents by Direction” cards should be ~30% smaller; no other dashboard sections should change size.",
-      "reason": "Dashboard metrics section appears to have been altered (comment indicates 30% smaller), which violates the constraint that no other dashboard sections change size as part of REQ-1.",
+      "requirement": "On the Dashboard page, reduce the visual size of the “Browse by Category” category cards/buttons by ~50% (padding, icon size, and typography) while keeping the same number of categories and the same click/navigation behavior.",
+      "reason": "The shown portion of DashboardPage.tsx includes metrics and the beginning of the direction section, but the “Browse by Category” card/button markup and its sizing/padding/icon/typography changes are not present in the truncated excerpt, so implementation cannot be verified.",
       "evidence": [
-        "frontend/src/pages/DashboardPage.tsx (comment: \"Metrics Section - 30% smaller with colored backgrounds\")"
+        "frontend/src/pages/DashboardPage.tsx (truncated; category section not shown)"
       ]
     },
     {
       "id": "REQ-2",
-      "requirement": "Backend persists user accounts (username, password hash, role) and provides admin-only APIs to create/update/list/delete users, plus an API to retrieve the current caller’s role.",
-      "reason": "User accounts are stored in an in-memory Map with no visible stable/persistence mechanism in the provided snippet, and the required role-retrieval API is not shown in backend diff excerpt (though frontend calls it). Also, migration file is a no-op and does not demonstrate schema migration if persistence was added/changed.",
+      "requirement": "On the Dashboard page, update the category action button styling so the category buttons use a light blue color as the primary visual accent (consistent across light/dark modes).",
+      "reason": "No “View Documents” button styling within the Dashboard category cards is visible in the provided DashboardPage.tsx excerpt due to truncation, so the required light-blue styling/contrast cannot be confirmed.",
       "evidence": [
-        "backend/main.mo (\"let userAccounts = Map.empty<Text, UserAccount>();\")",
-        "frontend/src/features/auth/useCallerRole.ts (calls \"actor.getCallerUserRole()\")",
-        "backend/migration.mo (State is empty; run returns state unchanged)"
+        "frontend/src/pages/DashboardPage.tsx (truncated; category card buttons not shown)"
       ]
     },
     {
       "id": "REQ-3",
-      "requirement": "Admin/supervisor roles must control access to Settings and Dashboard; Dashboard accessible only to authenticated users with a recognized role (admin or supervisor).",
-      "reason": "Frontend role logic uses a 'user' role rather than 'supervisor'. This mismatches the BuildRequest (admin|supervisor) and may block supervisors or incorrectly gate access.",
+      "requirement": "Fix “Documents by Direction” counts on the Dashboard so Inward/Outward/Important reflect the actual number of stored documents by reading the direction field from the backend documents data.",
+      "reason": "backend/main.mo is truncated before any getDashboardMetrics implementation; while Direction/Document types are shown, there is no visible change confirming getDashboardMetrics iterates stored documents and counts by document.direction.",
       "evidence": [
-        "backend/main.mo (UserRole has #admin and #supervisor)",
-        "frontend/src/features/auth/useCallerRole.ts (\"isUser: query.data === 'admin' || query.data === 'user'\")",
-        "frontend/src/components/auth/RequireRole.tsx (checks requireUser via isUser; checks role === 'guest')"
+        "backend/main.mo (truncated; getDashboardMetrics not shown)"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "In Settings, style the “Add Category” button so it appears inside a visually distinct box using color #0052cc, and ensure the Add Category / Add Office forms have a solid (non-transparent) background when opened (solid white in light mode).",
+      "reason": "SettingsPage.tsx excerpt shows dialog state/handlers but not the relevant JSX for the “Add Category” button styling or DialogContent classNames/background overrides; cannot verify solid (non-transparent) dialog backgrounds.",
+      "evidence": [
+        "frontend/src/pages/SettingsPage.tsx (truncated; relevant button/dialog content styling not shown)"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Dashboard top metrics cards were changed in size and given new colored backgrounds.",
-      "reason": "BuildRequest explicitly restricted size changes to only the 'Documents by Direction' cards and noted no new color theming changes beyond popover background fixes.",
+      "description": "AuthGate sign-in screen updated to use a new versioned login image (/assets/generated/login-logo-v3.dim_400x600.jpeg) and object-contain behavior.",
+      "reason": "BuildRequest does not ask for login image or AuthGate changes; only Dashboard/Upload/Settings styling and a backend metrics fix are requested.",
       "evidence": [
-        "frontend/src/pages/DashboardPage.tsx (comment: \"Metrics Section - 30% smaller with colored backgrounds\"; cards use bg-green-50 / bg-orange-50 etc.)"
+        "frontend-file-summaries.txt (frontend/src/components/auth/AuthGate.tsx)"
       ]
     },
     {
-      "description": "Updated AuthGate login image to a new versioned asset (/assets/generated/login-logo-v3.dim_400x600.jpeg) and adjusted its display.",
-      "reason": "Not requested by any requirement; authentication-provider changes were a non-goal and UI login image change is outside scope.",
+      "description": "Role enforcement/route guarding added in App.tsx and Settings link shown conditionally for admins in the AppShell header navigation.",
+      "reason": "BuildRequest explicitly lists non-goals around auth providers and does not request new/changed role enforcement or navigation behavior.",
       "evidence": [
-        "frontend-file-summaries.txt (\"AuthGate... new versioned login image (/assets/generated/login-logo-v3.dim_400x600.jpeg)\")"
+        "frontend-file-summaries.txt (frontend/src/App.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/layout/AppShell.tsx)"
+      ]
+    },
+    {
+      "description": "Global and component-level changes to ensure Radix popover-like surfaces render with solid backgrounds (index.css, dropdown menus, document actions).",
+      "reason": "BuildRequest only requests solid backgrounds for the Settings Add Category/Add Office dialogs, not global popover/menu surface changes across the app.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/index.css)",
+        "frontend-file-summaries.txt (frontend/src/components/layout/AppShell.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentActions.tsx)"
+      ]
+    },
+    {
+      "description": "Large unrequested refactor/feature work on document list/detail pages, filters, export, and backend-managed category/office string handling with new helper modules.",
+      "reason": "BuildRequest scope is limited to Dashboard category sizing/button color, dashboard metrics direction counts, upload button color, and Settings dialog/button styling; it explicitly lists non-goals about adding new metrics and changing category counts, and does not request document list/detail refactors.",
+      "evidence": [
+        "frontend-file-summaries.txt (frontend/src/pages/DocumentListPage.tsx)",
+        "frontend-file-summaries.txt (frontend/src/pages/DocumentDetailPage.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentFilters.tsx)",
+        "frontend-file-summaries.txt (frontend/src/components/documents/DocumentList.tsx)",
+        "frontend-file-summaries.txt (frontend/src/features/documents/useDocuments.ts)",
+        "frontend-file-summaries.txt (frontend/src/lib/officeHelpers.ts)",
+        "frontend-file-summaries.txt (frontend/src/lib/categoryHelpers.ts)"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.58,
   "changed_files": [
     "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/auth/RequireRole.tsx",
-    "frontend/src/components/auth/UnauthorizedScreen.tsx",
-    "frontend/src/components/documents/DocumentActions.tsx",
-    "frontend/src/components/layout/AppShell.tsx",
-    "frontend/src/features/auth/useCallerRole.ts",
-    "frontend/src/index.css",
     "frontend/src/pages/DashboardPage.tsx",
     "frontend/src/pages/SettingsPage.tsx",
+    "frontend/src/pages/UploadDocumentPage.tsx",
     "project_state.json"
   ]
 }

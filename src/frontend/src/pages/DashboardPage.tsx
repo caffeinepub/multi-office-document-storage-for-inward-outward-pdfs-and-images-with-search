@@ -123,28 +123,27 @@ export function DashboardPage() {
         </div>
       </div>
 
-      {/* Categories Section */}
+      {/* Categories Section - Reduced by ~50% */}
       <div>
         <h2 className="text-xl font-semibold mb-4">Browse by Category</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {categories?.map((category) => (
             <Card
               key={category.id}
               className="cursor-pointer transition-all hover:shadow-lg hover:scale-105"
               onClick={() => handleCategoryClick(category.id)}
             >
-              <CardContent className="flex flex-col items-center justify-center p-8 text-center">
-                <div className="mb-4 rounded-full bg-primary/10 p-6">
-                  <FolderOpen className="h-12 w-12 text-primary" />
+              <CardContent className="flex flex-col items-center justify-center p-4 text-center">
+                <div className="mb-2 rounded-full bg-primary/10 p-3">
+                  <FolderOpen className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold">{category.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">
+                <h3 className="text-base font-semibold">{category.name}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {category.offices.length} office{category.offices.length !== 1 ? 's' : ''}
                 </p>
                 <Button
-                  variant="ghost"
                   size="sm"
-                  className="mt-4"
+                  className="mt-3 bg-sky-500 hover:bg-sky-600 text-white dark:bg-sky-600 dark:hover:bg-sky-700"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCategoryClick(category.id);

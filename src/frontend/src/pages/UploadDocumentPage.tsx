@@ -282,7 +282,7 @@ export function UploadDocumentPage() {
                   <span className="text-muted-foreground">Uploading...</span>
                   <span className="font-medium">{uploadProgress}%</span>
                 </div>
-                <Progress value={uploadProgress} />
+                <Progress value={uploadProgress} className="h-2" />
               </div>
             )}
 
@@ -295,7 +295,12 @@ export function UploadDocumentPage() {
             )}
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full" disabled={!canSubmit}>
+            <Button
+              type="submit"
+              disabled={!canSubmit}
+              className="w-full text-white hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50"
+              style={{ backgroundColor: '#0052cc' }}
+            >
               {isUploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

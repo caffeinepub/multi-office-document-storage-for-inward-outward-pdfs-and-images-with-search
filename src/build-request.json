@@ -1,93 +1,114 @@
 {
   "kind": "build_request",
-  "title": "Add backend user roles (admin/supervisor) with enforced access + shrink Documents-by-Direction boxes + solid popover backgrounds",
-  "projectName": "Doc Archive",
+  "title": "Dashboard button sizing + metrics fix + consistent button colors + solid Settings dialogs",
+  "projectName": "Document Archive",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Reduce the size of the three \"Documents by Direction\" count boxes on the Dashboard page (Inward/Outward/Important) by approximately 30% while keeping their current content and structure.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "reduce their size by 30%"
-        ]
-      },
-      "acceptanceCriteria": [
-        "On the Dashboard page, the three Cards under \"Documents by Direction\" are visibly ~30% smaller (reduced padding and/or icon and font sizing), without removing any fields (label + count).",
-        "No other dashboard sections (e.g., top metrics cards, category cards) change size as part of this requirement."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Implement backend-stored user accounts that include username, hashed password, and role (admin or supervisor), and provide admin-only APIs to create, update (role/password), list, and delete users.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "store users and passwords in backend.",
-          "username + hashed password + role (admin/supervisor)? 1 yes"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Backend persists a user record containing: username, password hash (not plaintext), and role (admin|supervisor).",
-        "Only admins can create/update/delete/list users; non-admin callers receive an authorization error.",
-        "There is a backend API to retrieve the current caller’s role (for frontend gating)."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Enforce role-based access control so that admin/supervisor roles actually control access to the Settings page and the Dashboard.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "actually control access to settings and dashboard."
-        ]
-      },
-      "acceptanceCriteria": [
-        "Frontend: attempting to navigate to /settings as a non-admin shows an English “Unauthorized” message and/or redirects to an allowed page (e.g., Dashboard).",
-        "Frontend: the Settings navigation entry is hidden or disabled for non-admin users.",
-        "Backend: Settings-related mutations already require admin permission; additionally, any new user-management endpoints are admin-only.",
-        "Dashboard remains accessible only to authenticated users who have a recognized role (admin or supervisor); unauthorized identities are blocked with an English message."
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Ensure all popups, dialogs, and dropdown menus use a solid (non-transparent) white background in light mode, and a solid non-transparent background in dark mode, across the app.",
+      "text": "On the Dashboard page, reduce the visual size of the “Browse by Category” category cards/buttons by ~50% (padding, icon size, and typography) while keeping the same number of categories and the same click/navigation behavior.",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-1",
-          "msg-4"
+          "msg-2"
         ],
         "quotes": [
-          "error pop up is transparent use solid white  background for all pop up and dropdowns",
-          "Use solid white backgrounds for all popups and dropdowns"
+          "Dashboard - browse by category - reduce buttons by 50%",
+          "reduce their size"
         ]
       },
       "acceptanceCriteria": [
-        "Dropdown menus (e.g., the user menu in the header) render with an opaque background (no transparency artifacts).",
-        "Dialogs and alert dialogs (e.g., Settings add/edit/delete dialogs) render with opaque backgrounds.",
-        "No popover/dropdown surfaces appear translucent against page content in either light or dark theme."
+        "In the Dashboard “Browse by Category” section, each category card occupies noticeably less space (approximately half the current visual footprint).",
+        "Clicking a category card still navigates to /documents with the correct categoryId search param.",
+        "Clicking the “View Documents” button inside a card still works and does not trigger double navigation."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "On the Dashboard page, update the category action button styling so the category buttons use a light blue color as the primary visual accent (consistent across light/dark modes).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "add light blue colour to the buttons."
+        ]
+      },
+      "acceptanceCriteria": [
+        "The Dashboard “View Documents” button in each category card uses a light-blue appearance (not the default ghost style).",
+        "Text remains readable with sufficient contrast in both light and dark mode."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Fix “Documents by Direction” counts on the Dashboard so Inward/Outward/Important reflect the actual number of stored documents by reading the direction field from the backend documents data (not returning 0 when documents exist).",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "dashboard - Documents by direction count not responding it shows count 0 .",
+          "from backed field of documents."
+        ]
+      },
+      "acceptanceCriteria": [
+        "backend/main.mo getDashboardMetrics returns exact counts for inwardDocuments/outwardDocuments/importantDocuments by iterating all stored documents and counting by document.direction.",
+        "With at least 1 stored document of each direction, the Dashboard shows non-zero counts matching the backend data.",
+        "No changes are required to the frontend query hook (useDashboardMetrics continues calling actor.getDashboardMetrics())."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Update the Upload page primary action button styling so the upload button uses color #0052cc (including hover/active states) and remains readable in both light and dark modes.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "upload - upload download button use color #0052cc."
+        ]
+      },
+      "acceptanceCriteria": [
+        "On UploadDocumentPage, the “Upload Document” submit button background is #0052cc.",
+        "Hover/focus states remain visually clear and accessible.",
+        "Disabled state remains visually distinct."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "In Settings, style the “Add Category” button so it appears inside a visually distinct box using color #0052cc, and ensure the Add Category / Add Office forms have a solid (non-transparent) background when opened (solid white in light mode).",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1",
+          "msg-2"
+        ],
+        "quotes": [
+          "settings - add category button should be in a box colored #0052cc .",
+          "form open when we click on button i want background of that form solid"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On SettingsPage, the “Add Category” button is visually presented with a #0052cc box/background treatment (not default styling).",
+        "When the Add Category dialog opens, the dialog content has a solid white background in light mode (no transparency).",
+        "When the Add Office dialog opens, the dialog content has a solid white background in light mode (no transparency)."
       ]
     }
   ],
   "constraints": [
-    "Backend must remain a single Motoko actor in backend/main.mo; only add migration logic in backend/migration.mo if state schema changes require it per the project migration policy.",
-    "Do not edit frontend paths marked immutable in SYSTEM_CONTEXT (e.g., frontend/src/hooks/useInternetIdentity.ts(x), frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui). Compose/wrap instead."
+    "Backend must remain a single Motoko actor in backend/main.mo; do not introduce additional canisters/services.",
+    "Do not edit frontend files under frontend/src/components/ui (Shadcn UI sources); only override styling via composition/className in app components.",
+    "Use English for any user-facing text."
   ],
   "nonGoals": [
-    "Implementing third-party authentication providers (only Internet Identity is supported).",
-    "Adding real-time features (WebSockets, push notifications, chat).",
-    "Reintroducing the canceled dashboard color changes request (no new color theming changes beyond fixing popup backgrounds)."
+    "Changing the number of categories shown on the Dashboard (only reduce size, not quantity).",
+    "Adding new metrics beyond Total Documents/Users and the existing direction counts.",
+    "Implementing new authentication providers (only Internet Identity is supported)."
   ],
   "imageRequirements": {
     "required": [],
@@ -96,9 +117,7 @@
   "userProfileUpdate": {
     "goalsToAdd": [],
     "goalsToRemove": [],
-    "preferencesToAdd": [
-      "Use English for any user-facing text"
-    ],
+    "preferencesToAdd": [],
     "preferencesToRemove": [],
     "miscToAdd": [],
     "miscToRemove": [],
