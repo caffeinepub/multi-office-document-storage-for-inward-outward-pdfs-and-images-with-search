@@ -124,6 +124,13 @@ export interface _CaffeineStorageCreateCertificateResult {
 export interface UserProfile {
     name: string;
 }
+export interface DashboardMetrics {
+    totalDocuments: bigint;
+    uniqueUserCount: bigint;
+    inwardDocuments: bigint;
+    outwardDocuments: bigint;
+    importantDocuments: bigint;
+}
 export interface _CaffeineStorageRefillResult {
     success?: boolean;
     topped_up_amount?: bigint;
@@ -162,6 +169,8 @@ export interface backendInterface {
     removeOfficeFromCategory(categoryId: string, officeId: string): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateCategory(id: string, newName: string): Promise<void>;
+    clearAllData(): Promise<void>;
+    getDashboardMetrics(): Promise<DashboardMetrics>;
     updateOfficeInCategory(categoryId: string, officeId: string, newOfficeName: string): Promise<void>;
 }
 import type { Direction as _Direction, PublicDocument as _PublicDocument, Time as _Time, UserProfile as _UserProfile, UserRole as _UserRole, _CaffeineStorageRefillInformation as __CaffeineStorageRefillInformation, _CaffeineStorageRefillResult as __CaffeineStorageRefillResult } from "./declarations/backend.did.d.ts";
@@ -501,6 +510,32 @@ export class Backend implements backendInterface {
         } else {
             const result = await this.actor.updateOfficeInCategory(arg0, arg1, arg2);
             return result;
+        }
+    }
+    async clearAllData(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await (this.actor as any).clearAllData();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await (this.actor as any).clearAllData();
+        }
+    }
+    async getDashboardMetrics(): Promise<DashboardMetrics> {
+        if (this.processError) {
+            try {
+                const result = await (this.actor as any).getDashboardMetrics();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            return await (this.actor as any).getDashboardMetrics();
         }
     }
 }

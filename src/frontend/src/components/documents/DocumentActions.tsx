@@ -103,7 +103,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="bg-popover dark:bg-popover"
+            className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-lg"
           >
             <DropdownMenuItem onClick={handleView}>
               <ExternalLink className="mr-2 h-4 w-4" />
@@ -123,12 +123,12 @@ export function DocumentActions({ document }: DocumentActionsProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <AlertDialogContent className="bg-popover dark:bg-popover">
+        <AlertDialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 shadow-xl">
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Document</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{document.title}"? This action
-              cannot be undone.
+              Are you sure you want to delete &ldquo;{document.title}&rdquo;?
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

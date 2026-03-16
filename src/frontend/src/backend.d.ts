@@ -35,6 +35,13 @@ export interface PublicDocument {
 export interface UserProfile {
     name: string;
 }
+export interface DashboardMetrics {
+    totalDocuments: bigint;
+    uniqueUserCount: bigint;
+    inwardDocuments: bigint;
+    outwardDocuments: bigint;
+    importantDocuments: bigint;
+}
 export enum Direction {
     importantDocuments = "importantDocuments",
     inward = "inward",
@@ -50,10 +57,12 @@ export interface backendInterface {
     addDocument(id: string, categoryId: string, officeId: string, direction: Direction, title: string, referenceNumber: string | null, documentDate: Time, filename: string, mimeType: string, fileSize: bigint, blobId: string): Promise<void>;
     addOfficeToCategory(categoryId: string, officeId: string, officeName: string): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    clearAllData(): Promise<void>;
     filterDocuments(categoryId: string | null, officeId: string | null, direction: Direction | null, startDate: Time | null, endDate: Time | null, _dummy: boolean | null): Promise<Array<PublicDocument>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCategories(): Promise<Array<Category>>;
+    getDashboardMetrics(): Promise<DashboardMetrics>;
     getDocument(id: string): Promise<PublicDocument>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;

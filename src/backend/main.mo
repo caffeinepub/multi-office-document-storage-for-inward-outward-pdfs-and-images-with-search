@@ -223,6 +223,34 @@ actor {
     persistentCategories().toArray();
   };
 
+  // Clear all data - admin only
+  public shared ({ caller }) func clearAllData() : async () {
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can clear all data");
+    };
+    documents.clear();
+    persistentCategories_internal := List.empty<Category>();
+    userProfiles.clear();
+  };
+
+  // Get dashboard metrics
+  public shared ({ caller }) func getDashboardMetrics() : async DashboardMetrics {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view metrics");
+    };
+    let allDocs = documents.values().toArray();
+    let totalDocuments = allDocs.size();
+    let uniqueUploaders = Set.empty<Principal>();
+    for (doc in allDocs.vals()) {
+      uniqueUploaders.add(doc.uploader);
+    };
+    let uniqueUserCount = uniqueUploaders.size();
+    let inwardDocuments = allDocs.filter(func(d) { d.direction == #inward }).size();
+    let outwardDocuments = allDocs.filter(func(d) { d.direction == #outward }).size();
+    let importantDocuments = allDocs.filter(func(d) { d.direction == #importantDocuments }).size();
+    { totalDocuments; uniqueUserCount; inwardDocuments; outwardDocuments; importantDocuments };
+  };
+
   // Add a new document (user level, accessible to both admin and supervisor)
   public shared ({ caller }) func addDocument(
     id : Text,

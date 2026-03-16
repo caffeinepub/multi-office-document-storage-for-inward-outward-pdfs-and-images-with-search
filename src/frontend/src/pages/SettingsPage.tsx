@@ -1,4 +1,5 @@
 import type { Category } from "@/backend";
+import { Direction } from "@/backend";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +32,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useCategories } from "@/features/categories/useCategories";
 import { useCategoryMutations } from "@/features/categories/useCategoryMutations";
+import { useActor } from "@/hooks/useActor";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowDown,
   Building2,
@@ -45,7 +48,7 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 
-const DEMO_DATA = [
+const DEMO_CATEGORIES = [
   {
     id: "legal-compliance",
     name: "Legal & Compliance",
@@ -118,6 +121,243 @@ const DEMO_DATA = [
   },
 ];
 
+const DEMO_DOCUMENTS = [
+  {
+    id: "doc-001",
+    categoryId: "legal-compliance",
+    officeId: "contracts-dept",
+    direction: Direction.inward,
+    title: "Vendor Service Agreement - TechSoft Solutions",
+    referenceNumber: "LC/CON/2025/001",
+    filename: "vendor_agreement_techsoft.pdf",
+    mimeType: "application/pdf",
+    fileSize: 204800n,
+    blobId: "",
+    daysAgo: 5,
+  },
+  {
+    id: "doc-002",
+    categoryId: "legal-compliance",
+    officeId: "regulatory-affairs",
+    direction: Direction.outward,
+    title: "Compliance Certificate Submission to SEBI",
+    referenceNumber: "LC/REG/2025/002",
+    filename: "sebi_compliance_cert.pdf",
+    mimeType: "application/pdf",
+    fileSize: 153600n,
+    blobId: "",
+    daysAgo: 10,
+  },
+  {
+    id: "doc-003",
+    categoryId: "legal-compliance",
+    officeId: "litigation-cell",
+    direction: Direction.importantDocuments,
+    title: "Court Order - Civil Case No. 2025/0345",
+    referenceNumber: "LC/LIT/2025/003",
+    filename: "court_order_civil_2025.pdf",
+    mimeType: "application/pdf",
+    fileSize: 98304n,
+    blobId: "",
+    daysAgo: 3,
+  },
+  {
+    id: "doc-004",
+    categoryId: "finance-accounts",
+    officeId: "billing-invoicing",
+    direction: Direction.inward,
+    title: "Invoice from Global Supplies Ltd - Q1 2025",
+    referenceNumber: "FA/BIL/2025/004",
+    filename: "invoice_global_supplies_q1.pdf",
+    mimeType: "application/pdf",
+    fileSize: 71680n,
+    blobId: "",
+    daysAgo: 2,
+  },
+  {
+    id: "doc-005",
+    categoryId: "finance-accounts",
+    officeId: "payroll-unit",
+    direction: Direction.outward,
+    title: "Salary Disbursement Advice - March 2025",
+    referenceNumber: "FA/PAY/2025/005",
+    filename: "salary_disbursement_mar2025.pdf",
+    mimeType: "application/pdf",
+    fileSize: 122880n,
+    blobId: "",
+    daysAgo: 1,
+  },
+  {
+    id: "doc-006",
+    categoryId: "finance-accounts",
+    officeId: "tax-audit-cell",
+    direction: Direction.importantDocuments,
+    title: "Annual Tax Audit Report FY 2024-25",
+    referenceNumber: "FA/TAX/2025/006",
+    filename: "tax_audit_fy2025.pdf",
+    mimeType: "application/pdf",
+    fileSize: 358400n,
+    blobId: "",
+    daysAgo: 15,
+  },
+  {
+    id: "doc-007",
+    categoryId: "human-resources",
+    officeId: "recruitment-office",
+    direction: Direction.inward,
+    title: "Job Application - Senior Software Engineer",
+    referenceNumber: "HR/REC/2025/007",
+    filename: "application_senior_dev.pdf",
+    mimeType: "application/pdf",
+    fileSize: 81920n,
+    blobId: "",
+    daysAgo: 4,
+  },
+  {
+    id: "doc-008",
+    categoryId: "human-resources",
+    officeId: "employee-relations",
+    direction: Direction.outward,
+    title: "Warning Letter - Policy Violation",
+    referenceNumber: "HR/ER/2025/008",
+    filename: "warning_letter_policy.pdf",
+    mimeType: "application/pdf",
+    fileSize: 45056n,
+    blobId: "",
+    daysAgo: 7,
+  },
+  {
+    id: "doc-009",
+    categoryId: "it-technology",
+    officeId: "cybersecurity-unit",
+    direction: Direction.importantDocuments,
+    title: "Security Audit Report - Network Infrastructure",
+    referenceNumber: "IT/CYB/2025/009",
+    filename: "security_audit_network.pdf",
+    mimeType: "application/pdf",
+    fileSize: 245760n,
+    blobId: "",
+    daysAgo: 8,
+  },
+  {
+    id: "doc-010",
+    categoryId: "it-technology",
+    officeId: "software-development",
+    direction: Direction.inward,
+    title: "Software License Agreement - Adobe Creative Cloud",
+    referenceNumber: "IT/SW/2025/010",
+    filename: "license_adobe_creative.pdf",
+    mimeType: "application/pdf",
+    fileSize: 61440n,
+    blobId: "",
+    daysAgo: 12,
+  },
+  {
+    id: "doc-011",
+    categoryId: "operations-logistics",
+    officeId: "supply-chain",
+    direction: Direction.inward,
+    title: "Purchase Order - Office Equipment Batch 3",
+    referenceNumber: "OL/SUP/2025/011",
+    filename: "po_office_equipment_b3.pdf",
+    mimeType: "application/pdf",
+    fileSize: 92160n,
+    blobId: "",
+    daysAgo: 6,
+  },
+  {
+    id: "doc-012",
+    categoryId: "operations-logistics",
+    officeId: "vendor-management",
+    direction: Direction.outward,
+    title: "Vendor Termination Notice - BuildCo Ltd",
+    referenceNumber: "OL/VEN/2025/012",
+    filename: "termination_buildco.pdf",
+    mimeType: "application/pdf",
+    fileSize: 40960n,
+    blobId: "",
+    daysAgo: 9,
+  },
+  {
+    id: "doc-013",
+    categoryId: "sales-marketing",
+    officeId: "client-relations",
+    direction: Direction.inward,
+    title: "Client Complaint - Order #CRM-2025-8821",
+    referenceNumber: "SM/CR/2025/013",
+    filename: "complaint_crm_8821.pdf",
+    mimeType: "application/pdf",
+    fileSize: 35840n,
+    blobId: "",
+    daysAgo: 1,
+  },
+  {
+    id: "doc-014",
+    categoryId: "sales-marketing",
+    officeId: "proposals-desk",
+    direction: Direction.outward,
+    title: "Proposal Submission - Infra Modernization Project",
+    referenceNumber: "SM/PRO/2025/014",
+    filename: "proposal_infra_modernization.pdf",
+    mimeType: "application/pdf",
+    fileSize: 307200n,
+    blobId: "",
+    daysAgo: 3,
+  },
+  {
+    id: "doc-015",
+    categoryId: "administration",
+    officeId: "board-secretariat",
+    direction: Direction.importantDocuments,
+    title: "Board Resolution - Q1 2025 Strategy Review",
+    referenceNumber: "ADM/BRD/2025/015",
+    filename: "board_resolution_q1_2025.pdf",
+    mimeType: "application/pdf",
+    fileSize: 184320n,
+    blobId: "",
+    daysAgo: 20,
+  },
+  {
+    id: "doc-016",
+    categoryId: "administration",
+    officeId: "mou-agreements",
+    direction: Direction.inward,
+    title: "MoU - Partnership with StateGov Digital Initiative",
+    referenceNumber: "ADM/MOU/2025/016",
+    filename: "mou_stategov_digital.pdf",
+    mimeType: "application/pdf",
+    fileSize: 143360n,
+    blobId: "",
+    daysAgo: 14,
+  },
+  {
+    id: "doc-017",
+    categoryId: "finance-accounts",
+    officeId: "procurement-desk",
+    direction: Direction.outward,
+    title: "RFQ Issued - Cloud Hosting Services 2025",
+    referenceNumber: "FA/PRO/2025/017",
+    filename: "rfq_cloud_hosting_2025.pdf",
+    mimeType: "application/pdf",
+    fileSize: 102400n,
+    blobId: "",
+    daysAgo: 11,
+  },
+  {
+    id: "doc-018",
+    categoryId: "human-resources",
+    officeId: "training-development",
+    direction: Direction.outward,
+    title: "Training Schedule - Leadership Excellence Q2",
+    referenceNumber: "HR/TRN/2025/018",
+    filename: "training_leadership_q2.pdf",
+    mimeType: "application/pdf",
+    fileSize: 77824n,
+    blobId: "",
+    daysAgo: 5,
+  },
+];
+
 export function SettingsPage() {
   const { data: categories, isLoading } = useCategories();
   const {
@@ -128,6 +368,8 @@ export function SettingsPage() {
     updateOffice,
     removeOffice,
   } = useCategoryMutations();
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
 
   const [isSeedingDemo, setIsSeedingDemo] = useState(false);
 
@@ -147,33 +389,74 @@ export function SettingsPage() {
   const [officeName, setOfficeName] = useState("");
 
   const handleSeedDemoData = async () => {
+    if (!actor) {
+      toast.error("Not connected");
+      return;
+    }
     setIsSeedingDemo(true);
     try {
-      const existingIds = new Set((categories || []).map((c) => c.id));
-
-      for (const cat of DEMO_DATA) {
-        if (!existingIds.has(cat.id)) {
-          await addCategory.mutateAsync({ id: cat.id, name: cat.name });
+      // Step 1: Clear all existing data
+      toast.info("Clearing old data...");
+      try {
+        await actor.clearAllData();
+      } catch {
+        // If clearAllData fails (e.g. not admin), try to remove categories manually
+        const existingCats = await actor.getCategories();
+        for (const cat of existingCats) {
+          await actor.removeCategory(cat.id).catch(() => {});
         }
-
-        const existing = (categories || []).find((c) => c.id === cat.id);
-        const existingOfficeIds = new Set(
-          (existing?.offices || []).map((o) => o.id),
+        // Remove documents
+        const existingDocs = await actor.filterDocuments(
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
         );
-
-        for (const office of cat.offices) {
-          if (!existingOfficeIds.has(office.id)) {
-            await addOffice.mutateAsync({
-              categoryId: cat.id,
-              officeId: office.id,
-              officeName: office.name,
-            });
-          }
+        for (const doc of existingDocs) {
+          await actor.removeDocument(doc.id).catch(() => {});
         }
       }
 
-      toast.success("Demo data seeded successfully!");
-    } catch (_err) {
+      // Step 2: Seed categories and offices
+      toast.info("Seeding categories and offices...");
+      for (const cat of DEMO_CATEGORIES) {
+        await actor.addCategory(cat.id, cat.name);
+        for (const office of cat.offices) {
+          await actor.addOfficeToCategory(cat.id, office.id, office.name);
+        }
+      }
+
+      // Step 3: Seed mock documents
+      toast.info("Seeding documents...");
+      const now = Date.now();
+      for (const doc of DEMO_DOCUMENTS) {
+        const documentDate = BigInt(
+          (now - doc.daysAgo * 24 * 60 * 60 * 1000) * 1_000_000,
+        );
+        await actor.addDocument(
+          doc.id,
+          doc.categoryId,
+          doc.officeId,
+          doc.direction,
+          doc.title,
+          doc.referenceNumber,
+          documentDate,
+          doc.filename,
+          doc.mimeType,
+          doc.fileSize,
+          doc.blobId,
+        );
+      }
+
+      // Invalidate all queries
+      await queryClient.invalidateQueries();
+      toast.success(
+        "Demo data seeded successfully! 18 documents added across 7 categories.",
+      );
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to seed demo data");
     } finally {
       setIsSeedingDemo(false);
@@ -375,23 +658,23 @@ export function SettingsPage() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-bold text-indigo-900 mb-1">
-                👋 Welcome to Doc Vault! Looks like you&apos;re just getting
+                Welcome to Doc Vault! Looks like you&apos;re just getting
                 started.
               </h3>
               <p className="text-sm text-indigo-700 leading-relaxed mb-3">
-                To explore the app, click{" "}
+                Click{" "}
                 <span className="font-semibold text-indigo-900 bg-indigo-100 px-1.5 py-0.5 rounded">
                   &ldquo;Seed Demo Data&rdquo;
                 </span>{" "}
                 below to instantly populate{" "}
-                <strong>7 professional categories</strong> — Legal, Finance, HR,
-                IT, Operations, Sales &amp; Administration — each with realistic
-                offices. Then go to the <strong>Dashboard</strong> and upload a
-                document to see the full workflow!
+                <strong>7 professional categories</strong> and{" "}
+                <strong>18 realistic documents</strong> — Legal, Finance, HR,
+                IT, Operations, Sales &amp; Administration. Then explore the
+                Dashboard to see live counts!
               </p>
               <div className="flex items-center gap-2 text-cyan-700 font-medium text-sm">
                 <ArrowDown className="h-5 w-5 animate-bounce text-indigo-600" />
-                <span>Start by clicking the Demo Data button just below</span>
+                <span>Start by clicking the Demo Data button below</span>
               </div>
             </div>
           </div>
@@ -408,18 +691,18 @@ export function SettingsPage() {
             <div>
               <CardTitle>Demo Data</CardTitle>
               <CardDescription>
-                Seed the app with sample categories and offices spanning
-                multiple professional fields
+                Reset the app and seed fresh sample data — 7 categories, 28
+                offices, and 18 documents
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">
-            This will add 7 professional categories — Legal &amp; Compliance,
-            Finance &amp; Accounts, Human Resources, IT &amp; Technology,
-            Operations &amp; Logistics, Sales &amp; Marketing, and
-            Administration — each with 4 realistic offices.
+            This will <strong>clear all existing data</strong> and populate the
+            app with 18 realistic documents across 7 professional categories —
+            Legal, Finance, HR, IT, Operations, Sales &amp; Marketing, and
+            Administration.
           </p>
           <Button
             onClick={handleSeedDemoData}
@@ -435,7 +718,7 @@ export function SettingsPage() {
             ) : (
               <>
                 <Database className="mr-2 h-4 w-4" />
-                Seed Demo Categories &amp; Offices
+                Seed Fresh Demo Data
               </>
             )}
           </Button>
