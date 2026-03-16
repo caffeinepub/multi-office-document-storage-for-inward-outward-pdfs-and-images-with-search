@@ -1,7 +1,14 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, RefreshCw, Home } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useNavigate } from "@tanstack/react-router";
+import { AlertCircle, Home, RefreshCw } from "lucide-react";
 
 interface PermissionsErrorScreenProps {
   error?: Error | null;
@@ -9,13 +16,19 @@ interface PermissionsErrorScreenProps {
   onRetry: () => void;
 }
 
-export function PermissionsErrorScreen({ error, hasTimedOut, onRetry }: PermissionsErrorScreenProps) {
+export function PermissionsErrorScreen({
+  error,
+  hasTimedOut,
+  onRetry,
+}: PermissionsErrorScreenProps) {
   const navigate = useNavigate();
 
-  const title = hasTimedOut ? 'Permission Check Timed Out' : 'Permission Check Failed';
+  const title = hasTimedOut
+    ? "Permission Check Timed Out"
+    : "Permission Check Failed";
   const description = hasTimedOut
-    ? 'The permission check is taking longer than expected. This might be due to network issues or backend initialization.'
-    : error?.message || 'Unable to verify your permissions. Please try again.';
+    ? "The permission check is taking longer than expected. This might be due to network issues or backend initialization."
+    : error?.message || "Unable to verify your permissions. Please try again.";
 
   return (
     <div className="flex min-h-[600px] items-center justify-center p-4">
@@ -47,7 +60,7 @@ export function PermissionsErrorScreen({ error, hasTimedOut, onRetry }: Permissi
             Retry
           </Button>
           <Button
-            onClick={() => navigate({ to: '/' })}
+            onClick={() => navigate({ to: "/" })}
             className="w-full sm:w-auto"
             variant="outline"
           >

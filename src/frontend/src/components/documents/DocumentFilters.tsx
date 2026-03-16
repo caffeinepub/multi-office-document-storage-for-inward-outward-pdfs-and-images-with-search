@@ -1,27 +1,31 @@
-import { useEffect } from 'react';
-import { Direction } from '@/backend';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Direction } from "@/backend";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Card, CardContent } from '@/components/ui/card';
-import { CalendarIcon, X, Search } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { useCategories } from '@/features/categories/useCategories';
+} from "@/components/ui/select";
+import { useCategories } from "@/features/categories/useCategories";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon, Search, X } from "lucide-react";
+import { useEffect } from "react";
 
 const DIRECTION_LABELS: Record<Direction, string> = {
-  [Direction.inward]: 'Inward',
-  [Direction.outward]: 'Outward',
-  [Direction.importantDocuments]: 'Important Documents',
+  [Direction.inward]: "Inward",
+  [Direction.outward]: "Outward",
+  [Direction.importantDocuments]: "Important Documents",
 };
 
 interface DocumentFiltersProps {
@@ -54,7 +58,8 @@ export function DocumentFilters({
   onSearchTextChange,
 }: DocumentFiltersProps) {
   const { data: categories } = useCategories();
-  const hasActiveFilters = categoryId || officeId || direction || startDate || endDate || searchText;
+  const hasActiveFilters =
+    categoryId || officeId || direction || startDate || endDate || searchText;
 
   const clearFilters = () => {
     onCategoryChange(null);
@@ -62,7 +67,7 @@ export function DocumentFilters({
     onDirectionChange(null);
     onStartDateChange(null);
     onEndDateChange(null);
-    onSearchTextChange('');
+    onSearchTextChange("");
   };
 
   // Get selected category and its offices
@@ -70,6 +75,7 @@ export function DocumentFilters({
   const officeOptions = selectedCategory?.offices || [];
 
   // Clear office selection when category changes and office is no longer valid
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   useEffect(() => {
     if (officeId && !officeOptions.find((o) => o.id === officeId)) {
       onOfficeChange(null);
@@ -100,10 +106,15 @@ export function DocumentFilters({
             <div className="space-y-2">
               <Label htmlFor="category-filter">Category</Label>
               <Select
-                value={categoryId || 'all'}
-                onValueChange={(value) => onCategoryChange(value === 'all' ? null : value)}
+                value={categoryId || "all"}
+                onValueChange={(value) =>
+                  onCategoryChange(value === "all" ? null : value)
+                }
               >
-                <SelectTrigger id="category-filter" className="bg-white dark:bg-white">
+                <SelectTrigger
+                  id="category-filter"
+                  className="bg-white dark:bg-white"
+                >
                   <SelectValue placeholder="All categories" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
@@ -121,12 +132,21 @@ export function DocumentFilters({
             <div className="space-y-2 min-w-0">
               <Label htmlFor="office-filter">Office</Label>
               <Select
-                value={officeId || 'all'}
-                onValueChange={(value) => onOfficeChange(value === 'all' ? null : value)}
+                value={officeId || "all"}
+                onValueChange={(value) =>
+                  onOfficeChange(value === "all" ? null : value)
+                }
                 disabled={!categoryId}
               >
-                <SelectTrigger id="office-filter" className="bg-white dark:bg-white w-full min-w-0 [&>span]:truncate [&>span]:block">
-                  <SelectValue placeholder={categoryId ? "All offices" : "Select category first"} />
+                <SelectTrigger
+                  id="office-filter"
+                  className="bg-white dark:bg-white w-full min-w-0 [&>span]:truncate [&>span]:block"
+                >
+                  <SelectValue
+                    placeholder={
+                      categoryId ? "All offices" : "Select category first"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
                   <SelectItem value="all">All offices</SelectItem>
@@ -143,12 +163,17 @@ export function DocumentFilters({
             <div className="space-y-2">
               <Label htmlFor="direction-filter">Direction</Label>
               <Select
-                value={direction || 'all'}
+                value={direction || "all"}
                 onValueChange={(value) =>
-                  onDirectionChange(value === 'all' ? null : (value as Direction))
+                  onDirectionChange(
+                    value === "all" ? null : (value as Direction),
+                  )
                 }
               >
-                <SelectTrigger id="direction-filter" className="bg-white dark:bg-white">
+                <SelectTrigger
+                  id="direction-filter"
+                  className="bg-white dark:bg-white"
+                >
                   <SelectValue placeholder="All directions" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
@@ -170,15 +195,18 @@ export function DocumentFilters({
                   <Button
                     variant="outline"
                     className={cn(
-                      'w-full justify-start text-left font-normal bg-white dark:bg-white',
-                      !startDate && 'text-muted-foreground'
+                      "w-full justify-start text-left font-normal bg-white dark:bg-white",
+                      !startDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, 'PP') : 'From date'}
+                    {startDate ? format(startDate, "PP") : "From date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white dark:bg-white" align="start">
+                <PopoverContent
+                  className="w-auto p-0 bg-white dark:bg-white"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={startDate || undefined}
@@ -197,15 +225,18 @@ export function DocumentFilters({
                   <Button
                     variant="outline"
                     className={cn(
-                      'w-full justify-start text-left font-normal bg-white dark:bg-white',
-                      !endDate && 'text-muted-foreground'
+                      "w-full justify-start text-left font-normal bg-white dark:bg-white",
+                      !endDate && "text-muted-foreground",
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, 'PP') : 'To date'}
+                    {endDate ? format(endDate, "PP") : "To date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white dark:bg-white" align="start">
+                <PopoverContent
+                  className="w-auto p-0 bg-white dark:bg-white"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={endDate || undefined}

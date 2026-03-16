@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from '@/hooks/useActor';
+import { useActor } from "@/hooks/useActor";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function useDeleteDocument() {
   const { actor } = useActor();
@@ -7,13 +7,13 @@ export function useDeleteDocument() {
 
   const mutation = useMutation({
     mutationFn: async (documentId: string) => {
-      if (!actor) throw new Error('Not authenticated');
+      if (!actor) throw new Error("Not authenticated");
       await actor.removeDocument(documentId);
     },
     onSuccess: () => {
       // Invalidate both list and detail queries
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
-      queryClient.invalidateQueries({ queryKey: ['document'] });
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      queryClient.invalidateQueries({ queryKey: ["document"] });
     },
   });
 

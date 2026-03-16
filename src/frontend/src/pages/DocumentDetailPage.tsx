@@ -1,24 +1,37 @@
-import { useParams, useNavigate } from '@tanstack/react-router';
-import { useDocument } from '@/features/documents/useDocument';
-import { useCategories } from '@/features/categories/useCategories';
-import { DocumentActions } from '@/components/documents/DocumentActions';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui/button';
-import { Loader2, ArrowLeft, FileText, Calendar, Building2, ArrowDownToLine, ArrowUpFromLine, FileCheck, User, Clock, Hash, FolderOpen } from 'lucide-react';
-import { format } from 'date-fns';
-import { Direction } from '@/backend';
-import { getOfficeName } from '@/lib/officeHelpers';
+import { Direction } from "@/backend";
+import { DocumentActions } from "@/components/documents/DocumentActions";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { useCategories } from "@/features/categories/useCategories";
+import { useDocument } from "@/features/documents/useDocument";
+import { getOfficeName } from "@/lib/officeHelpers";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { format } from "date-fns";
+import {
+  ArrowDownToLine,
+  ArrowLeft,
+  ArrowUpFromLine,
+  Building2,
+  Calendar,
+  Clock,
+  FileCheck,
+  FileText,
+  FolderOpen,
+  Hash,
+  Loader2,
+  User,
+} from "lucide-react";
 
 const DIRECTION_LABELS: Record<Direction, string> = {
-  [Direction.inward]: 'Inward',
-  [Direction.outward]: 'Outward',
-  [Direction.importantDocuments]: 'Important Documents',
+  [Direction.inward]: "Inward",
+  [Direction.outward]: "Outward",
+  [Direction.importantDocuments]: "Important Documents",
 };
 
 export function DocumentDetailPage() {
-  const { documentId } = useParams({ from: '/document/$documentId' });
+  const { documentId } = useParams({ from: "/app/document/$documentId" });
   const navigate = useNavigate();
   const { document, isLoading, error } = useDocument(documentId);
   const { data: categories } = useCategories();
@@ -39,8 +52,13 @@ export function DocumentDetailPage() {
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center space-y-4">
           <p className="text-sm text-destructive">Error loading document</p>
-          {error && <p className="text-xs text-muted-foreground">{error.message}</p>}
-          <Button onClick={() => navigate({ to: '/documents' })} variant="outline">
+          {error && (
+            <p className="text-xs text-muted-foreground">{error.message}</p>
+          )}
+          <Button
+            onClick={() => navigate({ to: "/app/documents" })}
+            variant="outline"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Documents
           </Button>
@@ -49,10 +67,9 @@ export function DocumentDetailPage() {
     );
   }
 
-  const isPdf = document.mimeType === 'application/pdf';
-  const isImage = document.mimeType.startsWith('image/');
+  const isPdf = document.mimeType === "application/pdf";
+  const isImage = document.mimeType.startsWith("image/");
 
-  // Get category and office names
   const category = categories?.find((c) => c.id === document.categoryId);
   const categoryName = category?.name || document.categoryId;
   const officeName = getOfficeName(category || null, document.officeId);
@@ -60,9 +77,13 @@ export function DocumentDetailPage() {
   const getDirectionIcon = (direction: Direction) => {
     switch (direction) {
       case Direction.inward:
-        return <ArrowDownToLine className="h-4 w-4 mt-0.5 text-muted-foreground" />;
+        return (
+          <ArrowDownToLine className="h-4 w-4 mt-0.5 text-muted-foreground" />
+        );
       case Direction.outward:
-        return <ArrowUpFromLine className="h-4 w-4 mt-0.5 text-muted-foreground" />;
+        return (
+          <ArrowUpFromLine className="h-4 w-4 mt-0.5 text-muted-foreground" />
+        );
       case Direction.importantDocuments:
         return <FileCheck className="h-4 w-4 mt-0.5 text-muted-foreground" />;
     }
@@ -71,18 +92,23 @@ export function DocumentDetailPage() {
   const getDirectionVariant = (direction: Direction) => {
     switch (direction) {
       case Direction.inward:
-        return 'default';
+        return "default";
       case Direction.outward:
-        return 'secondary';
+        return "secondary";
       case Direction.importantDocuments:
-        return 'destructive';
+        return "destructive";
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button onClick={() => navigate({ to: '/documents' })} variant="ghost" size="sm">
+        <Button
+          onClick={() => navigate({ to: "/app/documents" })}
+          variant="ghost"
+          size="sm"
+          data-ocid="document.back.button"
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Documents
         </Button>
@@ -90,7 +116,6 @@ export function DocumentDetailPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Document Preview */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -135,7 +160,6 @@ export function DocumentDetailPage() {
           </Card>
         </div>
 
-        {/* Document Metadata */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -150,9 +174,7 @@ export function DocumentDetailPage() {
                     <p className="text-sm font-medium">{categoryName}</p>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   <Building2 className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
@@ -160,9 +182,7 @@ export function DocumentDetailPage() {
                     <p className="text-sm font-medium">{officeName}</p>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   {getDirectionIcon(document.direction)}
                   <div className="flex-1 space-y-1">
@@ -172,56 +192,61 @@ export function DocumentDetailPage() {
                     </Badge>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   <Calendar className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
-                    <p className="text-xs text-muted-foreground">Document Date</p>
+                    <p className="text-xs text-muted-foreground">
+                      Document Date
+                    </p>
                     <p className="text-sm font-medium">
-                      {format(new Date(Number(document.documentDate) / 1000000), 'PPP')}
+                      {format(
+                        new Date(Number(document.documentDate) / 1000000),
+                        "PPP",
+                      )}
                     </p>
                   </div>
                 </div>
-
                 {document.referenceNumber && (
                   <>
                     <Separator />
                     <div className="flex items-start gap-3">
                       <Hash className="h-4 w-4 mt-0.5 text-muted-foreground" />
                       <div className="flex-1 space-y-1">
-                        <p className="text-xs text-muted-foreground">Reference Number</p>
-                        <p className="text-sm font-medium">{document.referenceNumber}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Reference Number
+                        </p>
+                        <p className="text-sm font-medium">
+                          {document.referenceNumber}
+                        </p>
                       </div>
                     </div>
                   </>
                 )}
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   <FileText className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
                     <p className="text-xs text-muted-foreground">Filename</p>
-                    <p className="text-sm font-medium break-all">{document.filename}</p>
+                    <p className="text-sm font-medium break-all">
+                      {document.filename}
+                    </p>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   <Clock className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">
                     <p className="text-xs text-muted-foreground">Uploaded</p>
                     <p className="text-sm font-medium">
-                      {format(new Date(Number(document.uploadTimestamp) / 1000000), 'PPP')}
+                      {format(
+                        new Date(Number(document.uploadTimestamp) / 1000000),
+                        "PPP",
+                      )}
                     </p>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-start gap-3">
                   <User className="h-4 w-4 mt-0.5 text-muted-foreground" />
                   <div className="flex-1 space-y-1">

@@ -1,44 +1,62 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { useUploadDocument } from '@/features/documents/useUploadDocument';
-import { useCategories } from '@/features/categories/useCategories';
-import { Direction } from '@/backend';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Direction } from "@/backend";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Progress } from "@/components/ui/progress";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
-import { CalendarIcon, Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/select";
+import { useCategories } from "@/features/categories/useCategories";
+import { useUploadDocument } from "@/features/documents/useUploadDocument";
+import { cn } from "@/lib/utils";
+import { useNavigate } from "@tanstack/react-router";
+import { format } from "date-fns";
+import {
+  AlertCircle,
+  CalendarIcon,
+  CheckCircle2,
+  FileText,
+  Loader2,
+  Upload,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 const DIRECTION_LABELS: Record<Direction, string> = {
-  [Direction.inward]: 'Inward',
-  [Direction.outward]: 'Outward',
-  [Direction.importantDocuments]: 'Important Documents',
+  [Direction.inward]: "Inward",
+  [Direction.outward]: "Outward",
+  [Direction.importantDocuments]: "Important Documents",
 };
 
 export function UploadDocumentPage() {
   const navigate = useNavigate();
-  const { uploadDocument, isUploading, uploadProgress, error, isSuccess } = useUploadDocument();
+  const { uploadDocument, isUploading, uploadProgress, error, isSuccess } =
+    useUploadDocument();
   const { data: categories } = useCategories();
 
   const [file, setFile] = useState<File | null>(null);
-  const [categoryId, setCategoryId] = useState<string>('');
-  const [officeId, setOfficeId] = useState<string>('');
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [officeId, setOfficeId] = useState<string>("");
   const [direction, setDirection] = useState<Direction | null>(null);
-  const [title, setTitle] = useState('');
-  const [referenceNumber, setReferenceNumber] = useState('');
+  const [title, setTitle] = useState("");
+  const [referenceNumber, setReferenceNumber] = useState("");
   const [documentDate, setDocumentDate] = useState<Date | null>(null);
 
   // Get selected category and its offices
@@ -46,18 +64,19 @@ export function UploadDocumentPage() {
   const officeOptions = selectedCategory?.offices || [];
 
   // Clear office selection when category changes if the office doesn't belong to the new category
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   useEffect(() => {
     if (officeId && !officeOptions.find((o) => o.id === officeId)) {
-      setOfficeId('');
+      setOfficeId("");
     }
   }, [categoryId, officeId, officeOptions]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
-      const validTypes = ['application/pdf', 'image/png', 'image/jpeg'];
+      const validTypes = ["application/pdf", "image/png", "image/jpeg"];
       if (!validTypes.includes(selectedFile.type)) {
-        alert('Please select a PDF or image file (PNG/JPEG)');
+        alert("Please select a PDF or image file (PNG/JPEG)");
         return;
       }
       setFile(selectedFile);
@@ -67,8 +86,15 @@ export function UploadDocumentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!file || !categoryId || !officeId || !direction || !title || !documentDate) {
-      alert('Please fill in all required fields');
+    if (
+      !file ||
+      !categoryId ||
+      !officeId ||
+      !direction ||
+      !title ||
+      !documentDate
+    ) {
+      alert("Please fill in all required fields");
       return;
     }
 
@@ -83,7 +109,14 @@ export function UploadDocumentPage() {
     });
   };
 
-  const canSubmit = file && categoryId && officeId && direction && title && documentDate && !isUploading;
+  const canSubmit =
+    file &&
+    categoryId &&
+    officeId &&
+    direction &&
+    title &&
+    documentDate &&
+    !isUploading;
 
   if (isSuccess) {
     return (
@@ -94,10 +127,15 @@ export function UploadDocumentPage() {
               <CheckCircle2 className="h-16 w-16 text-green-500" />
             </div>
             <CardTitle>Upload Successful</CardTitle>
-            <CardDescription>Your document has been uploaded successfully</CardDescription>
+            <CardDescription>
+              Your document has been uploaded successfully
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button onClick={() => navigate({ to: '/documents' })} className="w-full">
+            <Button
+              onClick={() => navigate({ to: "/app/documents" })}
+              className="w-full"
+            >
               View Documents
             </Button>
             <Button
@@ -159,7 +197,11 @@ export function UploadDocumentPage() {
               <Label htmlFor="category">
                 Category <span className="text-destructive">*</span>
               </Label>
-              <Select value={categoryId} onValueChange={setCategoryId} disabled={isUploading}>
+              <Select
+                value={categoryId}
+                onValueChange={setCategoryId}
+                disabled={isUploading}
+              >
                 <SelectTrigger id="category" className="bg-white dark:bg-white">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -184,7 +226,11 @@ export function UploadDocumentPage() {
                 disabled={isUploading || !categoryId}
               >
                 <SelectTrigger id="office" className="bg-white dark:bg-white">
-                  <SelectValue placeholder={categoryId ? "Select an office" : "Select category first"} />
+                  <SelectValue
+                    placeholder={
+                      categoryId ? "Select an office" : "Select category first"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
                   {officeOptions.map((office) => (
@@ -202,11 +248,14 @@ export function UploadDocumentPage() {
                 Direction <span className="text-destructive">*</span>
               </Label>
               <Select
-                value={direction || ''}
+                value={direction || ""}
                 onValueChange={(value) => setDirection(value as Direction)}
                 disabled={isUploading}
               >
-                <SelectTrigger id="direction" className="bg-white dark:bg-white">
+                <SelectTrigger
+                  id="direction"
+                  className="bg-white dark:bg-white"
+                >
                   <SelectValue placeholder="Select direction" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-white text-foreground border border-border shadow-md">
@@ -255,16 +304,19 @@ export function UploadDocumentPage() {
                   <Button
                     variant="outline"
                     className={cn(
-                      'w-full justify-start text-left font-normal bg-white dark:bg-white',
-                      !documentDate && 'text-muted-foreground'
+                      "w-full justify-start text-left font-normal bg-white dark:bg-white",
+                      !documentDate && "text-muted-foreground",
                     )}
                     disabled={isUploading}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {documentDate ? format(documentDate, 'PPP') : 'Select date'}
+                    {documentDate ? format(documentDate, "PPP") : "Select date"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white dark:bg-white" align="start">
+                <PopoverContent
+                  className="w-auto p-0 bg-white dark:bg-white"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={documentDate || undefined}
@@ -299,7 +351,7 @@ export function UploadDocumentPage() {
               type="submit"
               disabled={!canSubmit}
               className="w-full text-white hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50"
-              style={{ backgroundColor: '#0052cc' }}
+              style={{ backgroundColor: "#0052cc" }}
             >
               {isUploading ? (
                 <>

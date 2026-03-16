@@ -1,15 +1,15 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { ShieldAlert } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import { ShieldAlert } from "lucide-react";
 
 interface UnauthorizedScreenProps {
   message?: string;
   showBackButton?: boolean;
 }
 
-export function UnauthorizedScreen({ 
-  message = 'Unauthorized', 
-  showBackButton = true 
+export function UnauthorizedScreen({
+  message = "Unauthorized",
+  showBackButton = true,
 }: UnauthorizedScreenProps) {
   const navigate = useNavigate();
 
@@ -28,9 +28,7 @@ export function UnauthorizedScreen({
           </p>
         </div>
         {showBackButton && (
-          <Button onClick={() => navigate({ to: '/' })}>
-            Go to Dashboard
-          </Button>
+          <Button onClick={() => navigate({ to: "/" })}>Go to Dashboard</Button>
         )}
       </div>
     </div>

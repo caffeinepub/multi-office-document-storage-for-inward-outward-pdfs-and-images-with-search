@@ -1,37 +1,56 @@
-import { createRouter, RouterProvider, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
-import { AuthGate } from './components/auth/AuthGate';
-import { RequireRole } from './components/auth/RequireRole';
-import { AppShell } from './components/layout/AppShell';
-import { DashboardPage } from './pages/DashboardPage';
-import { DocumentListPage } from './pages/DocumentListPage';
-import { UploadDocumentPage } from './pages/UploadDocumentPage';
-import { DocumentDetailPage } from './pages/DocumentDetailPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from 'next-themes';
+import { Toaster } from "@/components/ui/sonner";
+import {
+  Outlet,
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+  createRouter,
+} from "@tanstack/react-router";
+import { ThemeProvider } from "next-themes";
+import { AuthGate } from "./components/auth/AuthGate";
+import { RequireRole } from "./components/auth/RequireRole";
+import { AppShell } from "./components/layout/AppShell";
+import { DashboardPage } from "./pages/DashboardPage";
+import { DocumentDetailPage } from "./pages/DocumentDetailPage";
+import { DocumentListPage } from "./pages/DocumentListPage";
+import { LandingPage } from "./pages/LandingPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { UploadDocumentPage } from "./pages/UploadDocumentPage";
 
-// Layout component that wraps authenticated routes
-function Layout() {
+// Authenticated app layout
+function AppLayout() {
   return (
-    <AppShell>
-      <Outlet />
-    </AppShell>
+    <AuthGate>
+      <AppShell>
+        <Outlet />
+      </AppShell>
+    </AuthGate>
   );
 }
 
-// Root route with layout
+// Root route — no auth, no layout
 const rootRoute = createRootRoute({
-  component: () => (
-    <AuthGate>
-      <Layout />
-    </AuthGate>
-  ),
+  component: () => <Outlet />,
 });
 
-// Dashboard route (default) - requires user role
-const indexRoute = createRoute({
+// Public landing page at /
+const landingRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: '/',
+  path: "/",
+  component: LandingPage,
+});
+
+// Authenticated /app layout route
+const appRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/app",
+  component: AppLayout,
+});
+
+// Dashboard at /app/
+const dashboardRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: "/",
   component: () => (
     <RequireRole requireUser>
       <DashboardPage />
@@ -39,10 +58,10 @@ const indexRoute = createRoute({
   ),
 });
 
-// Document list route - requires user role
+// Documents at /app/documents
 const documentsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/documents',
+  getParentRoute: () => appRoute,
+  path: "/documents",
   component: () => (
     <RequireRole requireUser>
       <DocumentListPage />
@@ -50,10 +69,10 @@ const documentsRoute = createRoute({
   ),
 });
 
-// Upload document route - requires user role
+// Upload at /app/upload
 const uploadRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/upload',
+  getParentRoute: () => appRoute,
+  path: "/upload",
   component: () => (
     <RequireRole requireUser>
       <UploadDocumentPage />
@@ -61,10 +80,10 @@ const uploadRoute = createRoute({
   ),
 });
 
-// Document detail route - requires user role
+// Document detail at /app/document/$documentId
 const documentRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/document/$documentId',
+  getParentRoute: () => appRoute,
+  path: "/document/$documentId",
   component: () => (
     <RequireRole requireUser>
       <DocumentDetailPage />
@@ -72,24 +91,31 @@ const documentRoute = createRoute({
   ),
 });
 
-// Settings route - requires admin role
+// Settings at /app/settings
 const settingsRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/settings',
+  getParentRoute: () => appRoute,
+  path: "/settings",
   component: () => (
-    <RequireRole requireAdmin>
+    <RequireRole requireUser>
       <SettingsPage />
     </RequireRole>
   ),
 });
 
-// Create router
-const routeTree = rootRoute.addChildren([indexRoute, documentsRoute, uploadRoute, documentRoute, settingsRoute]);
+const routeTree = rootRoute.addChildren([
+  landingRoute,
+  appRoute.addChildren([
+    dashboardRoute,
+    documentsRoute,
+    uploadRoute,
+    documentRoute,
+    settingsRoute,
+  ]),
+]);
 
 const router = createRouter({ routeTree });
 
-// Register router for type safety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }

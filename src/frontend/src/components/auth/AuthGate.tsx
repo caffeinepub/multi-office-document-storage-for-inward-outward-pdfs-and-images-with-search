@@ -1,14 +1,21 @@
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, LogIn } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { Loader2, LogIn } from "lucide-react";
 
 interface AuthGateProps {
   children: React.ReactNode;
 }
 
 export function AuthGate({ children }: AuthGateProps) {
-  const { identity, login, loginStatus, isInitializing } = useInternetIdentity();
+  const { identity, login, loginStatus, isInitializing } =
+    useInternetIdentity();
 
   if (isInitializing) {
     return (
@@ -28,12 +35,14 @@ export function AuthGate({ children }: AuthGateProps) {
           <CardHeader className="text-center">
             <div className="mb-4 flex justify-center">
               <img
-                src="/assets/generated/login-logo-v3.dim_400x600.jpeg"
-                alt="Login logo"
+                src="/assets/generated/doc-vault-logo-transparent.dim_256x256.png"
+                alt="Doc Vault"
                 className="h-32 w-32 rounded-lg object-contain"
               />
             </div>
-            <CardTitle className="text-2xl">Dr Sudhir Dhone Document Management System</CardTitle>
+            <CardTitle className="text-2xl">
+              Doc Vault - Document Management System
+            </CardTitle>
             <CardDescription>
               Secure storage for inward and outward documents across offices
             </CardDescription>
@@ -41,11 +50,12 @@ export function AuthGate({ children }: AuthGateProps) {
           <CardContent>
             <Button
               onClick={login}
-              disabled={loginStatus === 'logging-in'}
+              disabled={loginStatus === "logging-in"}
               className="w-full"
               size="lg"
+              data-ocid="auth.submit_button"
             >
-              {loginStatus === 'logging-in' ? (
+              {loginStatus === "logging-in" ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Connecting...

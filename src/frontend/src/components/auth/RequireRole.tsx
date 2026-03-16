@@ -1,9 +1,9 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { useCallerRole } from '@/features/auth/useCallerRole';
-import { UnauthorizedScreen } from './UnauthorizedScreen';
-import { PermissionsErrorScreen } from './PermissionsErrorScreen';
-import { Loader2 } from 'lucide-react';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
+import { useCallerRole } from "@/features/auth/useCallerRole";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { Loader2 } from "lucide-react";
+import { type ReactNode, useEffect, useState } from "react";
+import { PermissionsErrorScreen } from "./PermissionsErrorScreen";
+import { UnauthorizedScreen } from "./UnauthorizedScreen";
 
 interface RequireRoleProps {
   children: ReactNode;
@@ -13,12 +13,25 @@ interface RequireRoleProps {
 
 const PERMISSIONS_CHECK_TIMEOUT = 15000; // 15 seconds
 
-export function RequireRole({ children, requireAdmin = false, requireUser = false }: RequireRoleProps) {
-  const { isLoading, isFetched, isAdmin, isUser, data: role, error, refetch } = useCallerRole();
+export function RequireRole({
+  children,
+  requireAdmin = false,
+  requireUser = false,
+}: RequireRoleProps) {
+  const {
+    isLoading,
+    isFetched,
+    isAdmin,
+    isUser,
+    data: role,
+    error,
+    refetch,
+  } = useCallerRole();
   const { identity } = useInternetIdentity();
   const [hasTimedOut, setHasTimedOut] = useState(false);
 
   // Reset timeout when identity changes (e.g., after login)
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentional
   useEffect(() => {
     setHasTimedOut(false);
   }, [identity]);
@@ -54,7 +67,9 @@ export function RequireRole({ children, requireAdmin = false, requireUser = fals
       <div className="flex min-h-[600px] items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">Checking permissions...</p>
+          <p className="text-sm text-muted-foreground">
+            Checking permissions...
+          </p>
         </div>
       </div>
     );
@@ -71,7 +86,7 @@ export function RequireRole({ children, requireAdmin = false, requireUser = fals
   }
 
   // If role is guest, deny access
-  if (role === 'guest') {
+  if (role === "guest") {
     return <UnauthorizedScreen message="Unauthorized" />;
   }
 

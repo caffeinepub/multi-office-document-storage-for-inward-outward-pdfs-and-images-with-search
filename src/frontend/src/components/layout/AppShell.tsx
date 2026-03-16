@@ -1,7 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
-import { useInternetIdentity } from '@/hooks/useInternetIdentity';
-import { useCallerRole } from '@/features/auth/useCallerRole';
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,11 +6,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { LayoutDashboard, FileText, Upload, User, LogOut, Moon, Sun, Settings } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { SiX } from 'react-icons/si';
-import { MobileNavMenu } from './MobileNavMenu';
+} from "@/components/ui/dropdown-menu";
+import { useInternetIdentity } from "@/hooks/useInternetIdentity";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  FileText,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  Settings,
+  Sun,
+  Upload,
+  User,
+} from "lucide-react";
+import { useTheme } from "next-themes";
+import { MobileNavMenu } from "./MobileNavMenu";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -23,7 +30,6 @@ export function AppShell({ children }: AppShellProps) {
   const navigate = useNavigate();
   const { identity, clear } = useInternetIdentity();
   const { theme, setTheme } = useTheme();
-  const { isAdmin } = useCallerRole();
 
   const handleLogout = () => {
     clear();
@@ -31,30 +37,43 @@ export function AppShell({ children }: AppShellProps) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full border-b" style={{ backgroundColor: '#0B2554' }}>
+      <header
+        className="sticky top-0 z-50 w-full border-b"
+        style={{
+          background:
+            "linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)",
+        }}
+      >
         <div className="container flex h-16 items-center justify-between gap-2">
           <div className="flex items-center gap-2 md:gap-6 min-w-0">
             <MobileNavMenu />
             <button
-              onClick={() => navigate({ to: '/' })}
+              type="button"
+              onClick={() => navigate({ to: "/app" })}
               className="flex items-center gap-2 md:gap-3 transition-opacity hover:opacity-80 min-w-0"
+              data-ocid="nav.link"
             >
               <img
-                src="/assets/generated/header-logo.dim_512x512.png"
-                alt="DMS"
+                src="/assets/generated/doc-vault-logo-transparent.dim_256x256.png"
+                alt="Doc Vault"
                 className="h-8 w-8 md:h-10 md:w-10 flex-shrink-0"
               />
               <div className="flex flex-col min-w-0">
-                <span className="text-sm md:text-lg font-semibold text-white truncate">Dr Sudhir Dhone</span>
-                <span className="text-xs md:text-sm text-white/80 truncate">Document Archive</span>
+                <span className="text-sm md:text-lg font-semibold text-white truncate">
+                  Doc Vault
+                </span>
+                <span className="text-xs md:text-sm text-white/80 truncate">
+                  by Tattva Innovation
+                </span>
               </div>
             </button>
             <nav className="hidden items-center gap-1 md:flex">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/' })}
+                onClick={() => navigate({ to: "/app" })}
                 className="text-white hover:bg-white/10 hover:text-white"
+                data-ocid="nav.dashboard.link"
               >
                 <LayoutDashboard className="mr-2 h-4 w-4" />
                 Dashboard
@@ -62,8 +81,9 @@ export function AppShell({ children }: AppShellProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/documents' })}
+                onClick={() => navigate({ to: "/app/documents" })}
                 className="text-white hover:bg-white/10 hover:text-white"
+                data-ocid="nav.documents.link"
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Documents
@@ -71,23 +91,23 @@ export function AppShell({ children }: AppShellProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/upload' })}
+                onClick={() => navigate({ to: "/app/upload" })}
                 className="text-white hover:bg-white/10 hover:text-white"
+                data-ocid="nav.upload.link"
               >
                 <Upload className="mr-2 h-4 w-4" />
                 Upload
               </Button>
-              {isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate({ to: '/settings' })}
-                  className="text-white hover:bg-white/10 hover:text-white"
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </Button>
-              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate({ to: "/app/settings" })}
+                className="text-white hover:bg-white/10 hover:text-white"
+                data-ocid="nav.settings.link"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                Settings
+              </Button>
             </nav>
           </div>
 
@@ -95,7 +115,7 @@ export function AppShell({ children }: AppShellProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="text-white hover:bg-white/10 hover:text-white"
             >
               <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -105,11 +125,19 @@ export function AppShell({ children }: AppShellProps) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/10 hover:text-white"
+                  data-ocid="nav.user.button"
+                >
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-popover dark:bg-popover">
+              <DropdownMenuContent
+                align="end"
+                className="w-56 bg-white dark:bg-gray-900"
+              >
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">Account</p>
@@ -119,7 +147,10 @@ export function AppShell({ children }: AppShellProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  data-ocid="nav.logout.button"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>
@@ -134,15 +165,23 @@ export function AppShell({ children }: AppShellProps) {
       </main>
 
       <footer className="border-t bg-muted/30 py-6">
-        <div className="container flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="container flex flex-col items-center gap-3 md:flex-row md:justify-between">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Document Management System
+            &copy; {new Date().getFullYear()} Doc Vault &middot; Document
+            Management System
           </p>
-          <p className="text-sm text-muted-foreground">
-            Built with <SiX className="inline h-3 w-3 text-red-500" /> using{' '}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold tracking-wide uppercase px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-cyan-500 text-white shadow-sm">
+              Created by Tattva Innovation
+            </span>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Built with{" "}
             <a
               href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(
-                typeof window !== 'undefined' ? window.location.hostname : 'dms-app'
+                typeof window !== "undefined"
+                  ? window.location.hostname
+                  : "doc-vault",
               )}`}
               target="_blank"
               rel="noopener noreferrer"

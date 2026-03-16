@@ -11,10 +11,9 @@ import Set "mo:core/Set";
 import List "mo:core/List";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-import Migration "migration";
 
 // Roll forward migration
-(with migration = Migration.run)
+
 actor {
   // Initialize the access control system
   let accessControlState = AccessControl.initState();
@@ -127,10 +126,10 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Category Management (admin-only - Settings page access)
+  // Category Management - Now open to all users
   public shared ({ caller }) func addCategory(id : Text, name : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add categories");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can add categories");
     };
     let newCategory : Category = {
       id;
@@ -141,8 +140,8 @@ actor {
   };
 
   public shared ({ caller }) func updateCategory(id : Text, newName : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update categories");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can update categories");
     };
     let updatedCategories = persistentCategories_internal.map<Category, Category>(
       func(c) {
@@ -153,17 +152,17 @@ actor {
   };
 
   public shared ({ caller }) func removeCategory(id : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can remove categories");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can remove categories");
     };
     let filteredCategories = persistentCategories_internal.filter(func(c) { c.id != id });
     persistentCategories_internal := filteredCategories;
   };
 
-  // Office Management within a Category (admin-only - Settings page access)
+  // Office Management within a Category - Now open to all users
   public shared ({ caller }) func addOfficeToCategory(categoryId : Text, officeId : Text, officeName : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add offices");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can add offices");
     };
 
     let updatedCategories = persistentCategories_internal.map<Category, Category>(
@@ -179,8 +178,8 @@ actor {
   };
 
   public shared ({ caller }) func updateOfficeInCategory(categoryId : Text, officeId : Text, newOfficeName : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can update offices");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can update offices");
     };
 
     let updatedCategories = persistentCategories_internal.map<Category, Category>(
@@ -199,8 +198,8 @@ actor {
   };
 
   public shared ({ caller }) func removeOfficeFromCategory(categoryId : Text, officeId : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can remove offices");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can remove offices");
     };
 
     let updatedCategories = persistentCategories_internal.map<Category, Category>(

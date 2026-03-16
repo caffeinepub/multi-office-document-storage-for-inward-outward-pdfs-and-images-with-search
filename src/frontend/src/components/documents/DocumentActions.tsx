@@ -1,8 +1,4 @@
-import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
-import { PublicDocument } from '@/backend';
-import { useDeleteDocument } from '@/features/documents/useDeleteDocument';
-import { Button } from '@/components/ui/button';
+import type { PublicDocument } from "@/backend";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,16 +9,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Download, Trash2, MoreVertical, ExternalLink, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+} from "@/components/ui/dropdown-menu";
+import { useDeleteDocument } from "@/features/documents/useDeleteDocument";
+import { useNavigate } from "@tanstack/react-router";
+import {
+  Download,
+  ExternalLink,
+  Loader2,
+  MoreVertical,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface DocumentActionsProps {
   document: PublicDocument;
@@ -34,8 +40,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
 
   const handleView = () => {
-    // Open in new window
-    const newWindow = window.open('', '_blank');
+    const newWindow = window.open("", "_blank");
     if (newWindow) {
       newWindow.document.write(`
         <!DOCTYPE html>
@@ -48,9 +53,10 @@ export function DocumentActions({ document }: DocumentActionsProps) {
             </style>
           </head>
           <body>
-            ${document.mimeType === 'application/pdf' 
-              ? `<iframe src="${document.blobId}"></iframe>`
-              : `<img src="${document.blobId}" alt="${document.title}" />`
+            ${
+              document.mimeType === "application/pdf"
+                ? `<iframe src="${document.blobId}"></iframe>`
+                : `<img src="${document.blobId}" alt="${document.title}" />`
             }
           </body>
         </html>
@@ -60,20 +66,20 @@ export function DocumentActions({ document }: DocumentActionsProps) {
   };
 
   const handleDownload = () => {
-    const link = window.document.createElement('a');
+    const link = window.document.createElement("a");
     link.href = document.blobId;
     link.download = document.filename;
     link.click();
-    toast.success('Download started');
+    toast.success("Download started");
   };
 
   const handleDelete = async () => {
     try {
       await deleteDocument(document.id);
-      toast.success('Document deleted successfully');
-      navigate({ to: '/documents' });
-    } catch (error) {
-      toast.error('Failed to delete document');
+      toast.success("Document deleted successfully");
+      navigate({ to: "/app/documents" });
+    } catch (_error) {
+      toast.error("Failed to delete document");
     }
   };
 
@@ -95,7 +101,10 @@ export function DocumentActions({ document }: DocumentActionsProps) {
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-popover dark:bg-popover">
+          <DropdownMenuContent
+            align="end"
+            className="bg-popover dark:bg-popover"
+          >
             <DropdownMenuItem onClick={handleView}>
               <ExternalLink className="mr-2 h-4 w-4" />
               Open in new tab
@@ -118,15 +127,19 @@ export function DocumentActions({ document }: DocumentActionsProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Document</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{document.title}"? This action cannot be undone.
+              Are you sure you want to delete "{document.title}"? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-ocid="document.delete.cancel_button">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              data-ocid="document.delete.confirm_button"
             >
               {isDeleting ? (
                 <>
@@ -134,7 +147,7 @@ export function DocumentActions({ document }: DocumentActionsProps) {
                   Deleting...
                 </>
               ) : (
-                'Delete'
+                "Delete"
               )}
             </AlertDialogAction>
           </AlertDialogFooter>

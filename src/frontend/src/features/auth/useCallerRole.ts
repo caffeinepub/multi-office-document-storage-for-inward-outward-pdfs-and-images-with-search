@@ -1,22 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
-import { useActor } from '@/hooks/useActor';
-import { UserRole } from '@/backend';
+import type { UserRole } from "@/backend";
+import { useActor } from "@/hooks/useActor";
+import { useQuery } from "@tanstack/react-query";
 
 export function useCallerRole() {
   const { actor, isFetching: actorFetching } = useActor();
 
   const query = useQuery<UserRole>({
-    queryKey: ['callerRole'],
+    queryKey: ["callerRole"],
     queryFn: async () => {
       if (!actor) {
-        throw new Error('Actor not available');
+        throw new Error("Actor not available");
       }
       try {
         const role = await actor.getCallerUserRole();
         return role;
       } catch (err) {
         // Provide more context for errors
-        const message = err instanceof Error ? err.message : 'Failed to fetch user role';
+        const message =
+          err instanceof Error ? err.message : "Failed to fetch user role";
         throw new Error(`Permission check failed: ${message}`);
       }
     },
@@ -30,7 +31,7 @@ export function useCallerRole() {
     ...query,
     isLoading: actorFetching || query.isLoading,
     isFetched: !!actor && query.isFetched,
-    isAdmin: query.data === 'admin',
-    isUser: query.data === 'admin' || query.data === 'user',
+    isAdmin: query.data === "admin",
+    isUser: query.data === "admin" || query.data === "user",
   };
 }

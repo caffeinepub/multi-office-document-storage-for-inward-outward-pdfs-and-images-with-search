@@ -1,9 +1,8 @@
-import { PublicDocument, Direction } from '@/backend';
-import { useCategories } from '@/features/categories/useCategories';
-import { useNavigate } from '@tanstack/react-router';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Direction, type PublicDocument } from "@/backend";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -11,16 +10,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Card, CardContent } from '@/components/ui/card';
-import { FileText, ArrowDownToLine, ArrowUpFromLine, Star } from 'lucide-react';
-import { format } from 'date-fns';
-import { getOfficeName } from '@/lib/officeHelpers';
+} from "@/components/ui/table";
+import { useCategories } from "@/features/categories/useCategories";
+import { getOfficeName } from "@/lib/officeHelpers";
+import { useNavigate } from "@tanstack/react-router";
+import { format } from "date-fns";
+import { ArrowDownToLine, ArrowUpFromLine, FileText, Star } from "lucide-react";
 
 const DIRECTION_LABELS: Record<Direction, string> = {
-  [Direction.inward]: 'Inward',
-  [Direction.outward]: 'Outward',
-  [Direction.importantDocuments]: 'Important',
+  [Direction.inward]: "Inward",
+  [Direction.outward]: "Outward",
+  [Direction.importantDocuments]: "Important",
 };
 
 interface DocumentListProps {
@@ -39,8 +39,11 @@ export function DocumentList({
   const navigate = useNavigate();
   const { data: categories } = useCategories();
 
-  const allSelected = documents.length > 0 && documents.every((doc) => selectedDocuments.has(doc.id));
-  const someSelected = documents.some((doc) => selectedDocuments.has(doc.id)) && !allSelected;
+  const allSelected =
+    documents.length > 0 &&
+    documents.every((doc) => selectedDocuments.has(doc.id));
+  const someSelected =
+    documents.some((doc) => selectedDocuments.has(doc.id)) && !allSelected;
 
   const getDirectionIcon = (direction: Direction) => {
     switch (direction) {
@@ -53,14 +56,16 @@ export function DocumentList({
     }
   };
 
-  const getDirectionVariant = (direction: Direction): 'default' | 'secondary' | 'destructive' => {
+  const getDirectionVariant = (
+    direction: Direction,
+  ): "default" | "secondary" | "destructive" => {
     switch (direction) {
       case Direction.inward:
-        return 'default';
+        return "default";
       case Direction.outward:
-        return 'secondary';
+        return "secondary";
       case Direction.importantDocuments:
-        return 'destructive';
+        return "destructive";
     }
   };
 
@@ -86,7 +91,9 @@ export function DocumentList({
                     checked={allSelected}
                     onCheckedChange={onSelectAll}
                     aria-label="Select all"
-                    className={someSelected ? 'data-[state=checked]:bg-primary/50' : ''}
+                    className={
+                      someSelected ? "data-[state=checked]:bg-primary/50" : ""
+                    }
                   />
                 </TableHead>
                 <TableHead>Title</TableHead>
@@ -102,12 +109,19 @@ export function DocumentList({
                 <TableRow
                   key={doc.id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => navigate({ to: '/document/$documentId', params: { documentId: doc.id } })}
+                  onClick={() =>
+                    navigate({
+                      to: "/app/document/$documentId",
+                      params: { documentId: doc.id },
+                    })
+                  }
                 >
                   <TableCell onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={selectedDocuments.has(doc.id)}
-                      onCheckedChange={(checked) => onSelectDocument(doc.id, checked as boolean)}
+                      onCheckedChange={(checked) =>
+                        onSelectDocument(doc.id, checked as boolean)
+                      }
                       aria-label={`Select ${doc.title}`}
                     />
                   </TableCell>
@@ -118,25 +132,35 @@ export function DocumentList({
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{getCategoryName(doc.categoryId)}</span>
+                    <span className="text-sm">
+                      {getCategoryName(doc.categoryId)}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">{getOfficeNameForDoc(doc)}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {getOfficeNameForDoc(doc)}
+                    </span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getDirectionVariant(doc.direction)} className="gap-1">
+                    <Badge
+                      variant={getDirectionVariant(doc.direction)}
+                      className="gap-1"
+                    >
                       {getDirectionIcon(doc.direction)}
                       {DIRECTION_LABELS[doc.direction]}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-muted-foreground">
-                      {format(new Date(Number(doc.documentDate) / 1000000), 'PP')}
+                      {format(
+                        new Date(Number(doc.documentDate) / 1000000),
+                        "PP",
+                      )}
                     </span>
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-muted-foreground">
-                      {doc.referenceNumber || '-'}
+                      {doc.referenceNumber || "-"}
                     </span>
                   </TableCell>
                 </TableRow>

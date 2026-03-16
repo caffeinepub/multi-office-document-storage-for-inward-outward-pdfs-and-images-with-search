@@ -1,6 +1,6 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import { Upload } from "lucide-react";
 
 export function EmptyState() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export function EmptyState() {
       <p className="text-muted-foreground mb-6 max-w-md">
         Get started by uploading your first document to the archive
       </p>
-      <Button onClick={() => navigate({ to: '/upload' })} size="lg">
+      <Button onClick={() => navigate({ to: "/app/upload" })} size="lg">
         <Upload className="mr-2 h-4 w-4" />
         Upload Document
       </Button>

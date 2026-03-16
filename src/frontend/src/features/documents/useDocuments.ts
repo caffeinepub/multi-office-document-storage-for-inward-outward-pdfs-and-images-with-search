@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useActor } from '@/hooks/useActor';
-import { PublicDocument, Direction } from '@/backend';
+import type { Direction, PublicDocument } from "@/backend";
+import { useActor } from "@/hooks/useActor";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 
 interface UseDocumentsOptions {
   categoryId: string | null;
@@ -26,14 +26,30 @@ export function useDocuments({
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
 
   const query = useQuery<PublicDocument[]>({
-    queryKey: ['documents', categoryId, officeId, direction, startDate, endDate],
+    queryKey: [
+      "documents",
+      categoryId,
+      officeId,
+      direction,
+      startDate,
+      endDate,
+    ],
     queryFn: async () => {
       if (!actor) return [];
 
-      const startTime = startDate ? BigInt(startDate.getTime() * 1000000) : null;
+      const startTime = startDate
+        ? BigInt(startDate.getTime() * 1000000)
+        : null;
       const endTime = endDate ? BigInt(endDate.getTime() * 1000000) : null;
 
-      return actor.filterDocuments(categoryId, officeId, direction, startTime, endTime, null);
+      return actor.filterDocuments(
+        categoryId,
+        officeId,
+        direction,
+        startTime,
+        endTime,
+        null,
+      );
     },
     enabled: !!actor && !isActorFetching,
   });
@@ -49,12 +65,14 @@ export function useDocuments({
       filtered = filtered.filter(
         (doc) =>
           doc.title.toLowerCase().includes(searchLower) ||
-          (doc.referenceNumber && doc.referenceNumber.toLowerCase().includes(searchLower))
+          doc.referenceNumber?.toLowerCase().includes(searchLower),
       );
     }
 
     // Sort by upload timestamp (newest first)
-    return filtered.sort((a, b) => Number(b.uploadTimestamp - a.uploadTimestamp));
+    return filtered.sort((a, b) =>
+      Number(b.uploadTimestamp - a.uploadTimestamp),
+    );
   }, [query.data, searchText]);
 
   const displayedDocuments = filteredDocuments.slice(0, displayCount);

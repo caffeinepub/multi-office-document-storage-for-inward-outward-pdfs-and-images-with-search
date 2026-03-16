@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useActor } from '@/hooks/useActor';
-import { Direction } from '@/backend';
+import type { Direction } from "@/backend";
+import { useActor } from "@/hooks/useActor";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 interface UploadDocumentParams {
   file: File;
@@ -20,9 +20,17 @@ export function useUploadDocument() {
 
   const mutation = useMutation({
     mutationFn: async (params: UploadDocumentParams) => {
-      if (!actor) throw new Error('Not authenticated');
+      if (!actor) throw new Error("Not authenticated");
 
-      const { file, categoryId, officeId, direction, title, referenceNumber, documentDate } = params;
+      const {
+        file,
+        categoryId,
+        officeId,
+        direction,
+        title,
+        referenceNumber,
+        documentDate,
+      } = params;
 
       setUploadProgress(10);
 
@@ -34,12 +42,12 @@ export function useUploadDocument() {
 
       // Convert bytes to base64 for storage
       const base64 = btoa(String.fromCharCode(...bytes));
-      
+
       setUploadProgress(50);
 
       // Generate unique document ID and blob ID
       const documentId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const blobId = `${documentId}-${file.name}`;
+      const _blobId = `${documentId}-${file.name}`;
 
       setUploadProgress(70);
 
@@ -64,7 +72,7 @@ export function useUploadDocument() {
         file.name,
         file.type,
         BigInt(file.size),
-        dataUrl
+        dataUrl,
       );
 
       setUploadProgress(100);
@@ -73,8 +81,8 @@ export function useUploadDocument() {
     },
     onSuccess: () => {
       // Invalidate documents and dashboard queries to refresh
-      queryClient.invalidateQueries({ queryKey: ['documents'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboardMetrics'] });
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboardMetrics"] });
       setUploadProgress(0);
     },
     onError: () => {
